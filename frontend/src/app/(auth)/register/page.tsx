@@ -11,9 +11,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
     <p id={id} className="mb-3 mt-1 text-sm text-[#ffb7a8]" role="alert">
       {message}
     </p>
-  ) : (
-    <div className="mb-3" />
-  );
+  ) : null;
 }
 
 function BrandLogo() {
@@ -257,13 +255,13 @@ export default function RegisterPage() {
 
   return (
     <section
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-cover bg-center px-5 py-8 sm:px-10 lg:px-14"
+      className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-cover bg-center px-5 py-3 sm:px-10 sm:py-4 lg:px-14 lg:py-6"
       style={{
         backgroundImage:
           "linear-gradient(110deg, rgba(7, 24, 22, 0.74), rgba(7, 24, 22, 0.52)), url('/fondos/bg-image.png')",
       }}
     >
-      <div className="relative grid w-full max-w-6xl items-center gap-10 md:grid-cols-[minmax(0,1fr)_440px] lg:gap-20">
+      <div className="relative grid w-full max-w-6xl items-center gap-6 md:grid-cols-[minmax(0,1fr)_440px] lg:gap-12">
         <div className="hidden max-w-xl text-white md:block">
           <BrandLogo />
           <p className="mb-4 mt-12 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#a9e4cb]">
@@ -356,14 +354,14 @@ export default function RegisterPage() {
           </ul>
         </div>
         <form
-          className="mx-auto flex w-full max-w-md flex-col rounded-2xl border border-[#70cba6]/55 bg-[#102a28]/80 p-6 text-white shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8"
+          className="mx-auto flex w-full max-w-md flex-col rounded-2xl border border-[#70cba6]/55 bg-[#102a28]/80 p-5 text-white shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6"
           onSubmit={handleSubmit}
           noValidate
         >
-          <div className="mb-7">
+          <div className="mb-4 sm:mb-5">
             <BrandLogo />
-            <h2 className="mt-7 text-2xl font-semibold">Creá tu cuenta</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">
+            <h2 className="mt-4 text-2xl font-semibold">Creá tu cuenta</h2>
+            <p className="mt-1 text-sm leading-5 text-white/70">
               Ingresá tus datos para empezar a gestionar tu alojamiento.
             </p>
           </div>
@@ -394,7 +392,7 @@ export default function RegisterPage() {
             Nombre completo
           </label>
           <input
-            className="h-11 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
             type="text"
             id="name"
             name="name"
@@ -412,7 +410,7 @@ export default function RegisterPage() {
             Correo electrónico
           </label>
           <input
-            className="h-11 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
             type="email"
             id="email"
             name="email"
@@ -430,7 +428,7 @@ export default function RegisterPage() {
             Contraseña
           </label>
           <input
-            className="h-11 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
             type="password"
             id="password"
             name="password"
@@ -451,7 +449,7 @@ export default function RegisterPage() {
             Confirmar contraseña
           </label>
           <input
-            className="h-11 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
             type="password"
             id="confirm-password"
             name="confirm-password"
@@ -475,7 +473,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isSubmitting || Boolean(successMessage)}
-            className="mt-5 h-12 rounded-md bg-linear-to-r from-[#54bd91] to-[#36a77d] px-4 text-sm font-semibold text-[#06261c] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7ce0b7] focus-visible:ring-offset-2 focus-visible:ring-offset-[#102a28]"
+            className="mt-4 h-11 rounded-md bg-linear-to-r from-[#54bd91] to-[#36a77d] px-4 text-sm font-semibold text-[#06261c] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7ce0b7] focus-visible:ring-offset-2 focus-visible:ring-offset-[#102a28]"
           >
             {isSubmitting
               ? "Registrando..."
