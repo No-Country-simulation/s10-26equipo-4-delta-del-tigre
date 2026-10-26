@@ -30,15 +30,6 @@ export function AdminHeader() {
             </div>
 
             <div className="ml-auto flex items-center gap-4">
-                <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Notificaciones"
-                    className="relative size-11 rounded-xl border-[#dce5e0]"
-                >
-                    <Bell className="size-5 text-[#526963]" />
-                    <span className="absolute right-2 top-2 size-2 rounded-full bg-[#c58a48]" />
-                </Button>
 
                 <Avatar className="size-11 rounded-xl">
                     <AvatarFallback className="rounded-xl bg-[#e7f0eb] font-semibold text-[#174f40]">

@@ -28,7 +28,7 @@ export default function AdminLayout({
             <SidebarInset className="min-h-dvh bg-[#f5f8f6]">
                 <AdminHeader />
 
-                <main className="min-h-0 flex-1 overflow-y-auto p-6 md:p-10">
+                <main className=" min-h-0 flex-1 overflow-y-auto p-6 md:p-10">
                     {children}
                 </main>
             </SidebarInset>
