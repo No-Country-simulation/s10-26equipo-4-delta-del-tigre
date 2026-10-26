@@ -1,10 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-
-function validateEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+import { authSchema } from "../schemas/auth.schema";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   return message ? (
@@ -159,28 +156,26 @@ export default function RegisterPage() {
     setSuccessMessage("");
 
     const formData = new FormData(event.currentTarget);
-    const name = String(formData.get("name") ?? "").trim();
-    const email = String(formData.get("email") ?? "").trim();
-    const password = String(formData.get("password") ?? "");
-    const confirmPassword = String(formData.get("confirm-password") ?? "");
-    const validationErrors: Record<string, string> = {};
+    const validation = authSchema.safeParse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      "confirm-password": formData.get("confirm-password"),
+    });
 
-    if (!name) validationErrors.name = "Ingresá tu nombre.";
-    if (!validateEmail(email)) {
-      validationErrors.email = "Ingresá un correo electrónico válido.";
-    }
-    if (password.length < 8) {
-      validationErrors.password =
-        "La contraseña debe tener al menos 8 caracteres.";
-    }
-    if (password !== confirmPassword) {
-      validationErrors["confirm-password"] = "Las contraseñas no coinciden.";
-    }
-
-    if (Object.keys(validationErrors).length > 0) {
+    if (!validation.success) {
+      const validationErrors: Record<string, string> = {};
+      for (const issue of validation.error.issues) {
+        const field = String(issue.path[0] ?? "");
+        if (field && !validationErrors[field]) {
+          validationErrors[field] = issue.message;
+        }
+      }
       setFieldErrors(validationErrors);
       return;
     }
+
+    const { name, email, password } = validation.data;
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
     if (!apiUrl) {
@@ -392,7 +387,7 @@ export default function RegisterPage() {
             Nombre completo
           </label>
           <input
-            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className={`h-10 rounded-md border bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${fieldErrors.name ? "border-red-400 focus:border-red-400 focus:ring-red-400/15" : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"}`}
             type="text"
             id="name"
             name="name"
@@ -410,7 +405,7 @@ export default function RegisterPage() {
             Correo electrónico
           </label>
           <input
-            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className={`h-10 rounded-md border bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${fieldErrors.email ? "border-red-400 focus:border-red-400 focus:ring-red-400/15" : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"}`}
             type="email"
             id="email"
             name="email"
@@ -428,7 +423,7 @@ export default function RegisterPage() {
             Contraseña
           </label>
           <input
-            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className={`h-10 rounded-md border bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${fieldErrors.password ? "border-red-400 focus:border-red-400 focus:ring-red-400/15" : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"}`}
             type="password"
             id="password"
             name="password"
@@ -449,7 +444,7 @@ export default function RegisterPage() {
             Confirmar contraseña
           </label>
           <input
-            className="h-10 rounded-md border border-white/20 bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:border-[#69d2a7] focus:ring-4 focus:ring-[#69d2a7]/15"
+            className={`h-10 rounded-md border bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${fieldErrors["confirm-password"] ? "border-red-400 focus:border-red-400 focus:ring-red-400/15" : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"}`}
             type="password"
             id="confirm-password"
             name="confirm-password"
