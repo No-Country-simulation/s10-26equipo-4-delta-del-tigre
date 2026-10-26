@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     House,
     CalendarDays,
@@ -28,7 +28,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu";
-import { useRouter } from "next/router";
+
 
 const items = [
     { title: "Mi complejo", url: "/dashboard", icon: House },
@@ -97,7 +97,7 @@ export function AppSidebar() {
                         render={
                             <Button
                                 variant="ghost"
-                                className="h-auto w-full justify-start gap-3 px-1 py-2 hover:bg-[#f6f8f7]"
+                                className="h-auto w-full justify-start gap-3 px-1 py-2 hover:bg-[#f6f8f7] cursor-pointer"
                             />
                         }
                     >
@@ -128,7 +128,7 @@ export function AppSidebar() {
 
                                 router.push("/login")
                             }}
-                            className="gap-2 text-red-600 focus:text-red-600"
+                            className="gap-2 text-red-600 focus:text-red-600 cursor-pointer"
                         >
                             <LogOut className="size-4" />
                             Cerrar sesión
