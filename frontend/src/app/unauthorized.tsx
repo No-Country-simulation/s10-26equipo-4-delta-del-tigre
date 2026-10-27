@@ -19,7 +19,7 @@ export default function Unauthorized() {
           </p>
           <h1 className="mt-3 text-3xl font-semibold">Iniciá sesión para continuar</h1>
           <p className="mt-3 max-w-md leading-6 text-[#71817b]">
-            No tenies una sesión válida para acceder a este contenido.
+            No tienes una sesión válida para acceder a este contenido.
           </p>
           <Link
             href="/login"
