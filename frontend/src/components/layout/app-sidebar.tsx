@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
     House,
     CalendarDays,
@@ -28,7 +28,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu";
-
+import {useState} from "react"
+import { logoutMockSession } from "@/app/(auth)/actions";
 
 const items = [
     { title: "Mi complejo", url: "/dashboard", icon: House },
@@ -41,7 +42,7 @@ const items = [
 export function AppSidebar() {
     const pathname = usePathname();
     const { setOpenMobile, isMobile } = useSidebar();
-    const router = useRouter();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     return (
         <Sidebar className="border-r border-[#dce5e0]">
             <SidebarHeader className="h-16 justify-center px-4 lg:h-22 lg:px-6">
@@ -123,15 +124,22 @@ export function AppSidebar() {
                         className="w-56"
                     >
                         <DropdownMenuItem
-                            onClick={() => {
-                                //implementacion de logout
-
-                                router.push("/login")
+                        disabled={isLoggingOut}
+                            onClick={async() => {
+                              try {
+                                setIsLoggingOut(true)
+                                await logoutMockSession();
+                                                                window.location.replace("/login");
+                              }catch (error) {
+                                console.error("Error al cerrar sesión:", error);
+                              }finally{
+                                setIsLoggingOut(false)
+                              }
                             }}
                             className="gap-2 text-red-600 focus:text-red-600 cursor-pointer"
                         >
                             <LogOut className="size-4" />
-                            Cerrar sesión
+                             {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
