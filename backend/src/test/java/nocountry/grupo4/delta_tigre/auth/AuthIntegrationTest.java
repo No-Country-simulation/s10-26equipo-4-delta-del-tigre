@@ -87,4 +87,20 @@ class AuthIntegrationTest {
                         .content("{\"email\":\"%s\",\"password\":\"incorrecta-123\"}".formatted(email)))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void register_with_one_character_name_returns_400() throws Exception {
+        mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"A\",\"email\":\"a1@mail.com\",\"password\":\"clave-segura-1\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data.name").exists());
+    }
+
+    @Test
+    void register_with_two_character_name_returns_201() throws Exception {
+        String email = "dos-" + UUID.randomUUID() + "@mail.com";
+        mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Al\",\"email\":\"" + email + "\",\"password\":\"clave-segura-1\"}"))
+                .andExpect(status().isCreated());
+    }
 }

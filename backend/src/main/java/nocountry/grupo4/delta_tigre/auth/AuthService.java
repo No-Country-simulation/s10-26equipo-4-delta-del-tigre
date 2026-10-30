@@ -32,10 +32,6 @@ public class AuthService {
         o.setName(r.name().trim());
         o.setEmail(email);
         o.setPasswordHash(encoder.encode(r.password()));
-        o.setPhone(r.phone());
-        o.setCountry(r.country());
-        o.setIdentificationType(r.identificationType());
-        o.setIdentificationNumber(r.identificationNumber());
         owners.save(o);
         return token(o);
     }
