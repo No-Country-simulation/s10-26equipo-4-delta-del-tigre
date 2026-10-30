@@ -10,5 +10,5 @@ public record RegisterRequest(
         @NotBlank @Size(min = 8, max = 72) String password,
         @Size(max = 40) String phone,
         @Size(max = 80) String country,
-        @Size(max = 40) String identificationType,
+        @Size(max = 20) String identificationType,
         @Size(max = 40) String identificationNumber) {}

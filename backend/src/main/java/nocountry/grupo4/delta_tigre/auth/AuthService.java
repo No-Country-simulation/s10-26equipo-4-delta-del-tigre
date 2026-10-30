@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Locale;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -29,7 +27,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest r) {
         String email = r.email().trim().toLowerCase();
         if (owners.existsByEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya esta registrado");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
         }
         Owner o = new Owner();
         o.setName(r.name().trim());
