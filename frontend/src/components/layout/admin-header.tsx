@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 
 export function AdminHeader() {
     return (
-        <header className="flex h-22 shrink-0 items-center gap-4 border-b border-[#dce5e0] bg-white px-6 md:px-10">
+        <header className="flex h-18 shrink-0 items-center gap-4 border-b border-[#dce5e0] bg-white px-6 md:px-10">
             <SidebarTrigger className="md:hidden" />
 
             <Separator
@@ -19,15 +19,6 @@ export function AdminHeader() {
                 className="mr-1 h-6 md:hidden"
             />
 
-            <div className="relative w-full max-w-xl">
-                <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-[#81918b]" />
-
-                <Input
-                    placeholder="Buscar huésped o reserva..."
-                    aria-label="Buscar huésped o reserva"
-                    className="border-0 bg-transparent pl-10 shadow-none focus-visible:ring-0"
-                />
-            </div>
 
             <div className="ml-auto flex items-center gap-4">
 
