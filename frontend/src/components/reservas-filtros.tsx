@@ -53,7 +53,7 @@ export function ReservasFiltros() {
     const hayFiltros = q !== "" || estadoActual !== TODOS;
 
     return (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2">
             <div className="relative">
                 <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#71817b]" />
                 <Input
@@ -61,7 +61,7 @@ export function ReservasFiltros() {
                     onChange={(e) => setQ(e.target.value)}
                     placeholder="Buscar huésped..."
                     aria-label="Buscar por nombre del huésped"
-                    className="h-11 w-56 rounded-xl border-[#dce5e0] bg-[#f7f9f8] pl-9"
+                    className="h-11 w-auto lg:w-3xl rounded-xl border-[#dce5e0] bg-[#f7f9f8] pl-9"
                 />
             </div>
 

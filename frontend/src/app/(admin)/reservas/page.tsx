@@ -105,8 +105,8 @@ async function ReservasPage({ searchParams }: { searchParams: SearchParams }) {
             </div>
 
             <Card className="overflow-hidden rounded-3xl border border-[#dce5e0] bg-white py-0 shadow-none ring-0">
-                <div className="flex flex-wrap items-center justify-between gap-4 p-6">
-                    <div>
+                <div className="flex flex-col flex-wrap items-start justify-between gap-4 p-6">
+                    <div className="flex gap-6">
                         <h2 className="text-lg font-medium text-[#172c28]">Próximas reservas</h2>
                         <p className="mt-1 text-sm text-[#71817b]">Ordenadas por fecha de llegada</p>
                     </div>

@@ -1,4 +1,4 @@
-export type EstadoReserva = "pendiente" | "onboarding_completo";
+export type EstadoReserva = "pendiente" | "confirmada" | "finalizada" | "cancelada";
 
 export type Reserva = {
     id: string;
@@ -19,7 +19,9 @@ export type FiltrosReservas = {
 
 export const ESTADOS: { value: EstadoReserva; label: string }[] = [
     { value: "pendiente", label: "Pendiente" },
-    { value: "onboarding_completo", label: "Onboarding completo" },
+    { value: "confirmada", label: "Confirmada" },
+    { value: "cancelada", label: "Cancelada" },
+    { value: "finalizada", label: "Finalizada" },
 ];
 
 export function esEstadoValido(valor: unknown): valor is EstadoReserva {
@@ -73,23 +75,123 @@ export function iniciales(nombre: string) {
 const MOCK: Reserva[] = [
     {
         id: "res_001",
-        huesped: "Marina López",
-        checkIn: "2026-03-14T14:00:00-03:00",
-        checkOut: "2026-03-17T10:00:00-03:00",
-        personas: 2,
-        estado: "pendiente",
-        complejo: "Cabañas del Lago",
-        total: 185000,
-    },
-    {
-        id: "res_002",
         huesped: "Tomás Pereira",
         checkIn: "2026-03-16T15:30:00-03:00",
         checkOut: "2026-03-19T10:00:00-03:00",
         personas: 4,
-        estado: "onboarding_completo",
-        complejo: null, // dato aún no disponible
-        total: null,
+        estado: "confirmada",
+        complejo: "Cabañas del Río",
+        total: 850000,
+    },
+    {
+        id: "res_002",
+        huesped: "Lucía Fernández",
+        checkIn: "2026-03-20T14:00:00-03:00",
+        checkOut: "2026-03-23T10:00:00-03:00",
+        personas: 2,
+        estado: "pendiente",
+        complejo: "Refugio del Delta",
+        total: 620000,
+    },
+    {
+        id: "res_003",
+        huesped: "Martín Rodríguez",
+        checkIn: "2026-03-10T15:00:00-03:00",
+        checkOut: "2026-03-13T10:00:00-03:00",
+        personas: 5,
+        estado: "finalizada",
+        complejo: "Cabañas del Río",
+        total: 1100000,
+    },
+    {
+        id: "res_004",
+        huesped: "Sofía Martínez",
+        checkIn: "2026-03-25T14:30:00-03:00",
+        checkOut: "2026-03-28T10:00:00-03:00",
+        personas: 3,
+        estado: "cancelada",
+        complejo: "Islas del Sol",
+        total: 0,
+    },
+    {
+        id: "res_005",
+        huesped: "Diego González",
+        checkIn: "2026-04-02T15:00:00-03:00",
+        checkOut: "2026-04-06T10:00:00-03:00",
+        personas: 6,
+        estado: "confirmada",
+        complejo: "Refugio del Delta",
+        total: 1450000,
+    },
+    {
+        id: "res_006",
+        huesped: "Valentina López",
+        checkIn: "2026-04-08T14:00:00-03:00",
+        checkOut: "2026-04-10T10:00:00-03:00",
+        personas: 2,
+        estado: "pendiente",
+        complejo: "Islas del Sol",
+        total: 480000,
+    },
+    {
+        id: "res_007",
+        huesped: "Andrés Ramírez",
+        checkIn: "2026-02-15T15:30:00-03:00",
+        checkOut: "2026-02-18T10:00:00-03:00",
+        personas: 4,
+        estado: "finalizada",
+        complejo: "Cabañas del Río",
+        total: 920000,
+    },
+    {
+        id: "res_008",
+        huesped: "Camila Torres",
+        checkIn: "2026-04-12T14:00:00-03:00",
+        checkOut: "2026-04-15T10:00:00-03:00",
+        personas: 3,
+        estado: "cancelada",
+        complejo: "Refugio del Delta",
+        total: 0,
+    },
+    {
+        id: "res_009",
+        huesped: "Mateo Silva",
+        checkIn: "2026-04-18T15:00:00-03:00",
+        checkOut: "2026-04-22T10:00:00-03:00",
+        personas: 5,
+        estado: "confirmada",
+        complejo: "Islas del Sol",
+        total: 1250000,
+    },
+    {
+        id: "res_010",
+        huesped: "Isabella Castro",
+        checkIn: "2026-04-20T14:00:00-03:00",
+        checkOut: "2026-04-23T10:00:00-03:00",
+        personas: 2,
+        estado: "pendiente",
+        complejo: "Cabañas del Río",
+        total: 580000,
+    },
+    {
+        id: "res_011",
+        huesped: "Nicolás Herrera",
+        checkIn: "2026-01-12T15:00:00-03:00",
+        checkOut: "2026-01-16T10:00:00-03:00",
+        personas: 4,
+        estado: "finalizada",
+        complejo: "Refugio del Delta",
+        total: 1050000,
+    },
+    {
+        id: "res_012",
+        huesped: "Mariana Díaz",
+        checkIn: "2026-04-25T14:30:00-03:00",
+        checkOut: "2026-04-28T10:00:00-03:00",
+        personas: 3,
+        estado: "cancelada",
+        complejo: "Islas del Sol",
+        total: 0,
     },
 ];
 
