@@ -1,89 +1,95 @@
 package nocountry.grupo4.delta_tigre.response;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.validation.ConstraintViolationException;
-import nocountry.grupo4.delta_tigre.response.Response;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(ResponseStatusException.class) // Reutilizamos Response.response para mantener formato consistente
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatus(ResponseStatusException ex) {
-        return Response.response(HttpStatus.INTERNAL_SERVER_ERROR, ex.getReason(), ex);
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+        return Response.response(status, ex.getReason(), null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationErrors(MethodArgumentNotValidException ex) {
-        // Construir mapa con errores por campo y reutilizar Response.response
-        Map<String, String> fieldErrors = new HashMap<>();
-        List<String> errors = new ArrayList<>();
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
         for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
-            fieldErrors.put(fe.getField(), fe.getDefaultMessage());
-            errors.add(fe.getDefaultMessage());
+            fieldErrors.putIfAbsent(fe.getField(), fe.getDefaultMessage());
         }
-        return Response.response(HttpStatus.BAD_REQUEST, errors.get(0), fieldErrors);
+        String msg = fieldErrors.isEmpty()
+                ? "Datos inválidos"
+                : fieldErrors.values().iterator().next();
+        return Response.response(HttpStatus.BAD_REQUEST, msg, fieldErrors);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
-        return Response.response(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+        return Response.response(HttpStatus.BAD_REQUEST, "Datos inválidos", null);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrity(DataIntegrityViolationException ex) {
-        String msg = "Conflicto en operación de base de datos.";
+        String msg = "Conflicto en la operación de base de datos.";
         Throwable root = ex.getRootCause();
-
-        if (root != null) {
-            String rootMsg = root.getMessage() != null ? root.getMessage().toLowerCase() : "";
-
-            // 1. Manejo Genérico de Violación de Unicidad
+        if (root != null && root.getMessage() != null) {
+            String rootMsg = root.getMessage().toLowerCase();
             if (rootMsg.contains("unique") || rootMsg.contains("duplicate entry")) {
-                // Este mensaje aplica a cualquier campo con unique=true (legajo, nombre, email, etc.)
                 msg = "El valor proporcionado ya existe y debe ser único.";
-
-            // 2. Manejo Genérico de Violación de No Nulo (nullable=false)
             } else if (rootMsg.contains("cannot be null") || rootMsg.contains("violates not-null constraint")) {
-                // Este error puede ocurrir si falla la validación @NotNull o si un campo sin anotaciones es nullable=false
-                msg = "Falta un valor obligatorio (no puede ser nulo) en un campo de la base de datos.";
-            
-            // 3. Manejo de Violación de Clave Foránea (FK)
+                msg = "Falta un valor obligatorio.";
             } else if (rootMsg.contains("foreign key constraint") || rootMsg.contains("referential integrity")) {
-                msg = "La referencia a otra entidad es inválida o el registro que intenta eliminar está en uso.";
-            
-            // 4. Fallback: Usar el mensaje crudo de la BD
-            } else {
-                msg = root.getMessage();
+                msg = "La referencia a otro registro es inválida o el registro está en uso.";
             }
-        } else if (ex.getMessage() != null) {
-            msg = ex.getMessage();
         }
-
-        // Reutilizamos Response.dbError para response 409
+        log.warn("Violación de integridad de datos", ex);
         return Response.dbError(msg);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleMalformedJson(HttpMessageNotReadableException ex) {
-        String msg = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage();
-        return Response.response(HttpStatus.BAD_REQUEST, "Request body is malformed or invalid JSON" + msg, null);
+        return Response.response(HttpStatus.BAD_REQUEST,
+                "El cuerpo de la solicitud es inválido o tiene un JSON mal formado", null);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthentication(AuthenticationException ex) {
+        return Response.unauthorized("Credenciales inválidas");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
+        return Response.error(HttpStatus.FORBIDDEN, "No tenés permisos para esta acción");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Object> handleNoResource(NoResourceFoundException ex) {
+        return Response.notFound("Recurso no encontrado");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneric(Exception ex) {
-        return Response.response(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex.getMessage());
+        log.error("Error no controlado", ex);
+        return Response.error(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
     }
 }
