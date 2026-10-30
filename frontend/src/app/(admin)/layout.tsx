@@ -1,4 +1,6 @@
 
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import {
@@ -8,12 +10,25 @@ import {
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AdminHeader } from "@/components/layout/admin-header";
+import { hasMockSession } from "@/services/auth/mock-session.server";
 
-export default function AdminLayout({
+export default function AdminLayout({ children }: { children: ReactNode }) {
+    return (
+        <Suspense fallback={<div className="min-h-dvh bg-[#f5f8f6]" aria-busy="true" />}>
+            <AuthenticatedAdminLayout>{children}</AuthenticatedAdminLayout>
+        </Suspense>
+    );
+}
+
+async function AuthenticatedAdminLayout({
     children,
 }: {
     children: ReactNode;
 }) {
+    if (!(await hasMockSession())) {
+        redirect("/login?session=expired");
+    }
+
     return (
         <SidebarProvider
             style={
