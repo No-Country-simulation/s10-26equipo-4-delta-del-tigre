@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth")
+@Tag(name = "Auth", description = "Registro e inicio de sesión del dueño del complejo")
 public class AuthController {
     private final AuthService service;
 
