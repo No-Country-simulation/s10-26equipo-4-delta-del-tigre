@@ -103,4 +103,29 @@ class AuthIntegrationTest {
                         .content("{\"name\":\"Al\",\"email\":\"" + email + "\",\"password\":\"clave-segura-1\"}"))
                 .andExpect(status().isCreated());
     }
+
+    private void assertRegisterBad(String name, String email, String password, String field) throws Exception {
+        String body = "{\"name\":\"%s\",\"email\":\"%s\",\"password\":\"%s\"}".formatted(name, email, password);
+        mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data." + field).exists());
+    }
+
+    @Test
+    void register_rejects_invalid_characters() throws Exception {
+        assertRegisterBad("Ana123", "a2@mail.com", "clave-segura-1", "name");
+        assertRegisterBad("Ana@#", "a3@mail.com", "clave-segura-1", "name");
+        assertRegisterBad("张伟", "a4@mail.com", "clave-segura-1", "name");
+        assertRegisterBad("Ana Perez", "张伟@mail.com", "clave-segura-1", "email");
+        assertRegisterBad("Ana Perez", "a5@mail.com", "密码密码密码密码", "password");
+        assertRegisterBad("Ana Perez", "a6@mail.com", "clave segura 1", "password");
+    }
+
+    @Test
+    void register_accepts_accents_and_apostrophes_in_name() throws Exception {
+        String email = "acento-" + UUID.randomUUID() + "@mail.com";
+        mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"María José O'Brien-Núñez\",\"email\":\"" + email + "\",\"password\":\"clave-segura-1\"}"))
+                .andExpect(status().isCreated());
+    }
 }
