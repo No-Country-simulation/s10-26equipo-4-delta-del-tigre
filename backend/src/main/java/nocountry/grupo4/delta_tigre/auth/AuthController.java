@@ -1,14 +1,13 @@
 package nocountry.grupo4.delta_tigre.auth;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import nocountry.grupo4.delta_tigre.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -26,5 +25,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest r) {
         return Response.ok(service.login(r), "Login Exitoso");
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('OWNER')")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Object> me() {
+        return Response.ok(service.me());
     }
 }

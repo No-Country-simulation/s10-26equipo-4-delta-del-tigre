@@ -89,6 +89,25 @@ class AuthIntegrationTest {
     }
 
     @Test
+    void me_returns_current_owner() throws Exception {
+        String email = "me-" + UUID.randomUUID() + "@mail.com";
+        String body = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON)
+                        .content(REGISTER.formatted(email)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        String token = JsonPath.read(body, "$.data.accessToken");
+
+        mvc.perform(get("/api/v1/auth/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.email").value(email));
+    }
+
+    @Test
+    void me_without_token_returns_401() throws Exception {
+        mvc.perform(get("/api/v1/auth/me")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void register_with_one_character_name_returns_400() throws Exception {
         mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON)
                         .content("{\"name\":\"A\",\"email\":\"a1@mail.com\",\"password\":\"clave-segura-1\"}"))
