@@ -80,16 +80,7 @@ export function tieneEstadoComplejo(
     complejo: Complejo,
     estado: EstadoComplejo,
 ): boolean {
-    if (
-        estado === "sin-configurar" ||
-        estado === "faltan-datos" ||
-        estado === "completado"
-    ) {
-        return getEstadoConfiguracion(complejo) === estado;
-    }
-
-    if (estado === "sin-publicar") return !complejo.publicado;
-    return complejo.estadoOperativo === estado;
+    return getEstadoComplejo(complejo) === estado;
 }
 
 export function esEstadoComplejo(valor: unknown): valor is EstadoComplejo {
