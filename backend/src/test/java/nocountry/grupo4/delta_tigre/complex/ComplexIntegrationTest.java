@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -88,5 +89,33 @@ class ComplexIntegrationTest {
         String token = registerAndGetToken();
         create(token, "{\"name\":\"Con Alias\",\"aliasCbu\":\"hostflow.delta\"}", 201);
         create(token, "{\"name\":\"Con Cbu\",\"aliasCbu\":\"1234567890123456789012\"}", 201);
+    }
+
+    @Test
+    void list_returns_only_own_complexes_sorted_by_name() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        create(tokenA, "{\"name\":\"Zeta Lista\"}", 201);
+        create(tokenA, "{\"name\":\"Alfa Lista\"}", 201);
+        create(tokenB, "{\"name\":\"Beta Ajeno\"}", 201);
+
+        mvc.perform(get("/api/v1/complexes").header("Authorization", "Bearer " + tokenA))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].name").value("Alfa Lista"))
+                .andExpect(jsonPath("$.data[1].name").value("Zeta Lista"));
+    }
+
+    @Test
+    void list_returns_empty_for_owner_without_complexes() throws Exception {
+        String token = registerAndGetToken();
+        mvc.perform(get("/api/v1/complexes").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void list_complexes_without_token_returns_401() throws Exception {
+        mvc.perform(get("/api/v1/complexes")).andExpect(status().isUnauthorized());
     }
 }

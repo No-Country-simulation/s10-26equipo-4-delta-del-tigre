@@ -7,6 +7,7 @@ import nocountry.grupo4.delta_tigre.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,5 +41,13 @@ public class ComplexService {
             slug = base + "-" + n++;
         }
         return slug;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ComplexResponse> list() {
+        return complexRepository.findByOwnerIdOrderByNameAsc(SecurityUtils.currentOwnerId())
+                .stream()
+                .map(ComplexResponse::from)
+                .toList();
     }
 }
