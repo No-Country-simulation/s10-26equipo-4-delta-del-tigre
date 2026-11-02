@@ -256,14 +256,16 @@ export default async function ComplejosPage({
                             ? "Prueba con otros criterios o limpia los filtros."
                             : "Añade tu primer complejo para verlo aquí."}
                     </p>
-                   <Button
-                        nativeButton={false}
-                        render={<Link href="/complejos/nuevo" />}
-                        className="mt-5 h-10 gap-2 bg-[#28745b] px-4 text-white hover:bg-[#123f33]"
-                    >
-                        <Plus aria-hidden="true" className="size-4" />
-                        Añadir complejo
-                    </Button>
+                    {!hayFiltros ? (
+                        <Button
+                            nativeButton={false}
+                            render={<Link href="/complejos/nuevo" />}
+                            className="mt-5 h-10 gap-2 bg-[#28745b] px-4 text-white hover:bg-[#123f33]"
+                        >
+                            <Plus aria-hidden="true" className="size-4" />
+                            Añadir complejo
+                        </Button>
+                    ) : null}
                     {hayFiltros ? (
                         <Button nativeButton={false} render={<Link href="/complejos" />} variant="outline" className="mt-5 gap-2">
                             Limpiar búsqueda
