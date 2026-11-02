@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import nocountry.grupo4.delta_tigre.owner.Owner;
 import nocountry.grupo4.delta_tigre.owner.OwnerRepository;
 import nocountry.grupo4.delta_tigre.security.JwtService;
+import nocountry.grupo4.delta_tigre.security.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,5 +51,12 @@ public class AuthService {
 
     private AuthResponse token(Owner o) {
         return new AuthResponse(jwt.generate(o), "Bearer", jwt.expiresInSeconds());
+    }
+
+    @Transactional(readOnly = true)
+    public OwnerResponse me() {
+        Owner o = owners.findById(SecurityUtils.currentOwnerId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        return OwnerResponse.from(o);
     }
 }
