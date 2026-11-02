@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import nocountry.grupo4.delta_tigre.owner.Owner;
 import nocountry.grupo4.delta_tigre.owner.OwnerRepository;
 import nocountry.grupo4.delta_tigre.security.SecurityUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,5 +51,12 @@ public class ComplexService {
                 .stream()
                 .map(ComplexResponse::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ComplexResponse get(UUID id) {
+        Complex complex = complexRepository.findByIdAndOwnerId(id, SecurityUtils.currentOwnerId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Complejo no encontrado"));
+        return ComplexResponse.from(complex);
     }
 }
