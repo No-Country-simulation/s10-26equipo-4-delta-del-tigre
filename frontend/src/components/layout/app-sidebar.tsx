@@ -10,6 +10,7 @@ import {
     Link as LinkIcon,
     ChevronRight,
     LogOut,
+    BuildingComplex,
 } from "lucide-react";
 
 import {
@@ -32,7 +33,8 @@ import {useState} from "react"
 import { logoutMockSession } from "@/app/(auth)/actions";
 
 const items = [
-    { title: "Mi complejo", url: "/dashboard", icon: House },
+    { title: "Inicio", url: "/dashboard", icon: House },
+    { title: "Complejos", url: "/complejos", icon: BuildingComplex},
     { title: "Reservas", url: "/reservas", icon: CalendarDays },
     { title: "Adicionales", url: "/adicionales", icon: Plus },
     { title: "Datos de pago", url: "/datos-pago", icon: CreditCard },
