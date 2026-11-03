@@ -240,7 +240,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                             nativeButton={false}
                             render={<Link href={isEditing && complejoId ? `/complejos/${complejoId}` : "/complejos"} />}
                             variant="outline"
-                            className="h-10 border-[#dce5e0] bg-white px-4 text-[#526963]"
+                            className="h-10 cursor-pointer border-[#dce5e0] bg-white px-4 text-[#526963]"
                             disabled={isSubmitting}
                         >
                             Cancelar
@@ -248,7 +248,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         <Button
                             type="submit"
                             disabled={isSubmitting || isSaved}
-                            className="h-10 gap-2 bg-[#174f40] px-5 text-white hover:bg-[#123f33]"
+                            className="h-10 cursor-pointer gap-2 bg-[#174f40] px-5 text-white hover:bg-[#123f33]"
                         >
                             <Save aria-hidden="true" className="size-4" />
                             {isSubmitting ? "Guardando…" : isSaved ? "Guardado" : "Guardar cambios"}
