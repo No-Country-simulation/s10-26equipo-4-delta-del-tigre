@@ -55,8 +55,20 @@ public class ComplexService {
 
     @Transactional(readOnly = true)
     public ComplexResponse get(UUID id) {
-        Complex complex = complexRepository.findByIdAndOwnerId(id, SecurityUtils.currentOwnerId())
+        return ComplexResponse.from(findOwned(id));
+    }
+
+    @Transactional
+    public ComplexResponse update(UUID id, UpdateComplexRequest r) {
+        Complex complex = findOwned(id);
+        complex.setName(r.name().trim());
+        complex.setAddress(r.address());
+        complex.setBrandColors(r.brandColors());
+        return ComplexResponse.from(complexRepository.save(complex));
+    }
+
+    private Complex findOwned(UUID id) {
+        return complexRepository.findByIdAndOwnerId(id, SecurityUtils.currentOwnerId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Complejo no encontrado"));
-        return ComplexResponse.from(complex);
     }
 }

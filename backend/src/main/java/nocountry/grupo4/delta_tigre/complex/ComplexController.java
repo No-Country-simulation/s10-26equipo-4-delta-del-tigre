@@ -38,4 +38,10 @@ public class ComplexController {
     public ResponseEntity<Object> get(@PathVariable UUID id) {
         return Response.ok(service.get(id));
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> update(@PathVariable UUID id, @Valid @RequestBody UpdateComplexRequest request) {
+        return Response.ok(service.update(id,request));
+    }
 }

@@ -10,8 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -157,6 +156,66 @@ class ComplexIntegrationTest {
     @Test
     void get_complex_without_token_returns_401() throws Exception {
         mvc.perform(get("/api/v1/complexes/" + UUID.randomUUID()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    private String update(String token, String id, String json, int expectedStatus) throws Exception {
+        return mvc.perform(put("/api/v1/complexes/" + id)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().is(expectedStatus))
+                .andReturn().getResponse().getContentAsString();
+    }
+
+    @Test
+    void update_changes_editable_fields_and_keeps_slug_and_bank_data() throws Exception {
+        String token = registerAndGetToken();
+        String created = create(token,
+                "{\"name\":\"Nombre Original\",\"aliasCbu\":\"hostflow.delta\",\"bank\":\"Banco Nación\"}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        mvc.perform(put("/api/v1/complexes/" + id)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Nombre Nuevo\",\"address\":\"Calle 1\",\"brandColors\":\"#1A73E8,#FFFFFF\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value("Nombre Nuevo"))
+                .andExpect(jsonPath("$.data.address").value("Calle 1"))
+                .andExpect(jsonPath("$.data.brandColors").value("#1A73E8,#FFFFFF"))
+                .andExpect(jsonPath("$.data.slug").value("nombre-original"))
+                .andExpect(jsonPath("$.data.aliasCbu").value("hostflow.delta"))
+                .andExpect(jsonPath("$.data.bank").value("Banco Nación"));
+    }
+
+    @Test
+    void update_complex_of_another_owner_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String created = create(tokenA, "{\"name\":\"Complejo Editable Ajeno\"}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        update(tokenB, id, "{\"name\":\"Intento de otro dueño\"}", 404);
+    }
+
+    @Test
+    void update_nonexistent_complex_returns_404() throws Exception {
+        String token = registerAndGetToken();
+        update(token, UUID.randomUUID().toString(), "{\"name\":\"No existe\"}", 404);
+    }
+
+    @Test
+    void update_complex_with_blank_name_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String created = create(token, "{\"name\":\"Para Validar Edicion\"}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        update(token, id, "{\"name\":\"\"}", 400);
+    }
+
+    @Test
+    void update_complex_without_token_returns_401() throws Exception {
+        mvc.perform(put("/api/v1/complexes/" + UUID.randomUUID())
+                        .contentType(APPLICATION_JSON).content("{\"name\":\"Sin token\"}"))
                 .andExpect(status().isUnauthorized());
     }
 }
