@@ -118,4 +118,45 @@ class ComplexIntegrationTest {
     void list_complexes_without_token_returns_401() throws Exception {
         mvc.perform(get("/api/v1/complexes")).andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void get_own_complex_returns_200_with_all_fields() throws Exception {
+        String token = registerAndGetToken();
+        String created = create(token,
+                "{\"name\":\"Detalle Completo\",\"address\":\"Arroyo Gambado 123\",\"accountHolder\":\"Ana Perez\","
+                        + "\"aliasCbu\":\"hostflow.delta\",\"bank\":\"Banco Nación\"}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        mvc.perform(get("/api/v1/complexes/" + id).header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value("Detalle Completo"))
+                .andExpect(jsonPath("$.data.slug").value("detalle-completo"))
+                .andExpect(jsonPath("$.data.aliasCbu").value("hostflow.delta"))
+                .andExpect(jsonPath("$.data.bank").value("Banco Nación"));
+    }
+
+    @Test
+    void get_complex_of_another_owner_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String created = create(tokenA, "{\"name\":\"Complejo Ajeno\"}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        mvc.perform(get("/api/v1/complexes/" + id).header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void get_nonexistent_complex_returns_404() throws Exception {
+        String token = registerAndGetToken();
+        mvc.perform(get("/api/v1/complexes/" + UUID.randomUUID()).header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Complejo no encontrado"));
+    }
+
+    @Test
+    void get_complex_without_token_returns_401() throws Exception {
+        mvc.perform(get("/api/v1/complexes/" + UUID.randomUUID()))
+                .andExpect(status().isUnauthorized());
+    }
 }
