@@ -1,5 +1,6 @@
 package nocountry.grupo4.delta_tigre.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,12 @@ public class AuthController {
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Object> me() {
         return Response.ok(service.me());
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Cerrar sesión",
+            description = "El token es stateless: el backend no lo invalida. El front debe borrar la cookie.")
+    public ResponseEntity<Object> logout() {
+        return Response.ok(null, "Sesión cerrada");
     }
 }
