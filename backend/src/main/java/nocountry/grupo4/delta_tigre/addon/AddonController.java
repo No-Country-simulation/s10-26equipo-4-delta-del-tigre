@@ -32,4 +32,10 @@ public class AddonController {
     public ResponseEntity<Object> list(@PathVariable UUID complexId) {
         return Response.ok(service.list(complexId));
     }
+
+    @PutMapping("/addons/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> update(@PathVariable UUID id, @Valid @RequestBody AddonRequest request) {
+        return Response.ok(service.update(id, request));
+    }
 }
