@@ -26,4 +26,10 @@ public class AddonController {
                                          @Valid @RequestBody AddonRequest request) {
         return Response.response(HttpStatus.CREATED, "Adicional creado", service.create(complexId, request));
     }
+
+    @GetMapping("/complexes/{complexId}/addons")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> list(@PathVariable UUID complexId) {
+        return Response.ok(service.list(complexId));
+    }
 }
