@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 
 export function DatosPagoForm() {
     return (
-        <form>
+        <form id="datos-pago-form">
             <Card className="rounded-3xl border border-[#dce5e0] bg-white py-0 shadow-none ring-0">
                 <div className="flex items-center gap-4 border-b border-[#dce5e0] p-6 md:p-8">
                     <div className="flex size-13 shrink-0 items-center justify-center rounded-2xl bg-[#e4eff3] text-[#1f6178]">
