@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getOwnedComplejo } from "../complejos.data";
-import { ArrowLeft } from "lucide-react";
+import { getOwnedComplejo } from "../data/complejos.data";
+import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 
 type Params = Promise<{ id: string }>;
@@ -53,7 +53,7 @@ export const instant = false
 
 export default async function ComplejoDetallePage({ params }: { params: Params }) {
   const { id } = await params;
-  const complejo = getOwnedComplejo(id);
+  const complejo = await getOwnedComplejo(id);
 
   if (!complejo) notFound();
 
@@ -92,6 +92,15 @@ export default async function ComplejoDetallePage({ params }: { params: Params }
           </h1>
           <p className="mt-1 text-sm text-[#71817b]">Detalle del complejo</p>
         </div>
+        <Button
+          nativeButton={false}
+          render={<Link href={`/complejos/${complejo.id}/editar`} />}
+          variant="outline"
+          className="ml-auto h-10 gap-2 border-[#dce5e0] bg-white text-[#526963] hover:bg-[#f5f8f6]"
+        >
+          <Pencil aria-hidden="true" className="size-4" />
+          Editar configuración
+        </Button>
       </header>
 
       <Card className="rounded-3xl border border-[#dce5e0] bg-white py-0 shadow-none ring-0">
