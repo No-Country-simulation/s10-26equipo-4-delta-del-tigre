@@ -10,8 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -124,5 +123,56 @@ class AddonIntegrationTest {
         String complexId = createComplex(tokenA, "Complejo Lista Ajeno");
         mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
+    }
+
+    private String updateAddon(String token, String id, String json, int expectedStatus) throws Exception {
+        return mvc.perform(put("/api/v1/addons/" + id)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().is(expectedStatus))
+                .andReturn().getResponse().getContentAsString();
+    }
+
+    @Test
+    void update_addon_changes_name_description_and_price_and_keeps_status() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Editar Adicional");
+        String created = createAddon(token, complexId, "{\"name\":\"Original\",\"price\":100}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        mvc.perform(put("/api/v1/addons/" + id)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"name\":\"Nuevo\",\"description\":\"Detalle\",\"price\":250.50}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value("Nuevo"))
+                .andExpect(jsonPath("$.data.description").value("Detalle"))
+                .andExpect(jsonPath("$.data.price").value(250.5))
+                .andExpect(jsonPath("$.data.active").value(true));
+    }
+
+    @Test
+    void update_addon_of_another_owner_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String complexId = createComplex(tokenA, "Complejo Editar Ajeno");
+        String created = createAddon(tokenA, complexId, "{\"name\":\"Mio\",\"price\":100}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+        updateAddon(tokenB, id, "{\"name\":\"Robado\",\"price\":1}", 404);
+    }
+
+    @Test
+    void update_nonexistent_addon_returns_404() throws Exception {
+        String token = registerAndGetToken();
+        updateAddon(token, UUID.randomUUID().toString(), "{\"name\":\"No existe\",\"price\":1}", 404);
+    }
+
+    @Test
+    void update_addon_with_invalid_price_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Editar Precio");
+        String created = createAddon(token, complexId, "{\"name\":\"Original\",\"price\":100}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+        updateAddon(token, id, "{\"name\":\"Original\",\"price\":0}", 400);
     }
 }

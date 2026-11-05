@@ -43,4 +43,18 @@ public class AddonService {
                 .map(AddonResponse::from)
                 .toList();
     }
+
+    @Transactional
+    public AddonResponse update(UUID id, AddonRequest r) {
+        Addon addon = findOwnedAddon(id);
+        addon.setName(r.name().trim());
+        addon.setDescription(r.description());
+        addon.setPrice(r.price());
+        return AddonResponse.from(addonRepository.save(addon));
+    }
+
+    private Addon findOwnedAddon(UUID id) {
+        return addonRepository.findByIdAndComplexOwnerId(id, SecurityUtils.currentOwnerId())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Adicional no encontrado"));
+    }
 }
