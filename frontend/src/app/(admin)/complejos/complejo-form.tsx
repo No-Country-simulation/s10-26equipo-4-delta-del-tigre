@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { ImagePlus, Save, Upload, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,26 @@ function FieldError({ id, message }: { id: string; message?: string }) {
             {message}
         </p>
     ) : null;
+}
+
+function RequiredMark() {
+    return <span aria-hidden="true" className="text-[#a33c2f]"> *</span>;
+}
+
+function validateForm(form: HTMLFormElement) {
+    const validation = complejoFormSchema.safeParse(
+        Object.fromEntries(new FormData(form).entries()),
+    );
+    const fieldErrors: Record<string, string> = {};
+
+    if (!validation.success) {
+        for (const issue of validation.error.issues) {
+            const field = String(issue.path[0] ?? "");
+            if (field && !fieldErrors[field]) fieldErrors[field] = issue.message;
+        }
+    }
+
+    return { validation, fieldErrors };
 }
 
 function getColorValue(value?: string) {
@@ -130,6 +150,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
     const [logoError, setLogoError] = useState("");
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [formErrors, setFormErrors] = useState<string[]>([]);
+    const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [isOpen, setIsOpen] = useState(initialValues?.estadoOperativo !== "cerrado");
@@ -157,21 +178,26 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
         setLogoPreview(previewUrlRef.current);
     }
 
+    function handleFieldChange(event: ChangeEvent<HTMLInputElement>) {
+        if (!hasAttemptedSubmit) return;
+        const form = event.currentTarget.form;
+        if (!form) return;
+
+        const { fieldErrors: nextFieldErrors } = validateForm(form);
+        setFieldErrors(nextFieldErrors);
+        setFormErrors([]);
+    }
+
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        setHasAttemptedSubmit(true);
         setFieldErrors({});
         setFormErrors([]);
         setLogoError("");
         setIsSaved(false);
 
-        const formData = new FormData(event.currentTarget);
-        const validation = complejoFormSchema.safeParse(Object.fromEntries(formData.entries()));
+        const { validation, fieldErrors: nextFieldErrors } = validateForm(event.currentTarget);
         if (!validation.success) {
-            const nextFieldErrors: Record<string, string> = {};
-            for (const issue of validation.error.issues) {
-                const field = String(issue.path[0] ?? "");
-                if (field && !nextFieldErrors[field]) nextFieldErrors[field] = issue.message;
-            }
             setFieldErrors(nextFieldErrors);
             return;
         }
@@ -313,7 +339,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         <div className="mt-6 grid gap-4 sm:grid-cols-2">
                             <div>
                                 <label htmlFor="nombre" className="text-sm font-medium text-[#172c28]">
-                                    Nombre del complejo <span aria-hidden="true" className="text-[#a33c2f]">*</span>
+                                    Nombre del complejo<RequiredMark />
                                 </label>
                                 <Input
                                     id="nombre"
@@ -321,6 +347,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                     required
                                     maxLength={100}
                                     defaultValue={initialValues?.nombre ?? ""}
+                                    onChange={handleFieldChange}
                                     aria-invalid={Boolean(fieldErrors.nombre)}
                                     aria-describedby={fieldErrors.nombre ? "nombre-error" : undefined}
                                     className="mt-1 h-10 bg-white"
@@ -329,7 +356,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                             </div>
                             <div>
                                 <label htmlFor="direccion" className="text-sm font-medium text-[#172c28]">
-                                    Dirección <span aria-hidden="true" className="text-[#a33c2f]">*</span>
+                                    Dirección<RequiredMark />
                                 </label>
                                 <Input
                                     id="direccion"
@@ -337,6 +364,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                     required
                                     maxLength={200}
                                     defaultValue={initialValues?.direccion ?? ""}
+                                    onChange={handleFieldChange}
                                     aria-invalid={Boolean(fieldErrors.direccion)}
                                     aria-describedby={fieldErrors.direccion ? "direccion-error" : undefined}
                                     className="mt-1 h-10 bg-white"
@@ -353,7 +381,10 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                         value={colorValue}
                                         aria-label="Seleccionar color de marca"
                                         aria-invalid={Boolean(fieldErrors.coloresMarca)}
-                                        onChange={(event) => setColorValue(event.currentTarget.value)}
+                                        onChange={(event) => {
+                                            setColorValue(event.currentTarget.value);
+                                            handleFieldChange(event);
+                                        }}
                                         className="size-8 cursor-pointer border-0 bg-transparent p-0"
                                     />
                                     <span className="text-xs text-[#172c28]">{colorValue.toUpperCase()}</span>
@@ -371,7 +402,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         <h2 className="text-base font-medium text-[#172c28]">Datos del alojamiento</h2>
                         <div className="mt-5 grid gap-5 sm:grid-cols-2">
                             <div>
-                                <label htmlFor="slug" className="text-sm font-medium text-[#526963]">Slug</label>
+                                <label htmlFor="slug" className="text-sm font-medium text-[#526963]">Slug<RequiredMark /></label>
                                 <Input
                                     id="slug"
                                     name="slug"
@@ -379,6 +410,8 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                     pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
                                     placeholder="mi-complejo"
                                     defaultValue={initialValues?.slug ?? ""}
+                                    required
+                                    onChange={handleFieldChange}
                                     aria-invalid={Boolean(fieldErrors.slug)}
                                     aria-describedby={fieldErrors.slug ? "slug-error" : undefined}
                                     className="mt-1 h-10 bg-white"
@@ -393,7 +426,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                 };
                                 return (
                                     <div key={name}>
-                                        <label htmlFor={name} className="text-sm font-medium text-[#526963]">{labels[name]}</label>
+                                        <label htmlFor={name} className="text-sm font-medium text-[#526963]">{labels[name]}<RequiredMark /></label>
                                         <Input
                                             id={name}
                                             name={name}
@@ -402,6 +435,8 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                             step={1}
                                             inputMode="numeric"
                                             defaultValue={initialValues?.[name] ?? ""}
+                                            required
+                                            onChange={handleFieldChange}
                                             aria-invalid={Boolean(fieldErrors[name])}
                                             aria-describedby={fieldErrors[name] ? `${name}-error` : undefined}
                                             className="mt-1 h-10 bg-white"
@@ -415,8 +450,10 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                 </Card>
                   <div className="flex items-center justify-between gap-4 rounded-xl bg-[#eef4f1] px-4 py-3.5">
                     <div>
-                        <p className="text-sm font-semibold text-[#172c28]">Complejo {isOpen ? "abierto" : "cerrado"}</p>
-                        <p className="mt-0.5 text-xs text-[#71817b]" >
+                        <p className="text-sm font-semibold text-[#172c28]">
+                            Complejo {isOpen ? "abierto" : "cerrado"}<RequiredMark />
+                        </p>
+                        <p className="mt-0.5 text-xs text-[#71817b]">
                             {isOpen
                                 ? "Los huéspedes pueden completar nuevos onboardings."
                                 : "Los huéspedes no pueden iniciar nuevos onboardings."}
@@ -427,6 +464,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         type="button"
                         role="switch"
                         aria-checked={isOpen}
+                        aria-required="true"
                         aria-label="Complejo abierto"
                         onClick={() => setIsOpen((open) => !open)}
                         className={`flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28745b] focus-visible:ring-offset-2 ${
