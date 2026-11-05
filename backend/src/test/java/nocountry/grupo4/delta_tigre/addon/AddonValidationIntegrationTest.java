@@ -77,4 +77,20 @@ class AddonValidationIntegrationTest {
         create(token, complexId, json("Cena (vegetariana) & vino", "Incluye entrada, plato y postre."), 201);
         create(token, complexId, json("Kayak O'Brien - 2 hs.", "¿Alergias? Avisá antes (sin cargo)"), 201);
     }
+
+    @Test
+    void update_addon_with_invalid_name_or_description_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Validacion Edicion");
+        String created = create(token, complexId, json("Original Valido", null), 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        for (String body : new String[]{json("Nuevo@#*", null), json(" Nuevo", null), json("A", null),
+                json("Nuevo Valido", "Con @#*"), json("Nuevo Valido", "ab")}) {
+            mvc.perform(put("/api/v1/addons/" + id)
+                            .header("Authorization", "Bearer " + token)
+                            .contentType(APPLICATION_JSON).content(body))
+                    .andExpect(status().isBadRequest());
+        }
+    }
 }
