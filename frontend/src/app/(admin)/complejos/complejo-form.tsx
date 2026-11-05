@@ -416,7 +416,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                   <div className="flex items-center justify-between gap-4 rounded-xl bg-[#eef4f1] px-4 py-3.5">
                     <div>
                         <p className="text-sm font-semibold text-[#172c28]">Complejo {isOpen ? "abierto" : "cerrado"}</p>
-                        <p className="mt-0.5 text-xs text-[#71817b]">
+                        <p className="mt-0.5 text-xs text-[#71817b]" >
                             {isOpen
                                 ? "Los huéspedes pueden completar nuevos onboardings."
                                 : "Los huéspedes no pueden iniciar nuevos onboardings."}
@@ -429,7 +429,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         aria-checked={isOpen}
                         aria-label="Complejo abierto"
                         onClick={() => setIsOpen((open) => !open)}
-                        className={`flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28745b] focus-visible:ring-offset-2 ${
+                        className={`flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28745b] focus-visible:ring-offset-2 ${
                             isOpen ? "justify-end bg-[#28745b]" : "justify-start bg-[#a7b3ae]"
                         }`}
                     >
