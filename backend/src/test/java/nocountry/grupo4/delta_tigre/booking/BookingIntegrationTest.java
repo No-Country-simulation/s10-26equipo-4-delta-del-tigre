@@ -125,4 +125,32 @@ class BookingIntegrationTest {
                         .content(bookingJson("Sin token", "2026-12-10", "2026-12-12")))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void create_booking_with_invalid_guest_data_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Validacion Huesped");
+        for (String name : new String[]{"Juan123", "Juan@#", "张伟", " Juan", "J"}) {
+            createBooking(token, complexId, bookingJson(name, "2026-12-10", "2026-12-12"), 400);
+        }
+        for (String field : new String[]{"\"guestEmail\":\"张伟@mail.com\"", "\"guestEmail\":\"juan@\"",
+                "\"guestPhone\":\"abc123456\"", "\"guestPhone\":\"12345\"",
+                "\"guestIdentificationNumber\":\"12\"", "\"guestIdentificationNumber\":\"12 345 678\"",
+                "\"guestIdentificationType\":\"D1\"",
+                "\"preferences\":\"Con @#*\"", "\"preferences\":\"朝食 incluido\"", "\"otherAllergies\":\"ab\""}) {
+            createBooking(token, complexId,
+                    "{\"guestName\":\"Huesped Valido\",\"checkIn\":\"2026-12-10\",\"checkOut\":\"2026-12-12\"," + field + "}", 400);
+        }
+    }
+
+    @Test
+    void create_booking_accepts_valid_guest_data() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Huesped Valido");
+        createBooking(token, complexId,
+                "{\"guestName\":\"María José O'Brien-Núñez\",\"checkIn\":\"2026-12-10\",\"checkOut\":\"2026-12-12\","
+                        + "\"guestEmail\":\"maria.jose+hf@mail.com\",\"guestPhone\":\"+54 (351) 555-1234\","
+                        + "\"guestIdentificationType\":\"DNI\",\"guestIdentificationNumber\":\"30.123.456\","
+                        + "\"preferences\":\"Llegamos en la lancha de las 15. ¿Hay cuna?\",\"otherAllergies\":\"Kiwi y mango\"}", 201);
+    }
 }

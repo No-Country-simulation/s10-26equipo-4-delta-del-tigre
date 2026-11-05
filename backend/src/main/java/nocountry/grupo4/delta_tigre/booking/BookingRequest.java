@@ -1,10 +1,7 @@
 package nocountry.grupo4.delta_tigre.booking;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -19,35 +16,34 @@ public record BookingRequest(
         @NotNull(message = "El check-out es obligatorio")
         LocalDate checkOut,
 
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Juan Gómez")
         @NotBlank(message = "El nombre del huésped es obligatorio")
-        @Size(max = 150, message = "El nombre del huésped es demasiado largo")
+        @Size(min = 2, max = 120, message = "El nombre del huésped debe tener entre 2 y 120 caracteres")
+        @Pattern(regexp = BookingValidation.PERSON_NAME_REGEX,
+                message = "El nombre del huésped solo puede contener letras, espacios, apóstrofes y guiones")
         String guestName,
 
-        @Schema(example = "DNI")
-        @Size(max = 20, message = "El tipo de documento es demasiado largo")
+        @Pattern(regexp = BookingValidation.ID_TYPE_REGEX, message = "El tipo de documento solo admite letras (2 a 20)")
         String guestIdentificationType,
 
-        @Schema(example = "30123456")
-        @Size(max = 40, message = "El número de documento es demasiado largo")
+        @Pattern(regexp = BookingValidation.ID_NUMBER_REGEX,
+                message = "El número de documento debe tener de 5 a 20 caracteres (letras, números, puntos o guiones)")
         String guestIdentificationNumber,
 
-        @Schema(example = "juan@mail.com")
-        @Email(message = "El correo del huésped no tiene un formato válido")
         @Size(max = 180, message = "El correo del huésped es demasiado largo")
+        @Pattern(regexp = BookingValidation.EMAIL_REGEX, message = "El correo del huésped no tiene un formato válido")
         String guestEmail,
 
-        @Schema(example = "+54 9 351 555 1234")
-        @Size(max = 40, message = "El teléfono es demasiado largo")
+        @Pattern(regexp = BookingValidation.PHONE_REGEX,
+                message = "El teléfono solo admite números, espacios, paréntesis, guiones y un + inicial (7 a 20 caracteres)")
         String guestPhone,
 
-        @Schema(example = "Llegamos en la lancha de las 15")
-        @Size(max = 1000, message = "Las preferencias son demasiado largas")
+        @Size(min = 3, max = 1000, message = "Las preferencias deben tener entre 3 y 1000 caracteres")
+        @Pattern(regexp = BookingValidation.FREE_TEXT_REGEX, message = "Las preferencias contienen caracteres no permitidos")
         String preferences,
 
         @Schema(description = "GLUTEN, LACTOSA, MANI, FRUTOS_SECOS, HUEVO, SOJA, MARISCOS, PESCADO")
         Set<Allergy> allergies,
 
-        @Schema(example = "Kiwi")
-        @Size(max = 500, message = "El detalle de otras alergias es demasiado largo")
+        @Size(min = 3, max = 500, message = "El detalle de otras alergias debe tener entre 3 y 500 caracteres")
+        @Pattern(regexp = BookingValidation.FREE_TEXT_REGEX, message = "El detalle de otras alergias contiene caracteres no permitidos")
         String otherAllergies) {}
