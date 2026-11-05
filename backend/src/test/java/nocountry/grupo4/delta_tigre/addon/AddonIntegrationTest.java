@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -89,5 +90,39 @@ class AddonIntegrationTest {
         mvc.perform(post("/api/v1/complexes/" + UUID.randomUUID() + "/addons")
                         .contentType(APPLICATION_JSON).content("{\"name\":\"Sin token\",\"price\":100}"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void list_addons_returns_sorted_by_name_only_for_that_complex() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Lista");
+        String otherId = createComplex(token, "Complejo Otro");
+        createAddon(token, complexId, "{\"name\":\"Zeta\",\"price\":100}", 201);
+        createAddon(token, complexId, "{\"name\":\"Alfa\",\"price\":100}", 201);
+        createAddon(token, otherId, "{\"name\":\"De otro complejo\",\"price\":100}", 201);
+
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].name").value("Alfa"))
+                .andExpect(jsonPath("$.data[1].name").value("Zeta"));
+    }
+
+    @Test
+    void list_addons_empty_for_complex_without_addons() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Vacio");
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void list_addons_of_another_owners_complex_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String complexId = createComplex(tokenA, "Complejo Lista Ajeno");
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
     }
 }
