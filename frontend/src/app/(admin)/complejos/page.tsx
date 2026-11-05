@@ -27,7 +27,7 @@ import {
     tieneEstadoComplejo,
     type Complejo,
     type EstadoComplejo,
-} from "./complejos.data";
+} from "./data/complejos.data";
 
 const ESTADO_BADGE_STYLES: Record<EstadoComplejo, string> = {
     "sin-configurar": "border-[#dce5e0] bg-[#f5f8f6] text-[#526963]",
@@ -62,7 +62,7 @@ export default async function ComplejosPage({
         ? estado
         : undefined;
     const hayFiltros = Boolean(query || estadoActual);
-    const ownedComplejos = getOwnedComplejos();
+    const ownedComplejos = await getOwnedComplejos();
     const filteredComplejos = ownedComplejos.filter((complejo) => {
         const coincideBusqueda = `${complejo.nombre} ${complejo.direccion} ${complejo.slug ?? ""}`
             .toLocaleLowerCase("es")
@@ -222,7 +222,10 @@ export default async function ComplejosPage({
                                                         <Eye aria-hidden="true" />
                                                         Ver detalle
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem disabled className="gap-2">
+                                                    <DropdownMenuItem
+                                                        render={<Link href={`/complejos/${complejo.id}/editar`} />}
+                                                        className="gap-2"
+                                                    >
                                                         <Pencil aria-hidden="true" />
                                                         Editar
                                                     </DropdownMenuItem>
@@ -256,14 +259,16 @@ export default async function ComplejosPage({
                             ? "Prueba con otros criterios o limpia los filtros."
                             : "Añade tu primer complejo para verlo aquí."}
                     </p>
-                   <Button
-                        nativeButton={false}
-                        render={<Link href="/complejos/nuevo" />}
-                        className="mt-5 h-10 gap-2 bg-[#28745b] px-4 text-white hover:bg-[#123f33]"
-                    >
-                        <Plus aria-hidden="true" className="size-4" />
-                        Añadir complejo
-                    </Button>
+                    {!hayFiltros ? (
+                        <Button
+                            nativeButton={false}
+                            render={<Link href="/complejos/nuevo" />}
+                            className="mt-5 h-10 gap-2 bg-[#28745b] px-4 text-white hover:bg-[#123f33]"
+                        >
+                            <Plus aria-hidden="true" className="size-4" />
+                            Añadir complejo
+                        </Button>
+                    ) : null}
                     {hayFiltros ? (
                         <Button nativeButton={false} render={<Link href="/complejos" />} variant="outline" className="mt-5 gap-2">
                             Limpiar búsqueda
