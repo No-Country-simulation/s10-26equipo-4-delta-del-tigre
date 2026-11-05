@@ -164,7 +164,7 @@ class AddonIntegrationTest {
     @Test
     void update_nonexistent_addon_returns_404() throws Exception {
         String token = registerAndGetToken();
-        updateAddon(token, UUID.randomUUID().toString(), "{\"name\":\"X\",\"price\":1}", 404);
+        updateAddon(token, UUID.randomUUID().toString(), "{\"name\":\"No existe\",\"price\":1}", 404);
     }
 
     @Test
