@@ -1,9 +1,22 @@
 # ---- Secretos: lo mas importante de este archivo ----
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 *.pem
 *.key
 secrets/
 db.txt
 *.log
+
+# ---- Artefactos de sistema / editor ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# ---- Dependencias y builds ----
+node_modules/
+.next/
+target/
+*.tsbuildinfo
