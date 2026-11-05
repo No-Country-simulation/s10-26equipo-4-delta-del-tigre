@@ -57,4 +57,11 @@ public class AddonService {
         return addonRepository.findByIdAndComplexOwnerId(id, SecurityUtils.currentOwnerId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Adicional no encontrado"));
     }
+
+    @Transactional
+    public AddonResponse updateStatus(UUID id, UpdateAddonStatusRequest r) {
+        Addon addon = findOwnedAddon(id);
+        addon.setActive(r.active());;
+        return AddonResponse.from(addonRepository.save(addon));
+    }
 }

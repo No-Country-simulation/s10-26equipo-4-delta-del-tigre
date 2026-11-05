@@ -175,4 +175,55 @@ class AddonIntegrationTest {
         String id = JsonPath.read(created, "$.data.id");
         updateAddon(token, id, "{\"name\":\"Original\",\"price\":0}", 400);
     }
+
+    private String patchStatus(String token, String id, String json, int expectedStatus) throws Exception {
+        return mvc.perform(patch("/api/v1/addons/" + id + "/status")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().is(expectedStatus))
+                .andReturn().getResponse().getContentAsString();
+    }
+
+    @Test
+    void toggle_addon_off_and_on_and_list_still_includes_inactive() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Estado Adicional");
+        String created = createAddon(token, complexId, "{\"name\":\"Estado\",\"price\":100}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        patchStatus(token, id, "{\"active\":false}", 200);
+
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].active").value(false));
+
+        String reactivated = patchStatus(token, id, "{\"active\":true}", 200);
+        org.assertj.core.api.Assertions.assertThat(JsonPath.<Boolean>read(reactivated, "$.data.active")).isTrue();
+    }
+
+    @Test
+    void toggle_addon_of_another_owner_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String complexId = createComplex(tokenA, "Complejo Estado Ajeno");
+        String created = createAddon(tokenA, complexId, "{\"name\":\"Mio\",\"price\":100}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+        patchStatus(tokenB, id, "{\"active\":false}", 404);
+    }
+
+    @Test
+    void toggle_nonexistent_addon_returns_404() throws Exception {
+        String token = registerAndGetToken();
+        patchStatus(token, UUID.randomUUID().toString(), "{\"active\":false}", 404);
+    }
+
+    @Test
+    void toggle_addon_without_active_field_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Estado Vacio");
+        String created = createAddon(token, complexId, "{\"name\":\"Mio\",\"price\":100}", 201);
+        String id = JsonPath.read(created, "$.data.id");
+        patchStatus(token, id, "{}", 400);
+    }
 }

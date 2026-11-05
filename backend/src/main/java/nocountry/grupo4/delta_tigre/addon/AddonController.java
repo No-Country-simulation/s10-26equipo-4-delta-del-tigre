@@ -38,4 +38,11 @@ public class AddonController {
     public ResponseEntity<Object> update(@PathVariable UUID id, @Valid @RequestBody AddonRequest request) {
         return Response.ok(service.update(id, request));
     }
+
+    @PatchMapping("/addons/{id}/status")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> updateStatus(@PathVariable UUID id,
+                                               @Valid @RequestBody UpdateAddonStatusRequest request) {
+        return Response.ok(service.updateStatus(id, request));
+    }
 }
