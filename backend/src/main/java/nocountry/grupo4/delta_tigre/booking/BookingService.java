@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final ComplexRepository complexRepository;
+    private final BookingAddonRepository bookingAddonRepository;
+    private final BoatRequestRepository boatRequestRepository;
 
     @Transactional
     public BookingResponse create(UUID complexId, BookingRequest r) {
@@ -59,5 +62,25 @@ public class BookingService {
                 ? bookingRepository.findByComplexIdOrderByCheckInAscCreatedAtAsc(complexId)
                 : bookingRepository.findByComplexIdAndStatusOrderByCheckInAscCreatedAtAsc(complexId, status);
         return bookings.stream().map(BookingSummaryResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public BookingDetailResponse get(UUID id) {
+        Booking booking = findOwnedBooking(id);
+        List<BookingAddonResponse> addons = bookingAddonRepository.findByBookingIdWithAddon(id).stream()
+                .map(BookingAddonResponse::from)
+                .toList();
+        BigDecimal addonsTotal = addons.stream()
+                .map(BookingAddonResponse::subtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<BoatRequestResponse> boatRequests = boatRequestRepository.findByBookingIdOrderByCreatedAtAsc(id).stream()
+                .map(BoatRequestResponse::from)
+                .toList();
+        return BookingDetailResponse.from(booking, addons, addonsTotal, boatRequests);
+    }
+
+    private Booking findOwnedBooking(UUID id) {
+        return bookingRepository.findByIdAndComplexOwnerId(id, SecurityUtils.currentOwnerId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada"));
     }
 }
