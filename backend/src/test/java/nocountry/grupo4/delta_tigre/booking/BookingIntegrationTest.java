@@ -13,6 +13,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import nocountry.grupo4.delta_tigre.addon.AddonRepository;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -20,6 +24,15 @@ class BookingIntegrationTest {
 
     @Autowired
     MockMvc mvc;
+    @Autowired
+    AddonRepository addonRepository;
+    @Autowired
+    BookingRepository bookingRepository;
+    @Autowired
+    BookingAddonRepository bookingAddonRepository;
+    @Autowired
+    BoatRequestRepository boatRequestRepository;
+
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
@@ -47,6 +60,33 @@ class BookingIntegrationTest {
 
     private static String bookingJson(String guest, String checkIn, String checkOut) {
         return "{\"guestName\":\"" + guest + "\",\"checkIn\":\"" + checkIn + "\",\"checkOut\":\"" + checkOut + "\"}";
+    }
+
+    private String createAddon(String token, String complexId, String name) throws Exception {
+        String response = mvc.perform(post("/api/v1/complexes/" + complexId + "/addons")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content("{\"name\":\"" + name + "\",\"price\":100}"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        return JsonPath.read(response, "$.data.id");
+    }
+
+    private void attachAddon(String bookingId, String addonId, int quantity, String unitPrice) {
+        BookingAddon ba = new BookingAddon();
+        ba.setBooking(bookingRepository.getReferenceById(UUID.fromString(bookingId)));
+        ba.setAddon(addonRepository.getReferenceById(UUID.fromString(addonId)));
+        ba.setQuantity(quantity);
+        ba.setUnitPrice(new BigDecimal(unitPrice));
+        bookingAddonRepository.save(ba);
+    }
+
+    private void attachBoatRequest(String bookingId, int passengers) {
+        BoatRequest br = new BoatRequest();
+        br.setBooking(bookingRepository.getReferenceById(UUID.fromString(bookingId)));
+        br.setDesiredDate(LocalDate.of(2026, 12, 10));
+        br.setDepartureTime(LocalTime.of(15, 0));
+        br.setPassengers(passengers);
+        boatRequestRepository.save(br);
     }
 
     @Test
@@ -220,5 +260,80 @@ class BookingIntegrationTest {
         String complexId = createComplex(tokenA, "Complejo Lista Reservas Ajeno");
         mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void get_booking_detail_includes_guest_addons_and_boat_request() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Detalle");
+        String created = createBooking(token, complexId,
+                "{\"guestName\":\"Juan Gomez\",\"checkIn\":\"2026-12-10\",\"checkOut\":\"2026-12-13\","
+                        + "\"guestEmail\":\"juan@mail.com\",\"allergies\":[\"MANI\"]}", 201);
+        String bookingId = JsonPath.read(created, "$.data.id");
+        String desayuno = createAddon(token, complexId, "Desayuno");
+        String cena = createAddon(token, complexId, "Cena");
+        attachAddon(bookingId, desayuno, 2, "100.00");
+        attachAddon(bookingId, cena, 1, "50.50");
+        attachBoatRequest(bookingId, 3);
+
+        mvc.perform(get("/api/v1/bookings/" + bookingId).header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.guestName").value("Juan Gomez"))
+                .andExpect(jsonPath("$.data.guestEmail").value("juan@mail.com"))
+                .andExpect(jsonPath("$.data.allergies[0]").value("MANI"))
+                .andExpect(jsonPath("$.data.addons.length()").value(2))
+                .andExpect(jsonPath("$.data.addons[0].name").value("Cena"))
+                .andExpect(jsonPath("$.data.addons[1].name").value("Desayuno"))
+                .andExpect(jsonPath("$.data.addons[1].quantity").value(2))
+                .andExpect(jsonPath("$.data.addonsTotal").value(Double.valueOf(250.5)))
+                .andExpect(jsonPath("$.data.boatRequests.length()").value(1))
+                .andExpect(jsonPath("$.data.boatRequests[0].passengers").value(3))
+                .andExpect(jsonPath("$.data.boatRequests[0].status").value("PENDING"));
+    }
+
+    @Test
+    void get_booking_detail_without_addons_or_boat_returns_empty_lists() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Detalle Vacio");
+        String created = createBooking(token, complexId, bookingJson("Sin Extras", "2026-12-10", "2026-12-12"), 201);
+        String bookingId = JsonPath.read(created, "$.data.id");
+
+        mvc.perform(get("/api/v1/bookings/" + bookingId).header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.addons").isEmpty())
+                .andExpect(jsonPath("$.data.addonsTotal").value(Double.valueOf(0)))
+                .andExpect(jsonPath("$.data.boatRequests").isEmpty());
+    }
+
+    @Test
+    void get_booking_of_another_owner_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String complexId = createComplex(tokenA, "Complejo Detalle Ajeno");
+        String created = createBooking(tokenA, complexId, bookingJson("Mio", "2026-12-10", "2026-12-12"), 201);
+        String bookingId = JsonPath.read(created, "$.data.id");
+
+        mvc.perform(get("/api/v1/bookings/" + bookingId).header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void get_nonexistent_booking_returns_404() throws Exception {
+        String token = registerAndGetToken();
+        mvc.perform(get("/api/v1/bookings/" + UUID.randomUUID()).header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void get_booking_with_invalid_id_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        mvc.perform(get("/api/v1/bookings/no-es-un-uuid").header("Authorization", "Bearer " + token))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void get_booking_without_token_returns_401() throws Exception {
+        mvc.perform(get("/api/v1/bookings/" + UUID.randomUUID()))
+                .andExpect(status().isUnauthorized());
     }
 }

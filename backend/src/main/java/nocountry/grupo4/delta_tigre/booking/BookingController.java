@@ -36,4 +36,11 @@ public class BookingController {
                                        @RequestParam(required = false) BookingStatus status) {
         return Response.ok(service.list(complexId, status));
     }
+
+    @GetMapping("/bookings/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> get(@PathVariable UUID id) {
+        return Response.ok(service.get(id));
+    }
+
 }
