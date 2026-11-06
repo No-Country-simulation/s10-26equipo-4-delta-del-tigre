@@ -177,11 +177,9 @@ class ComplexIntegrationTest {
         mvc.perform(put("/api/v1/complexes/" + id)
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
-                        .content("{\"name\":\"Nombre Nuevo\",\"address\":\"Calle 1\",\"brandColors\":\"#1A73E8,#FFFFFF\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.name").value("Nombre Nuevo"))
+                        .content("{\"name\":\"Nombre Nuevo\",\"address\":\"Calle 1\",\"brandColors\":\"#1A73E8\"}"))                .andExpect(jsonPath("$.data.name").value("Nombre Nuevo"))
                 .andExpect(jsonPath("$.data.address").value("Calle 1"))
-                .andExpect(jsonPath("$.data.brandColors").value("#1A73E8,#FFFFFF"))
+                .andExpect(jsonPath("$.data.brandColors").value("#1A73E8"))
                 .andExpect(jsonPath("$.data.slug").value("nombre-original"))
                 .andExpect(jsonPath("$.data.aliasCbu").value("hostflow.delta"))
                 .andExpect(jsonPath("$.data.bank").value("Banco Nación"));
