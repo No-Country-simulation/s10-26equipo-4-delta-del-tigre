@@ -89,6 +89,14 @@ class BookingIntegrationTest {
         boatRequestRepository.save(br);
     }
 
+    private String patchStatus(String token, String id, String json, int expectedStatus) throws Exception {
+        return mvc.perform(patch("/api/v1/bookings/" + id + "/status")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().is(expectedStatus))
+                .andReturn().getResponse().getContentAsString();
+    }
+
     @Test
     void create_booking_returns_201_pending_with_guest_data() throws Exception {
         String token = registerAndGetToken();
@@ -334,6 +342,72 @@ class BookingIntegrationTest {
     @Test
     void get_booking_without_token_returns_401() throws Exception {
         mvc.perform(get("/api/v1/bookings/" + UUID.randomUUID()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void update_booking_status_accepts_all_valid_states() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Estados");
+        String created = createBooking(token, complexId, bookingJson("Estados", "2026-12-10", "2026-12-12"), 201);
+        String id = JsonPath.read(created, "$.data.id");
+
+        for (String state : new String[]{"CONFIRMADA", "FINALIZADA", "CANCELADA", "PENDIENTE"}) {
+            String response = patchStatus(token, id, "{\"status\":\"" + state + "\"}", 200);
+            org.assertj.core.api.Assertions.assertThat(JsonPath.<String>read(response, "$.data.status")).isEqualTo(state);
+        }
+    }
+
+    @Test
+    void list_bookings_filtered_by_status_reflects_the_change() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Filtro Cambio");
+        createBooking(token, complexId, bookingJson("Sigue Pendiente", "2026-12-01", "2026-12-02"), 201);
+        String second = createBooking(token, complexId, bookingJson("Se Confirma", "2026-12-10", "2026-12-12"), 201);
+        patchStatus(token, JsonPath.read(second, "$.data.id"), "{\"status\":\"CONFIRMADA\"}", 200);
+
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=CONFIRMADA")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].guestName").value("Se Confirma"));
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=PENDIENTE")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].guestName").value("Sigue Pendiente"));
+    }
+
+    @Test
+    void update_booking_status_of_another_owner_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String complexId = createComplex(tokenA, "Complejo Estado Ajeno Reserva");
+        String created = createBooking(tokenA, complexId, bookingJson("Mio", "2026-12-10", "2026-12-12"), 201);
+        String id = JsonPath.read(created, "$.data.id");
+        patchStatus(tokenB, id, "{\"status\":\"CANCELADA\"}", 404);
+    }
+
+    @Test
+    void update_status_of_nonexistent_booking_returns_404() throws Exception {
+        String token = registerAndGetToken();
+        patchStatus(token, UUID.randomUUID().toString(), "{\"status\":\"CONFIRMADA\"}", 404);
+    }
+
+    @Test
+    void update_booking_status_without_or_with_invalid_value_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Estado Invalido Reserva");
+        String created = createBooking(token, complexId, bookingJson("Invalido", "2026-12-10", "2026-12-12"), 201);
+        String id = JsonPath.read(created, "$.data.id");
+        patchStatus(token, id, "{}", 400);
+        patchStatus(token, id, "{\"status\":\"ARCHIVADA\"}", 400);
+    }
+
+    @Test
+    void update_booking_status_without_token_returns_401() throws Exception {
+        mvc.perform(patch("/api/v1/bookings/" + UUID.randomUUID() + "/status")
+                        .contentType(APPLICATION_JSON).content("{\"status\":\"CONFIRMADA\"}"))
                 .andExpect(status().isUnauthorized());
     }
 }

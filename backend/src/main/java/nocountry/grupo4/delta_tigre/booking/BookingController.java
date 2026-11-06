@@ -43,4 +43,11 @@ public class BookingController {
         return Response.ok(service.get(id));
     }
 
+    @PatchMapping("/bookings/{id}/status")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> updateStatus(@PathVariable UUID id,
+                                               @Valid @RequestBody UpdateBookingStatusRequest request) {
+        return Response.ok(service.updateStatus(id, request));
+    }
+
 }
