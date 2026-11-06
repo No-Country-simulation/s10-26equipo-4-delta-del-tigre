@@ -1,5 +1,6 @@
 package nocountry.grupo4.delta_tigre.booking;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,5 +27,13 @@ public class BookingController {
     public ResponseEntity<Object> create(@PathVariable UUID complexId,
                                          @Valid @RequestBody BookingRequest request) {
         return Response.response(HttpStatus.CREATED, "Reserva creada", service.create(complexId, request));
+    }
+
+    @GetMapping("/complexes/{complexId}/bookings")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> list(@PathVariable UUID complexId,
+                                       @Parameter(description = "Filtro opcional: PENDIENTE, CONFIRMADA, FINALIZADA O CANCELADA")
+                                       @RequestParam(required = false) BookingStatus status) {
+        return Response.ok(service.list(complexId, status));
     }
 }

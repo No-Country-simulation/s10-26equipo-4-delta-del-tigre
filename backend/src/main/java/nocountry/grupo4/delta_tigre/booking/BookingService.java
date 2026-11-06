@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,5 +50,14 @@ public class BookingService {
     private Complex findOwnedComplex(UUID complexId){
         return complexRepository.findByIdAndOwnerId(complexId, SecurityUtils.currentOwnerId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Complejo no encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingSummaryResponse> list(UUID complexId, BookingStatus status) {
+        findOwnedComplex(complexId);
+        List<Booking> bookings = status == null
+                ? bookingRepository.findByComplexIdOrderByCheckInAscCreatedAtAsc(complexId)
+                : bookingRepository.findByComplexIdAndStatusOrderByCheckInAscCreatedAtAsc(complexId, status);
+        return bookings.stream().map(BookingSummaryResponse::from).toList();
     }
 }
