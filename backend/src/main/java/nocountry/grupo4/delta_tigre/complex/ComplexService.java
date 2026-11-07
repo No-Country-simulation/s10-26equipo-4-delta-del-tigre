@@ -71,4 +71,13 @@ public class ComplexService {
         return complexRepository.findByIdAndOwnerId(id, SecurityUtils.currentOwnerId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Complejo no encontrado"));
     }
+
+    @Transactional
+    public ComplexResponse updatePaymentInfo(UUID complexId, UpdatePaymentInfoRequest request) {
+        Complex complex = findOwned(complexId);
+        complex.setAccountHolder(request.accountHolder().trim());
+        complex.setAliasCbu(request.aliasCbu().trim());
+        complex.setBank(request.bank().trim());
+        return ComplexResponse.from(complexRepository.save(complex));
+    }
 }

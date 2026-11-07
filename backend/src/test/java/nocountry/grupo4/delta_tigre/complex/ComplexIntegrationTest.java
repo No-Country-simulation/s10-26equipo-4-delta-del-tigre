@@ -4,8 +4,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
@@ -30,6 +29,28 @@ class ComplexIntegrationTest {
 
     private String create(String token, String json, int expectedStatus) throws Exception {
         return mvc.perform(post("/api/v1/complexes")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().is(expectedStatus))
+                .andReturn().getResponse().getContentAsString();
+    }
+
+
+    private String update(String token, String id, String json, int expectedStatus) throws Exception {
+        return mvc.perform(put("/api/v1/complexes/" + id)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content(json))
+                .andExpect(status().is(expectedStatus))
+                .andReturn().getResponse().getContentAsString();
+    }
+
+    private String createComplexId(String token, String name) throws Exception {
+        String created = create(token, "{\"name\":\"" + name + "\"}", 201);
+        return JsonPath.read(created, "$.data.id");
+    }
+
+    private String patchPaymentInfo(String token, String id, String json, int expectedStatus) throws Exception {
+        return mvc.perform(patch("/api/v1/complexes/" + id + "/payment-info")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -159,14 +180,6 @@ class ComplexIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    private String update(String token, String id, String json, int expectedStatus) throws Exception {
-        return mvc.perform(put("/api/v1/complexes/" + id)
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(APPLICATION_JSON).content(json))
-                .andExpect(status().is(expectedStatus))
-                .andReturn().getResponse().getContentAsString();
-    }
-
     @Test
     void update_changes_editable_fields_and_keeps_slug_and_bank_data() throws Exception {
         String token = registerAndGetToken();
@@ -218,4 +231,65 @@ class ComplexIntegrationTest {
                         .contentType(APPLICATION_JSON).content("{\"name\":\"Sin token\"}"))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void update_payment_info_with_alias_returns_200() throws Exception {
+        String token = registerAndGetToken();
+        String id = createComplexId(token, "Pago Con Alias");
+
+        mvc.perform(patch("/api/v1/complexes/" + id + "/payment-info")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"accountHolder\":\"Maria Lopez\",\"aliasCbu\":\"hostflow.mp\",\"bank\":\"Banco Nación\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.accountHolder").value("Maria Lopez"))
+                .andExpect(jsonPath("$.data.aliasCbu").value("hostflow.mp"))
+                .andExpect(jsonPath("$.data.bank").value("Banco Nación"))
+                .andExpect(jsonPath("$.data.name").value("Pago Con Alias"));
+    }
+
+    @Test
+    void update_payment_info_with_cbu_22_digits_returns_200() throws Exception {
+        String token = registerAndGetToken();
+        String id = createComplexId(token, "Pago Con Cbu");
+
+        patchPaymentInfo(token, id,
+                "{\"accountHolder\":\"Maria Lopez\",\"aliasCbu\":\"0110012330001234567890\",\"bank\":\"Banco Nación\"}", 200);
+    }
+
+    @Test
+    void update_payment_info_with_invalid_fields_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String id = createComplexId(token, "Pago Invalido");
+
+        String[] bodies = {
+                "{\"accountHolder\":\"\",\"aliasCbu\":\"hostflow.mp\",\"bank\":\"Banco Nación\"}",
+                "{\"accountHolder\":\"Maria\",\"aliasCbu\":\"ab\",\"bank\":\"Banco Nación\"}",
+                "{\"accountHolder\":\"Maria\",\"aliasCbu\":\"123456789012345678901\",\"bank\":\"Banco Nación\"}",
+                "{\"accountHolder\":\"Maria\",\"aliasCbu\":\"hostflow mp\",\"bank\":\"Banco Nación\"}",
+                "{\"accountHolder\":\"Maria\",\"aliasCbu\":\"hostflow.mp\",\"bank\":\"<script>\"}",
+                "{\"accountHolder\":\"Maria\",\"aliasCbu\":\"hostflow.mp\"}"
+        };
+        for (String body : bodies) {
+            patchPaymentInfo(token, id, body, 400);
+        }
+    }
+
+    @Test
+    void update_payment_info_of_another_owner_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String id = createComplexId(tokenA, "Pago Ajeno");
+
+        patchPaymentInfo(tokenB, id,
+                "{\"accountHolder\":\"Maria Lopez\",\"aliasCbu\":\"hostflow.mp\",\"bank\":\"Banco Nación\"}", 404);
+    }
+
+    @Test
+    void update_payment_info_without_token_returns_401() throws Exception {
+        mvc.perform(patch("/api/v1/complexes/" + UUID.randomUUID() + "/payment-info")
+                        .contentType(APPLICATION_JSON).content("{}"))
+                .andExpect(status().isUnauthorized());
+    }
+
 }
