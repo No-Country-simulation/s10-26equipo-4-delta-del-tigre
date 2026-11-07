@@ -153,4 +153,72 @@ class BookingIntegrationTest {
                         + "\"guestIdentificationType\":\"DNI\",\"guestIdentificationNumber\":\"30.123.456\","
                         + "\"preferences\":\"Llegamos en la lancha de las 15. ¿Hay cuna?\",\"otherAllergies\":\"Kiwi y mango\"}", 201);
     }
+
+    @Test
+    void list_bookings_returns_sorted_by_check_in_only_for_that_complex() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Lista Reservas");
+        String otherId = createComplex(token, "Complejo Otro Reservas");
+        createBooking(token, complexId, bookingJson("Tercero", "2026-12-20", "2026-12-22"), 201);
+        createBooking(token, complexId, bookingJson("Primero", "2026-12-01", "2026-12-03"), 201);
+        createBooking(token, complexId, bookingJson("Segundo", "2026-12-10", "2026-12-12"), 201);
+        createBooking(token, otherId, bookingJson("De otro complejo", "2026-12-05", "2026-12-06"), 201);
+
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(3))
+                .andExpect(jsonPath("$.data[0].guestName").value("Primero"))
+                .andExpect(jsonPath("$.data[1].guestName").value("Segundo"))
+                .andExpect(jsonPath("$.data[2].guestName").value("Tercero"));
+    }
+
+    @Test
+    void list_bookings_empty_for_complex_without_bookings() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Sin Reservas");
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void list_bookings_can_be_filtered_by_status() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Filtro Estado");
+        createBooking(token, complexId, bookingJson("Pendiente", "2026-12-10", "2026-12-12"), 201);
+
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=PENDIENTE")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.length()").value(1));
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=CONFIRMADA")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void list_bookings_with_invalid_status_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        String complexId = createComplex(token, "Complejo Estado Invalido");
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=ARCHIVADA")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void list_bookings_with_invalid_complex_id_returns_400() throws Exception {
+        String token = registerAndGetToken();
+        mvc.perform(get("/api/v1/complexes/no-es-un-uuid/bookings").header("Authorization", "Bearer " + token))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void list_bookings_of_another_owners_complex_returns_404() throws Exception {
+        String tokenA = registerAndGetToken();
+        String tokenB = registerAndGetToken();
+        String complexId = createComplex(tokenA, "Complejo Lista Reservas Ajeno");
+        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
+    }
 }
