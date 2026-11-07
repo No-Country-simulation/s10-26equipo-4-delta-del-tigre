@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface AddonRepository extends JpaRepository<Addon, UUID> {
 
     List<Addon> findByComplexIdOrderByNameAsc(UUID complexId);
+    List<Addon> findByComplexIdAndActiveTrue(UUID complexId);
 }

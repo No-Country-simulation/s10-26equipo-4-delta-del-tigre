@@ -10,4 +10,5 @@ public interface ComplexRepository extends JpaRepository<Complex, UUID> {
     boolean existsBySlug(String slug);
     List<Complex> findByOwnerIdOrderByNameAsc(UUID ownerId);
     Optional<Complex> findByIdAndOwnerId(UUID id, UUID ownerId);
+    Optional<Complex> findBySlug(String slug);
 }
