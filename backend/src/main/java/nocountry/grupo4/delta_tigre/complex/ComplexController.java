@@ -44,4 +44,12 @@ public class ComplexController {
     public ResponseEntity<Object> update(@PathVariable UUID id, @Valid @RequestBody UpdateComplexRequest request) {
         return Response.ok(service.update(id,request));
     }
+
+    @PatchMapping("/{id}/payment-info")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> updatePaymentInfo(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdatePaymentInfoRequest request) {
+        return Response.ok(service.updatePaymentInfo(id, request));
+    }
 }
