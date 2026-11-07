@@ -83,4 +83,11 @@ public class BookingService {
         return bookingRepository.findByIdAndComplexOwnerId(id, SecurityUtils.currentOwnerId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada"));
     }
+
+    @Transactional
+    public BookingResponse updateStatus(UUID id, UpdateBookingStatusRequest r) {
+        Booking booking = findOwnedBooking(id);
+        booking.setStatus(r.status());
+        return BookingResponse.from(bookingRepository.save(booking));
+    }
 }
