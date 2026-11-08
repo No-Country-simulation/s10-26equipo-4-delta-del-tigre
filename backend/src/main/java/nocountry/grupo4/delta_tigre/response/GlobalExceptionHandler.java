@@ -21,6 +21,9 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.validation.ConstraintViolationException;
 
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -97,5 +100,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         return Response.response(HttpStatus.BAD_REQUEST, "El identificador no tiene un formato válido", null);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Object> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        return Response.error(HttpStatus.METHOD_NOT_ALLOWED, "Método no permitido");
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Object> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
+        return Response.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Tipo de contenido no soportado");
     }
 }
