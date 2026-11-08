@@ -95,24 +95,25 @@ class ComplexValidationIntegrationTest {
     }
 
     @Test
-    void update_complex_with_invalid_brand_colors_returns_400() throws Exception {
+    void update_complex_with_invalid_brand_color_returns_400() throws Exception {
         String token = registerAndGetToken();
         String created = create(token, "{\"name\":\"Para Validar Colores\"}", 201);
         String id = JsonPath.read(created, "$.data.id");
 
-        for (String colors : new String[]{"azul", "#1A73E8", "#1A73E8;#FFFFFF", "#GGGGGG,#FFFFFF",
-                "#1A73E8,#FFFFFF,#000000", "#1A73E8, #FFFFFF", "1A73E8,FFFFFF"}) {
-            update(token, id, "{\"name\":\"Para Validar Colores\",\"brandColors\":\"" + colors + "\"}", 400);
+        for (String color : new String[]{"azul", "#1A73E8,#FFFFFF", "#1A73E8;#FFFFFF", "#GGGGGG",
+                "#FFF", "#1A73E", "#1A73E8F", "1A73E8", " #1A73E8", "#1A73E8 "}) {
+            update(token, id, "{\"name\":\"Para Validar Colores\",\"brandColors\":\"" + color + "\"}", 400);
         }
     }
 
     @Test
-    void update_complex_accepts_valid_brand_colors_and_no_brand_colors() throws Exception {
+    void update_complex_accepts_valid_brand_color_and_no_brand_color() throws Exception {
         String token = registerAndGetToken();
         String created = create(token, "{\"name\":\"Para Colores Validos\"}", 201);
         String id = JsonPath.read(created, "$.data.id");
 
-        update(token, id, "{\"name\":\"Para Colores Validos\",\"brandColors\":\"#1a73e8,#ffffff\"}", 200);
+        update(token, id, "{\"name\":\"Para Colores Validos\",\"brandColors\":\"#1a73e8\"}", 200);
+        update(token, id, "{\"name\":\"Para Colores Validos\",\"brandColors\":\"#1A73E8\"}", 200);
         update(token, id, "{\"name\":\"Para Colores Validos\"}", 200);
     }
 }

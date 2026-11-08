@@ -22,8 +22,8 @@ public record UpdateComplexRequest(
                 message = "La dirección contiene caracteres no permitidos o espacios al inicio o al final")
         String address,
 
-        @Schema(example = "#1A73E8,#FFFFFF",
-                description = "Opcional. Dos colores hex separados por coma, por ejemplo #1A73E8,#FFFFFF")
+        @Schema(example = "#1A73E8",
+                description = "Opcional. Un color hex, por ejemplo #1A73E8")
         @Pattern(regexp = ComplexValidation.BRAND_COLORS_REGEX,
-                message = "Los colores deben ser dos valores hex separados por coma, por ejemplo #1A73E8,#FFFFFF")
+                message = "El color de marca debe tener el formato #RRGGBB")
         String brandColors) {}
