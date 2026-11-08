@@ -43,7 +43,7 @@ function AdicionalCard({
 
     return (
         <article className="flex flex-col overflow-hidden rounded-2xl border border-[#dce5e0] bg-white">
-            <div className="relative aspect-[16/8] w-full bg-[#e8eeea]">
+            <div className="relative aspect-16/8 w-full bg-[#e8eeea]">
                 <Image
                     src={getImagen(adicional)}
                     alt={`Imagen de ${adicional.nombre}`}
@@ -56,9 +56,8 @@ function AdicionalCard({
             <div className="flex flex-1 flex-col p-5">
                 <div className="flex items-center justify-between gap-4">
                     <span
-                        className={`text-xs font-semibold uppercase tracking-widest ${
-                            adicional.activo ? "text-[#174f40]" : "text-[#899791]"
-                        }`}
+                        className={`text-xs font-semibold uppercase tracking-widest ${adicional.activo ? "text-[#174f40]" : "text-[#899791]"
+                            }`}
                     >
                         {adicional.activo ? "Activo" : "Inactivo"}
                     </span>
@@ -76,11 +75,10 @@ function AdicionalCard({
                             role="switch"
                             aria-checked={adicional.activo}
                             aria-label={`${adicional.activo ? "Desactivar" : "Activar"} ${adicional.nombre}`}
-                            className={`flex h-6 w-11 cursor-pointer items-center rounded-full p-0.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28745b] focus-visible:ring-offset-2 ${
-                                adicional.activo
-                                    ? "justify-end bg-[#28745b]"
-                                    : "justify-start bg-[#cbd8d1]"
-                            }`}
+                            className={`flex h-6 w-11 cursor-pointer items-center rounded-full p-0.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28745b] focus-visible:ring-offset-2 ${adicional.activo
+                                ? "justify-end bg-[#28745b]"
+                                : "justify-start bg-[#cbd8d1]"
+                                }`}
                         >
                             <span className="size-5 rounded-full bg-white shadow-sm" />
                         </button>
@@ -245,7 +243,7 @@ export default async function AdicionalesPage({ searchParams }: { searchParams: 
                 <ComplejoSelector
                     complejos={complejos.map((complejo) => ({
                         id: complejo.id,
-                        nombre: complejo.nombre,
+                        nombre: complejo.slug ?? complejo.nombre,
                     }))}
                     value={complejoActual.id}
                 />
