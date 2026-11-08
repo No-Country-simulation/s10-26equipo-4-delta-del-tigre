@@ -4,6 +4,8 @@ import { Building2, LayoutDashboard, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { hasMockSession } from "@/services/auth/mock-session.server";
 
+export const instant = false;
+
 export default async function NotFound() {
   const sessionActive = await hasMockSession();
 
