@@ -7,6 +7,7 @@ public record OnboardingResponse(
         UUID bookingId,
         String status,
         BigDecimal total,
+        boolean boatRequested,
         PaymentInfo paymentInfo
 ) {
     public record PaymentInfo(String accountHolder, String aliasCbu, String bank) {}
