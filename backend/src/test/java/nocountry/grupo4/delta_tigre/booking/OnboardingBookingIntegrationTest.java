@@ -28,6 +28,7 @@ class OnboardingBookingIntegrationTest {
     @Autowired ComplexRepository complexRepository;
     @Autowired AddonRepository addonRepository;
     @Autowired BookingRepository bookingRepository;
+    @Autowired BoatRequestRepository boatRequestRepository;
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
@@ -162,5 +163,40 @@ class OnboardingBookingIntegrationTest {
 
         postOnboarding(slug, body(
                 ",\"addons\":[{\"addonId\":\"" + UUID.randomUUID() + "\",\"quantity\":1}]"), 400);
+    }
+
+    @Test
+    void onboarding_with_boat_creates_pending_boat_request() throws Exception {
+        String created = createComplex(registerAndGetToken(), "Onboarding Con Bote");
+        String slug = JsonPath.read(created, "$.data.slug");
+
+        String response = postOnboarding(slug, body(
+                ",\"guestPhone\":\"+5493511234567\",\"boat\":{\"desiredDate\":\"2099-01-10\","
+                        + "\"departureTime\":\"08:30\",\"returnTime\":\"18:00\",\"passengers\":3,"
+                        + "\"comments\":\"Con equipaje\"}"), 201);
+
+        assertThat(JsonPath.<Boolean>read(response, "$.data.boatRequested")).isTrue();
+
+        UUID bookingId = UUID.fromString(JsonPath.read(response, "$.data.bookingId"));
+        BoatRequest saved = boatRequestRepository.findAll().stream()
+                .filter(b -> b.getBooking().getId().equals(bookingId))
+                .findFirst().orElseThrow();
+        assertThat(saved.getStatus()).isEqualTo(BoatRequestStatus.PENDING);
+        assertThat(saved.getPassengers()).isEqualTo(3);
+        assertThat(saved.getPayloadJson()).contains("Ana Perez");
+        assertThat(saved.getPayloadJson()).doesNotContain("ana@mail.com");
+    }
+
+    @Test
+    void onboarding_without_boat_does_not_create_boat_request() throws Exception {
+        String created = createComplex(registerAndGetToken(), "Onboarding Sin Bote");
+        String slug = JsonPath.read(created, "$.data.slug");
+
+        String response = postOnboarding(slug, body(""), 201);
+
+        assertThat(JsonPath.<Boolean>read(response, "$.data.boatRequested")).isFalse();
+        UUID bookingId = UUID.fromString(JsonPath.read(response, "$.data.bookingId"));
+        assertThat(boatRequestRepository.findAll().stream()
+                .anyMatch(b -> b.getBooking().getId().equals(bookingId))).isFalse();
     }
 }

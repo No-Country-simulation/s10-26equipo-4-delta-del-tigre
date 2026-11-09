@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -24,6 +25,8 @@ public class OnboardingService {
     private final AddonRepository addonRepository;
     private final BookingRepository bookingRepository;
     private final BookingAddonRepository bookingAddonRepository;
+    private final BoatRequestRepository boatRequestRepository;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public OnboardingResponse create(String slug, OnboardingRequest req) {
@@ -70,10 +73,39 @@ public class OnboardingService {
             total = total.add(addon.getPrice().multiply(BigDecimal.valueOf(entry.getValue())));
         }
 
+        boolean boatRequested = req.boat() != null;
+        if (boatRequested) {
+            OnboardingRequest.BoatData boat = req.boat();
+
+            BoatRequest boatRequest = new BoatRequest();
+            boatRequest.setBooking(booking);
+            boatRequest.setDesiredDate(boat.desiredDate());
+            boatRequest.setDepartureTime(boat.departureTime());
+            boatRequest.setReturnTime(boat.returnTime());
+            boatRequest.setPassengers(boat.passengers());
+            boatRequest.setComments(boat.comments());
+            boatRequest.setStatus(BoatRequestStatus.PENDING);
+
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("bookingId", booking.getId().toString());
+            payload.put("complex", complex.getName());
+            payload.put("guestName", booking.getGuestName());
+            payload.put("guestPhone", booking.getGuestPhone());
+            payload.put("desiredDate", boat.desiredDate().toString());
+            payload.put("departureTime", boat.departureTime().toString());
+            payload.put("returnTime", boat.returnTime() == null ? null : boat.returnTime().toString());
+            payload.put("passengers", boat.passengers());
+            payload.put("comments", boat.comments());
+            boatRequest.setPayloadJson(objectMapper.writeValueAsString(payload));
+
+            boatRequestRepository.save(boatRequest);
+        }
+
         return new OnboardingResponse(
                 booking.getId(),
                 booking.getStatus().name(),
                 total,
+                boatRequested,
                 new OnboardingResponse.PaymentInfo(
                         complex.getAccountHolder(), complex.getAliasCbu(), complex.getBank()));
     }
