@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,7 +69,7 @@ class OnboardingBookingIntegrationTest {
 
     private String body(String extra) {
         return "{\"guestName\":\"Ana Perez\",\"guestEmail\":\"ana@mail.com\","
-                + "\"checkIn\":\"2099-01-10\",\"checkOut\":\"2099-01-12\"" + extra + "}";
+                + "\"checkIn\":\"2099-01-10\",\"checkOut\":\"2099-01-12\",\"guestsCount\":3" + extra + "}";
     }
 
     private String postOnboarding(String slug, String json, int expectedStatus) throws Exception {
@@ -76,6 +77,13 @@ class OnboardingBookingIntegrationTest {
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
                 .andReturn().getResponse().getContentAsString();
+    }
+
+    private void setComplexOpen(String token, String complexId, boolean open) throws Exception {
+        mvc.perform(patch("/api/v1/complexes/" + complexId + "/status")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(APPLICATION_JSON).content("{\"open\":" + open + "}"))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -106,17 +114,36 @@ class OnboardingBookingIntegrationTest {
         Booking saved = bookingRepository.findById(bookingId).orElseThrow();
         assertThat(saved.getStatus()).isEqualTo(BookingStatus.PENDIENTE);
         assertThat(saved.getGuestName()).isEqualTo("Ana Perez");
+        assertThat(saved.getGuestsCount()).isEqualTo(3);
     }
 
     @Test
-    void onboarding_without_addons_returns_201_with_zero_total() throws Exception {
+    void onboarding_with_three_different_addons_returns_201_and_sums_total() throws Exception {
+        String created = createComplex(registerAndGetToken(), "Onboarding Tres Addons");
+        String id = JsonPath.read(created, "$.data.id");
+        String slug = JsonPath.read(created, "$.data.slug");
+        UUID a = saveAddon(id, "Desayuno", "1500.00", true);
+        UUID b = saveAddon(id, "Kayak", "12000.00", true);
+        UUID c = saveAddon(id, "Cena", "18000.00", true);
+
+        String response = postOnboarding(slug, body(
+                ",\"addons\":[{\"addonId\":\"" + a + "\",\"quantity\":2},"
+                        + "{\"addonId\":\"" + b + "\",\"quantity\":1},"
+                        + "{\"addonId\":\"" + c + "\",\"quantity\":1}]"), 201);
+
+        assertThat(JsonPath.<Number>read(response, "$.data.total").doubleValue()).isEqualTo(33000.0);
+    }
+
+    @Test
+    void onboarding_without_addons_returns_201_with_zero_total_and_no_payment_info() throws Exception {
         String created = createComplex(registerAndGetToken(), "Onboarding Sin Addons");
         String slug = JsonPath.read(created, "$.data.slug");
 
         mvc.perform(post("/api/v1/public/complexes/" + slug + "/onboarding")
                         .contentType(APPLICATION_JSON).content(body("")))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.total").value(Double.valueOf(0.0)));
+                .andExpect(jsonPath("$.data.total").value(Double.valueOf(0.0)))
+                .andExpect(jsonPath("$.data.paymentInfo").doesNotExist());
     }
 
     @Test
@@ -134,14 +161,16 @@ class OnboardingBookingIntegrationTest {
     }
 
     @Test
-    void onboarding_with_inactive_addon_returns_400() throws Exception {
+    void onboarding_with_inactive_addon_returns_400_and_names_the_addon() throws Exception {
         String created = createComplex(registerAndGetToken(), "Onboarding Addon Inactivo");
         String id = JsonPath.read(created, "$.data.id");
         String slug = JsonPath.read(created, "$.data.slug");
         UUID inactive = saveAddon(id, "Addon Apagado", "1000.00", false);
 
-        postOnboarding(slug, body(
+        String response = postOnboarding(slug, body(
                 ",\"addons\":[{\"addonId\":\"" + inactive + "\",\"quantity\":1}]"), 400);
+
+        assertThat(response).contains("Addon Apagado");
     }
 
     @Test
@@ -152,8 +181,10 @@ class OnboardingBookingIntegrationTest {
         UUID foreign = saveAddon(JsonPath.read(first, "$.data.id"), "Addon Del Uno", "1000.00", true);
         String secondSlug = JsonPath.read(second, "$.data.slug");
 
-        postOnboarding(secondSlug, body(
+        String response = postOnboarding(secondSlug, body(
                 ",\"addons\":[{\"addonId\":\"" + foreign + "\",\"quantity\":1}]"), 400);
+
+        assertThat(response).contains("no pertenece");
     }
 
     @Test
@@ -161,8 +192,10 @@ class OnboardingBookingIntegrationTest {
         String created = createComplex(registerAndGetToken(), "Onboarding Addon Inexistente");
         String slug = JsonPath.read(created, "$.data.slug");
 
-        postOnboarding(slug, body(
+        String response = postOnboarding(slug, body(
                 ",\"addons\":[{\"addonId\":\"" + UUID.randomUUID() + "\",\"quantity\":1}]"), 400);
+
+        assertThat(response).contains("no existe");
     }
 
     @Test
@@ -171,9 +204,9 @@ class OnboardingBookingIntegrationTest {
         String slug = JsonPath.read(created, "$.data.slug");
 
         String response = postOnboarding(slug, body(
-                ",\"guestPhone\":\"+5493511234567\",\"boat\":{\"desiredDate\":\"2099-01-10\","
-                        + "\"departureTime\":\"08:30\",\"returnTime\":\"18:00\",\"passengers\":3,"
-                        + "\"comments\":\"Con equipaje\"}"), 201);
+                ",\"guestPhone\":\"+5493511234567\",\"boat\":{\"departureAt\":\"2099-01-10T08:30:00\","
+                        + "\"returnAt\":\"2099-01-10T18:00:00\",\"passengers\":3,"
+                        + "\"pickupPoint\":\"Muelle de Tigre\",\"comments\":\"Con equipaje\"}"), 201);
 
         assertThat(JsonPath.<Boolean>read(response, "$.data.boatRequested")).isTrue();
 
@@ -183,6 +216,9 @@ class OnboardingBookingIntegrationTest {
                 .findFirst().orElseThrow();
         assertThat(saved.getStatus()).isEqualTo(BoatRequestStatus.PENDING);
         assertThat(saved.getPassengers()).isEqualTo(3);
+        assertThat(saved.getPickupPoint()).isEqualTo("Muelle de Tigre");
+        assertThat(saved.getDepartureAt().toString()).isEqualTo("2099-01-10T08:30");
+        assertThat(saved.getReturnAt().toString()).isEqualTo("2099-01-10T18:00");
         assertThat(saved.getPayloadJson()).contains("Ana Perez");
         assertThat(saved.getPayloadJson()).doesNotContain("ana@mail.com");
     }
@@ -198,5 +234,19 @@ class OnboardingBookingIntegrationTest {
         UUID bookingId = UUID.fromString(JsonPath.read(response, "$.data.bookingId"));
         assertThat(boatRequestRepository.findAll().stream()
                 .anyMatch(b -> b.getBooking().getId().equals(bookingId))).isFalse();
+    }
+
+    @Test
+    void onboarding_on_closed_complex_returns_409_and_works_again_when_reopened() throws Exception {
+        String token = registerAndGetToken();
+        String created = createComplex(token, "Onboarding Complejo Cerrado");
+        String id = JsonPath.read(created, "$.data.id");
+        String slug = JsonPath.read(created, "$.data.slug");
+
+        setComplexOpen(token, id, false);
+        postOnboarding(slug, body(""), 409);
+
+        setComplexOpen(token, id, true);
+        postOnboarding(slug, body(""), 201);
     }
 }
