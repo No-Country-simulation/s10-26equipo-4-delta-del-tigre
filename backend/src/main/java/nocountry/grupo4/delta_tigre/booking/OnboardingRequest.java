@@ -2,16 +2,17 @@ package nocountry.grupo4.delta_tigre.booking;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.FutureOrPresent;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -43,6 +44,11 @@ public record OnboardingRequest(
         @NotNull(message = "La fecha de salida es obligatoria")
         LocalDate checkOut,
 
+        @NotNull(message = "La cantidad de huéspedes es obligatoria")
+        @Min(value = 1, message = "Debe haber al menos 1 huésped")
+        @Max(value = 10, message = "La cantidad máxima de huéspedes es 10")
+        Integer guestsCount,
+
         @Size(max = 1000, message = "Las preferencias no pueden superar los 1000 caracteres")
         @Pattern(regexp = BookingValidation.FREE_TEXT_REGEX,
                 message = "Las preferencias contienen caracteres no permitidos")
@@ -73,19 +79,22 @@ public record OnboardingRequest(
     ) {}
 
     public record BoatData(
-            @NotNull(message = "La fecha del bote es obligatoria")
-            @FutureOrPresent(message = "La fecha del bote no puede ser pasada")
-            LocalDate desiredDate,
+            @NotNull(message = "La fecha y hora de salida del bote son obligatorias")
+            @Future(message = "La salida del bote debe ser futura")
+            LocalDateTime departureAt,
 
-            @NotNull(message = "La hora de salida es obligatoria")
-            LocalTime departureTime,
-
-            LocalTime returnTime,
+            @NotNull(message = "La fecha y hora de regreso del bote son obligatorias")
+            LocalDateTime returnAt,
 
             @NotNull(message = "La cantidad de pasajeros es obligatoria")
             @Min(value = 1, message = "Debe haber al menos 1 pasajero")
-            @Max(value = 30, message = "La cantidad de pasajeros es demasiado alta")
+            @Max(value = 10, message = "La cantidad máxima de pasajeros es 10")
             Integer passengers,
+
+            @Size(max = 200, message = "El punto de salida no puede superar los 200 caracteres")
+            @Pattern(regexp = BookingValidation.FREE_TEXT_REGEX,
+                    message = "El punto de salida contiene caracteres no permitidos")
+            String pickupPoint,
 
             @Size(max = 500, message = "Los comentarios no pueden superar los 500 caracteres")
             @Pattern(regexp = BookingValidation.FREE_TEXT_REGEX,
@@ -93,9 +102,9 @@ public record OnboardingRequest(
             String comments
     ) {
 
-        @AssertTrue(message = "La hora de regreso debe ser posterior a la de salida")
-        public boolean isReturnTimeValid() {
-            return returnTime == null || departureTime == null || returnTime.isAfter(departureTime);
+        @AssertTrue(message = "El regreso del bote debe ser posterior a la salida")
+        public boolean isReturnAfterDeparture() {
+            return departureAt == null || returnAt == null || returnAt.isAfter(departureAt);
         }
     }
 
@@ -107,5 +116,11 @@ public record OnboardingRequest(
     @AssertTrue(message = "El teléfono es obligatorio para solicitar el bote")
     public boolean isPhoneValidForBoat() {
         return boat == null || (guestPhone != null && !guestPhone.isBlank());
+    }
+
+    @AssertTrue(message = "Los pasajeros del bote no pueden superar la cantidad de huéspedes")
+    public boolean isPassengersWithinGuests() {
+        return boat == null || guestsCount == null || boat.passengers() == null
+                || boat.passengers() <= guestsCount;
     }
 }

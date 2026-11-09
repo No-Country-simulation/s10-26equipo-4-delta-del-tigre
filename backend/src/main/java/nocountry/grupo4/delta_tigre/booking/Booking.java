@@ -47,6 +47,7 @@ public class Booking {
     @Column(name = "guest_phone", length = 40) private String guestPhone;
     @Column(length = 1000) private String preferences;
     @Column(name = "other_allergies", length = 500) private String otherAllergies;
+    @Column(name = "guests_count", nullable = false) private Integer guestsCount = 1;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "booking_allergies", joinColumns = @JoinColumn(name = "booking_id"))
