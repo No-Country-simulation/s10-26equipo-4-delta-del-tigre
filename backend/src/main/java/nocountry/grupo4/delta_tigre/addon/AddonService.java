@@ -27,6 +27,7 @@ public class AddonService {
         addon.setName(r.name().trim());
         addon.setDescription(r.description());
         addon.setPrice(r.price());
+        addon.setImageUrl(r.imageUrl());
         addon.setActive(true);
         return AddonResponse.from(addonRepository.save(addon));
     }
@@ -50,6 +51,7 @@ public class AddonService {
         addon.setName(r.name().trim());
         addon.setDescription(r.description());
         addon.setPrice(r.price());
+        addon.setImageUrl(r.imageUrl());
         return AddonResponse.from(addonRepository.save(addon));
     }
 
@@ -61,7 +63,7 @@ public class AddonService {
     @Transactional
     public AddonResponse updateStatus(UUID id, UpdateAddonStatusRequest r) {
         Addon addon = findOwnedAddon(id);
-        addon.setActive(r.active());;
+        addon.setActive(r.active());
         return AddonResponse.from(addonRepository.save(addon));
     }
 }
