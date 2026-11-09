@@ -5,6 +5,7 @@ import nocountry.grupo4.delta_tigre.addon.Addon;
 import nocountry.grupo4.delta_tigre.addon.AddonRepository;
 import nocountry.grupo4.delta_tigre.complex.Complex;
 import nocountry.grupo4.delta_tigre.complex.ComplexRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class OnboardingService {
     private final BookingAddonRepository bookingAddonRepository;
     private final BoatRequestRepository boatRequestRepository;
     private final ObjectMapper objectMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public OnboardingResponse create(String slug, OnboardingRequest req) {
@@ -114,6 +116,8 @@ public class OnboardingService {
 
             boatRequestRepository.save(boatRequest);
         }
+
+        eventPublisher.publishEvent(new BookingCreatedEvent(booking.getId()));
 
         OnboardingResponse.PaymentInfo paymentInfo = merged.isEmpty()
                 ? null
