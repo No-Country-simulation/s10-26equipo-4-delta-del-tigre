@@ -236,7 +236,9 @@ La plantilla de desarrollo usa credenciales solo locales. No reutilices esas con
 
 Para preparar producción, copia `.env.produccion` como `.env` y completa cada valor requerido. Los campos vacíos están intencionalmente incompletos: Compose se detendrá si falta una variable obligatoria. No despliegues esa plantilla sin rellenar y revisar secretos, imágenes y parámetros TLS. No subas el `.env` resultante al repositorio; en producción, inyecta los secretos desde el gestor de secretos de la plataforma siempre que sea posible.
 
-`NEXT_PUBLIC_API_URL` se incorpora al bundle del frontend durante la compilación y debe ser una URL HTTPS accesible desde el navegador de los usuarios. Configura un proxy inverso con TLS para publicar frontend y API; los puertos de los contenedores se enlazan solo a `127.0.0.1` en el host. La aplicación aún no implementa un token de API/JWT, por lo que no hay un token que configurar en estas plantillas.
+`NEXT_PUBLIC_API_URL` se incorpora al bundle del frontend durante la compilación y debe ser una URL HTTPS accesible desde el navegador de los usuarios. Configura un proxy inverso con TLS para publicar frontend y API; los puertos de los contenedores se enlazan solo a `127.0.0.1` en el host.
+
+El backend autentica con JWT: define JWT_SECRET (mínimo 32 caracteres) en el .env.
 
 ### Scripts de desarrollo y Dev Container
 
@@ -254,3 +256,7 @@ Los scripts `delta.ps1` (Windows) y `delta.sh` (Linux/macOS) administran Compose
 En Linux/macOS, usa los mismos comandos con `bash ./delta.sh`, o dale permiso de ejecución con `chmod +x ./delta.sh` y ejecútalo como `./delta.sh`. `connect` sin servicio abre una shell en `workspace`; también puedes indicar `backend`, `frontend`, `mysql`, `redis` o `mailpit`. `down` conserva los volúmenes de datos.
 
 En Linux/macOS el script pasa `id -u` e `id -g` a la construcción del contenedor `workspace`; en Windows usa `1000:1000`. No ejecutes el script como root en Linux/macOS. El servicio de desarrollo monta el proyecto y ejecuta VS Code con el usuario `vscode` que recibe esos IDs. MySQL y Redis conservan sus usuarios internos porque escriben en volúmenes Docker, no en carpetas del host; las imágenes del backend y frontend también mantienen sus usuarios no-root. Para VS Code Dev Containers, crea primero `.env` con `init` y luego abre el proyecto en el contenedor; `.devcontainer/devcontainer.json` se conecta al servicio `workspace`.
+
+## Backend
+
+La API (Spring Boot) tiene su propia guía en [backend/README.md](backend/README.md): requisitos, variables de entorno, cómo levantarla y probarla, y el contrato de la API.
