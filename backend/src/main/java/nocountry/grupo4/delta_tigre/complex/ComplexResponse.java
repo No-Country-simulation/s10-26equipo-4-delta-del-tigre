@@ -11,10 +11,11 @@ public record ComplexResponse(
         String brandColors,
         String accountHolder,
         String aliasCbu,
-        String bank
+        String bank,
+        Boolean open
 ) {
     public static ComplexResponse from(Complex c) {
         return new ComplexResponse(c.getId(), c.getName(), c.getSlug(), c.getAddress(),
-                c.getLogoUrl(), c.getBrandColors(), c.getAccountHolder(), c.getAliasCbu(), c.getBank());
+                c.getLogoUrl(), c.getBrandColors(), c.getAccountHolder(), c.getAliasCbu(), c.getBank(), c.isOpen());
     }
 }

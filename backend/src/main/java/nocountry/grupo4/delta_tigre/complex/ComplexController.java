@@ -52,4 +52,11 @@ public class ComplexController {
             @Valid @RequestBody UpdatePaymentInfoRequest request) {
         return Response.ok(service.updatePaymentInfo(id, request));
     }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Object> updateStatus(@PathVariable UUID id,
+                                               @Valid @RequestBody UpdateComplexStatusRequest request) {
+        return Response.ok(service.updateStatus(id, request), "Estado actualizado");
+    }
 }

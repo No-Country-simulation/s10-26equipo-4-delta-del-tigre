@@ -31,6 +31,6 @@ public class PublicComplexService {
                 .toList();
 
         return new PublicComplexResponse(complex.getId(), complex.getName(), complex.getSlug(),
-                complex.getAddress(), complex.getLogoUrl(), complex.getBrandColors(), addons);
+                complex.getAddress(), complex.getLogoUrl(), complex.getBrandColors(), addons, complex.isOpen());
     }
 }

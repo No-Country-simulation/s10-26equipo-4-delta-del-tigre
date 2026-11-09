@@ -80,4 +80,11 @@ public class ComplexService {
         complex.setBank(request.bank().trim());
         return ComplexResponse.from(complexRepository.save(complex));
     }
+
+    @Transactional
+    public ComplexResponse updateStatus(UUID complexId, UpdateComplexStatusRequest request) {
+        Complex complex = findOwned(complexId);
+        complex.setOpen(request.open());
+        return ComplexResponse.from(complexRepository.save(complex));
+    }
 }
