@@ -109,13 +109,13 @@ class OnboardingValidationIntegrationTest {
     @Test
     void onboarding_with_valid_minimal_body_passes_validation() throws Exception {
         String slug = createComplexAndGetSlug();
-        postOnboarding(slug, body("Ana Perez", "ana@mail.com", "2099-01-10", "2099-01-12", ""), 501);
+        postOnboarding(slug, body("Ana Perez", "ana@mail.com", "2099-01-10", "2099-01-12", ""), 201);
     }
 
     @Test
     void onboarding_with_valid_boat_passes_validation() throws Exception {
         String slug = createComplexAndGetSlug();
-        postOnboarding(slug, body("Ana Perez", "ana@mail.com", "2099-01-10", "2099-01-12", BOAT_OK), 501);
+        postOnboarding(slug, body("Ana Perez", "ana@mail.com", "2099-01-10", "2099-01-12", BOAT_OK), 201);
     }
 
     @Test
