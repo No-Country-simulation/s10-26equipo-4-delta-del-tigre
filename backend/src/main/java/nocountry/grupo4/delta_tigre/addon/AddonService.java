@@ -66,4 +66,15 @@ public class AddonService {
         addon.setActive(r.active());
         return AddonResponse.from(addonRepository.save(addon));
     }
+
+    @Transactional
+    public DeleteAddonResponse delete(UUID id) {
+        Addon addon = findOwnedAddon(id);
+        if (addonRepository.isUsedInBookings(id)) {
+            addon.setActive(false);
+            return new DeleteAddonResponse(false, AddonResponse.from(addonRepository.save(addon)));
+        }
+        addonRepository.delete(addon);
+        return new DeleteAddonResponse(true, null);
+    }
 }
