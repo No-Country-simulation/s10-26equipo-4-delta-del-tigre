@@ -11,7 +11,8 @@ public record PublicComplexResponse(
         String address,
         String logoUrl,
         String brandColors,
-        List<PublicAddonResponse> addons
+        List<PublicAddonResponse> addons,
+        Boolean open
 ) {
     public record PublicAddonResponse(UUID id, String name, String description, BigDecimal price) {}
 }

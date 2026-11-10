@@ -49,6 +49,9 @@ public class Complex {
     @Column(length =  100)
     private String bank;
 
+    @Column(name = "is_open", nullable = false)
+    private boolean open = true;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

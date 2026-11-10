@@ -33,10 +33,15 @@ public class OnboardingService {
         Complex complex = complexRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Complejo no encontrado"));
 
+        if (!complex.isOpen()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El alojamiento no está recibiendo reservas");
+        }
+
         Booking booking = new Booking();
         booking.setComplex(complex);
         booking.setCheckIn(req.checkIn());
         booking.setCheckOut(req.checkOut());
+        booking.setGuestsCount(req.guestsCount());
         booking.setStatus(BookingStatus.PENDIENTE);
         booking.setGuestName(req.guestName().trim());
         booking.setGuestEmail(req.guestEmail().trim());
@@ -60,8 +65,16 @@ public class OnboardingService {
         BigDecimal total = BigDecimal.ZERO;
         for (Map.Entry<UUID, Integer> entry : merged.entrySet()) {
             Addon addon = addonRepository.findById(entry.getKey())
-                    .filter(a -> a.isActive() && a.getComplex().getId().equals(complex.getId()))
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Addon inválido"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "El adicional " + entry.getKey() + " no existe"));
+            if (!addon.getComplex().getId().equals(complex.getId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El adicional " + entry.getKey() + " no pertenece a este alojamiento");
+            }
+            if (!addon.isActive()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El adicional " + addon.getName() + " no está disponible");
+            }
 
             BookingAddon line = new BookingAddon();
             line.setBooking(booking);
@@ -79,9 +92,9 @@ public class OnboardingService {
 
             BoatRequest boatRequest = new BoatRequest();
             boatRequest.setBooking(booking);
-            boatRequest.setDesiredDate(boat.desiredDate());
-            boatRequest.setDepartureTime(boat.departureTime());
-            boatRequest.setReturnTime(boat.returnTime());
+            boatRequest.setDepartureAt(boat.departureAt());
+            boatRequest.setReturnAt(boat.returnAt());
+            boatRequest.setPickupPoint(boat.pickupPoint());
             boatRequest.setPassengers(boat.passengers());
             boatRequest.setComments(boat.comments());
             boatRequest.setStatus(BoatRequestStatus.PENDING);
@@ -91,9 +104,10 @@ public class OnboardingService {
             payload.put("complex", complex.getName());
             payload.put("guestName", booking.getGuestName());
             payload.put("guestPhone", booking.getGuestPhone());
-            payload.put("desiredDate", boat.desiredDate().toString());
-            payload.put("departureTime", boat.departureTime().toString());
-            payload.put("returnTime", boat.returnTime() == null ? null : boat.returnTime().toString());
+            payload.put("guestsCount", booking.getGuestsCount());
+            payload.put("departureAt", boat.departureAt().toString());
+            payload.put("returnAt", boat.returnAt().toString());
+            payload.put("pickupPoint", boat.pickupPoint());
             payload.put("passengers", boat.passengers());
             payload.put("comments", boat.comments());
             boatRequest.setPayloadJson(objectMapper.writeValueAsString(payload));
@@ -101,12 +115,16 @@ public class OnboardingService {
             boatRequestRepository.save(boatRequest);
         }
 
+        OnboardingResponse.PaymentInfo paymentInfo = merged.isEmpty()
+                ? null
+                : new OnboardingResponse.PaymentInfo(
+                complex.getAccountHolder(), complex.getAliasCbu(), complex.getBank());
+
         return new OnboardingResponse(
                 booking.getId(),
                 booking.getStatus().name(),
                 total,
                 boatRequested,
-                new OnboardingResponse.PaymentInfo(
-                        complex.getAccountHolder(), complex.getAliasCbu(), complex.getBank()));
+                paymentInfo);
     }
 }

@@ -7,9 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -27,9 +25,15 @@ public class BoatRequest {
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    @Column(name = "desired_date", nullable = false) private LocalDate desiredDate;
-    @Column(name = "departure_time", nullable = false) private LocalTime departureTime;
-    @Column(name = "return_time") private LocalTime returnTime;
+    @Column(name = "departure_at", nullable = false)
+    private LocalDateTime departureAt;
+
+    @Column(name = "return_at")
+    private LocalDateTime returnAt;
+
+    @Column(name = "pickup_point", length = 200)
+    private String pickupPoint;
+
     @Column(nullable = false) private int passengers;
     @Column(length = 500) private String comments;
 

@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -15,8 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import nocountry.grupo4.delta_tigre.addon.AddonRepository;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -83,8 +82,7 @@ class BookingIntegrationTest {
     private void attachBoatRequest(String bookingId, int passengers) {
         BoatRequest br = new BoatRequest();
         br.setBooking(bookingRepository.getReferenceById(UUID.fromString(bookingId)));
-        br.setDesiredDate(LocalDate.of(2026, 12, 10));
-        br.setDepartureTime(LocalTime.of(15, 0));
+        br.setDepartureAt(LocalDateTime.of(2026, 12, 10, 15, 0));
         br.setPassengers(passengers);
         boatRequestRepository.save(br);
     }
