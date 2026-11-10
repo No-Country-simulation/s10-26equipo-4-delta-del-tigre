@@ -1,0 +1,135 @@
+ID,Grupo,Campo,Historia,Caso padre,Técnica,Valor de entrada,Resultado esperado,Estado
+EL-LOGO-PESO-01,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase inválida,0 KB (archivo vacío),Se rechaza con advertencia,No ejecutado
+EL-LOGO-PESO-02,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase válida,1 KB,Se acepta,No ejecutado
+EL-LOGO-PESO-03,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase válida,1 MB,Se acepta,No ejecutado
+EL-LOGO-PESO-04,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Valor límite,"1,99 MB",Se acepta,No ejecutado
+EL-LOGO-PESO-05,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Valor límite,"2,00 MB (máximo)",Se acepta,No ejecutado
+EL-LOGO-PESO-06,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Valor límite,"2,01 MB",Se rechaza con advertencia,No ejecutado
+EL-LOGO-PESO-07,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase inválida,10 MB,Se rechaza con advertencia,No ejecutado
+EL-LOGO-FMT-01,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase válida,logo.png,Se acepta,No ejecutado
+EL-LOGO-FMT-02,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase válida,logo.jpg,Se acepta,No ejecutado
+EL-LOGO-FMT-03,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,"logo.jpeg (no listado, confirmar)",A definir: aceptar o rechazar,No ejecutado
+EL-LOGO-FMT-04,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,logo.gif,Se rechaza con advertencia,No ejecutado
+EL-LOGO-FMT-05,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,logo.svg,Se rechaza con advertencia,No ejecutado
+EL-LOGO-FMT-06,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,documento.pdf,Se rechaza con advertencia,No ejecutado
+EL-LOGO-FMT-07,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,programa.exe,Se rechaza con advertencia,No ejecutado
+EL-LOGO-FMT-08,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,programa.exe renombrado a .png (extensión falsa),Se rechaza con advertencia,No ejecutado
+EL-LOGO-FMT-09,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,Sin archivo,Se rechaza con advertencia,No ejecutado
+EL-HEX-01,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase válida,#FF5733,Se acepta,No ejecutado
+EL-HEX-02,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase válida,#ff5733 (minúsculas),Se acepta,No ejecutado
+EL-HEX-03,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,"#FFF (3 dígitos, confirmar)",A definir,No ejecutado
+EL-HEX-04,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,"FF5733 (sin #, confirmar)",A definir,No ejecutado
+EL-HEX-05,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Valor límite,#12345 (5 dígitos),Se rechaza con advertencia,No ejecutado
+EL-HEX-06,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Valor límite,#1234567 (7 dígitos),Se rechaza con advertencia,No ejecutado
+EL-HEX-07,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,#GGGGGG,Se rechaza con advertencia,No ejecutado
+EL-HEX-08,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
+EL-EMAIL-01,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase válida,ana@correo.com,Se acepta,No ejecutado
+EL-EMAIL-02,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase válida,ana.perez+tag@correo.com.ar,Se acepta,No ejecutado
+EL-EMAIL-03,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,anacorreo.com (sin @),Se rechaza con advertencia,No ejecutado
+EL-EMAIL-04,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,ana@ (sin dominio),Se rechaza con advertencia,No ejecutado
+EL-EMAIL-05,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,ana@@correo.com,Se rechaza con advertencia,No ejecutado
+EL-EMAIL-06,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,ana perez@correo.com (espacio),Se rechaza con advertencia,No ejecutado
+EL-EMAIL-07,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
+EL-EMAIL-08,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,Solo espacios,Se rechaza con advertencia,No ejecutado
+EL-NOMBRE-01,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,Ana,Se acepta,No ejecutado
+EL-NOMBRE-02,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,José María,Se acepta,No ejecutado
+EL-NOMBRE-03,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,O'Connor (apóstrofe),Se acepta,No ejecutado
+EL-NOMBRE-04,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,Pérez-Gómez (guion),Se acepta,No ejecutado
+EL-NOMBRE-05,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,Ñandú (ñ y tildes),Se acepta,No ejecutado
+EL-NOMBRE-06,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Ana 😀 (emoji),Se rechaza (regla del Manual),No ejecutado
+EL-NOMBRE-07,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
+EL-NOMBRE-08,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Solo espacios,Se rechaza con advertencia,No ejecutado
+EL-NOMBRE-09,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,"Ana123 (números, confirmar)",A definir,No ejecutado
+EL-DOC-01,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase válida,DNI 8 dígitos: 12345678,Se acepta,No ejecutado
+EL-DOC-02,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Valor límite,DNI 7 dígitos: 1234567,"Se acepta (DNI antiguos), confirmar",No ejecutado
+EL-DOC-03,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Valor límite,DNI 6 dígitos,Se rechaza con advertencia,No ejecutado
+EL-DOC-04,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Valor límite,DNI 9 dígitos,Se rechaza con advertencia,No ejecutado
+EL-DOC-05,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase inválida,DNI con letras: 1234ABCD,Se rechaza con advertencia,No ejecutado
+EL-DOC-06,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase válida,Pasaporte alfanumérico: AB123456,Se acepta,No ejecutado
+EL-DOC-07,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
+EL-TEL-01,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase válida,+54 9 11 2345-6789,Se acepta,No ejecutado
+EL-TEL-02,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase válida,+5491123456789,Se acepta,No ejecutado
+EL-TEL-03,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,6 dígitos,Se rechaza con advertencia,No ejecutado
+EL-TEL-04,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,7 dígitos,A definir según regla,No ejecutado
+EL-TEL-05,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,15 dígitos (máx. E.164),Se acepta,No ejecutado
+EL-TEL-06,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,16 dígitos,Se rechaza con advertencia,No ejecutado
+EL-TEL-07,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase inválida,Con letras: 11-ABCD-6789,Se rechaza con advertencia,No ejecutado
+EL-TEL-08,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
+EL-HUESPEDES-01,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,0,Se rechaza con advertencia,No ejecutado
+EL-HUESPEDES-02,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Valor límite,1 (mínimo),Se acepta,No ejecutado
+EL-HUESPEDES-03,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase válida,2,Se acepta,No ejecutado
+EL-HUESPEDES-04,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Valor límite,Máximo definido,Se acepta,No ejecutado
+EL-HUESPEDES-05,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Valor límite,Máximo + 1,Se rechaza con advertencia,No ejecutado
+EL-HUESPEDES-06,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
+EL-HUESPEDES-07,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,"1,5 (decimal)",Se rechaza con advertencia,No ejecutado
+EL-HUESPEDES-08,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
+EL-HUESPEDES-09,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
+EL-FECHAS-01,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase válida,Salida 1 día después de la llegada,Se acepta,No ejecutado
+EL-FECHAS-02,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Salida 1 minuto después de la llegada,Se acepta,No ejecutado
+EL-FECHAS-03,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Salida = llegada (misma fecha y hora),Se rechaza con advertencia,No ejecutado
+EL-FECHAS-04,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Salida 1 minuto antes de la llegada,Se rechaza con advertencia,No ejecutado
+EL-FECHAS-05,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Salida 1 día antes de la llegada,Se rechaza con advertencia,No ejecutado
+EL-FECHAS-06,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Llegada en el pasado (confirmar regla),A definir,No ejecutado
+EL-FECHAS-07,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Llegada hoy,Se acepta,No ejecutado
+EL-FECHAS-08,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Fecha inexistente (30/02),Se rechaza con advertencia,No ejecutado
+EL-FECHAS-09,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Vacía,Se rechaza con advertencia,No ejecutado
+EL-TXT50-01,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Clase válida,Vacío (campo opcional),Se acepta,No ejecutado
+EL-TXT50-02,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,1 carácter,Se acepta,No ejecutado
+EL-TXT50-03,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,49 caracteres,Se acepta,No ejecutado
+EL-TXT50-04,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,50 caracteres (máximo),Se acepta,No ejecutado
+EL-TXT50-05,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,51 caracteres,Se bloquea o avisa (no se corta en silencio),No ejecutado
+EL-TXT50-06,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Clase válida,Con tildes y ñ,Se acepta,No ejecutado
+EL-TXT50-07,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Clase inválida,Con emoji (confirmar),A definir,No ejecutado
+EL-PAX-01,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,0,Se rechaza con advertencia,No ejecutado
+EL-PAX-02,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Valor límite,1 (mínimo),Se acepta,No ejecutado
+EL-PAX-03,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Valor límite,Máximo definido,Se acepta,No ejecutado
+EL-PAX-04,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Valor límite,Máximo + 1,Se rechaza con advertencia,No ejecutado
+EL-PAX-05,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
+EL-PAX-06,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,"2,5",Se rechaza con advertencia,No ejecutado
+EL-PAX-07,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
+EL-PAX-08,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,Vacío con casilla marcada,Se rechaza con advertencia,No ejecutado
+EL-PAX-09,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase válida,Vacío con casilla desmarcada,Se acepta,No ejecutado
+EL-DESC45-01,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Clase inválida,Vacío (confirmar si es obligatoria),A definir,No ejecutado
+EL-DESC45-02,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,1 carácter,Se acepta,No ejecutado
+EL-DESC45-03,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,44 caracteres,Se acepta,No ejecutado
+EL-DESC45-04,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,45 caracteres (máximo),Se acepta,No ejecutado
+EL-DESC45-05,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,46 caracteres,Se bloquea o avisa,No ejecutado
+EL-DESC45-06,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Clase válida,Con tildes y ñ,Se acepta,No ejecutado
+EL-PRECIO-01,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,0,Se rechaza con advertencia,No ejecutado
+EL-PRECIO-02,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Valor límite,"0,01 (mínimo posible)",Se acepta,No ejecutado
+EL-PRECIO-03,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase válida,1,Se acepta,No ejecutado
+EL-PRECIO-04,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase válida,"1500,50 (2 decimales)",Se acepta,No ejecutado
+EL-PRECIO-05,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,"1500,555 (3 decimales, confirmar)",A definir,No ejecutado
+EL-PRECIO-06,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
+EL-PRECIO-07,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
+EL-PRECIO-08,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
+EL-PRECIO-09,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Valor límite,Precio máximo (por definir),A definir,No ejecutado
+EL-QTY-01,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase válida,0 (equivale a no seleccionar),Se trata como no seleccionado,No ejecutado
+EL-QTY-02,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Valor límite,1,Se acepta,No ejecutado
+EL-QTY-03,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase válida,2,Se acepta,No ejecutado
+EL-QTY-04,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Valor límite,Máximo definido,Se acepta,No ejecutado
+EL-QTY-05,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Valor límite,Máximo + 1,Se rechaza con advertencia,No ejecutado
+EL-QTY-06,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
+EL-QTY-07,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase inválida,"1,5",Se rechaza con advertencia,No ejecutado
+EL-QTY-08,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
+EL-CBU-01,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase válida,22 dígitos numéricos,Se acepta,No ejecutado
+EL-CBU-02,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Valor límite,21 dígitos,Se rechaza con advertencia,No ejecutado
+EL-CBU-03,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Valor límite,23 dígitos,Se rechaza con advertencia,No ejecutado
+EL-CBU-04,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase inválida,22 caracteres con letras,Se rechaza con advertencia,No ejecutado
+EL-CBU-05,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase inválida,22 dígitos con espacios (confirmar),A definir,No ejecutado
+EL-CBU-06,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase inválida,Vacío,Se rechaza si no hay Alias,No ejecutado
+EL-ALIAS-01,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Clase válida,mi.cabana.delta,Se acepta,No ejecutado
+EL-ALIAS-02,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,6 caracteres,Se acepta,No ejecutado
+EL-ALIAS-03,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,5 caracteres,Se rechaza con advertencia,No ejecutado
+EL-ALIAS-04,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,20 caracteres,Se acepta,No ejecutado
+EL-ALIAS-05,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,21 caracteres,Se rechaza con advertencia,No ejecutado
+EL-ALIAS-06,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Clase inválida,Con espacios o @,Se rechaza con advertencia,No ejecutado
+EL-ALIAS-07,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Clase inválida,Vacío,Se rechaza si no hay CBU,No ejecutado
+EL-ADIC-N-01,EL-ADIC-N,Cantidad de adicionales creados (límite 1 - por confirmar),US-05.1,TC-066,Clase válida,0 adicionales,Se acepta,No ejecutado
+EL-ADIC-N-02,EL-ADIC-N,Cantidad de adicionales creados (límite 1 - por confirmar),US-05.1,TC-066,Valor límite,1 adicional (máximo),Se acepta,No ejecutado
+EL-ADIC-N-03,EL-ADIC-N,Cantidad de adicionales creados (límite 1 - por confirmar),US-05.1,TC-066,Valor límite,Intentar crear el 2.º,Se rechaza con advertencia,No ejecutado
+EL-PWD-01,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Clase inválida,Vacía,Se rechaza con advertencia,No ejecutado
+EL-PWD-02,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Clase inválida,Solo espacios,Se rechaza con advertencia,No ejecutado
+EL-PWD-03,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Valor límite,Longitud mínima definida,A definir,No ejecutado
+EL-PWD-04,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Valor límite,Longitud mínima - 1,A definir,No ejecutado
+EL-PWD-05,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Clase válida,"Con tildes, ñ y símbolos",Se acepta,No ejecutado

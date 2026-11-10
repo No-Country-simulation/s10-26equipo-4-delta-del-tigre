@@ -220,3 +220,37 @@ El MVP cumplirá su objetivo cuando:
 ---
 
 HostFlow busca que el ingreso de datos del huésped, la solicitud de adicionales y la captación de interés por el transporte privado formen parte de una experiencia digital sencilla, coherente y trazable.
+
+## Configuración de contenedores
+
+Para desarrollo local, copia la plantilla y levanta el stack desde la raíz del repositorio:
+
+```powershell
+Copy-Item .env.desarrollo .env -Force
+docker compose up --build
+```
+
+Para empezar a preparar producción, usa `Copy-Item .env.produccion .env -Force` y completa los campos vacíos antes de ejecutar Compose.
+
+La plantilla de desarrollo usa credenciales solo locales. No reutilices esas contraseñas fuera de tu equipo. Mailpit se inicia con el perfil `development`; su interfaz está disponible en `http://localhost:8025`.
+
+Para preparar producción, copia `.env.produccion` como `.env` y completa cada valor requerido. Los campos vacíos están intencionalmente incompletos: Compose se detendrá si falta una variable obligatoria. No despliegues esa plantilla sin rellenar y revisar secretos, imágenes y parámetros TLS. No subas el `.env` resultante al repositorio; en producción, inyecta los secretos desde el gestor de secretos de la plataforma siempre que sea posible.
+
+`NEXT_PUBLIC_API_URL` se incorpora al bundle del frontend durante la compilación y debe ser una URL HTTPS accesible desde el navegador de los usuarios. Configura un proxy inverso con TLS para publicar frontend y API; los puertos de los contenedores se enlazan solo a `127.0.0.1` en el host. La aplicación aún no implementa un token de API/JWT, por lo que no hay un token que configurar en estas plantillas.
+
+### Scripts de desarrollo y Dev Container
+
+Los scripts `delta.ps1` (Windows) y `delta.sh` (Linux/macOS) administran Compose. Ejecuta `init` una vez para crear `.env` desde la plantilla de desarrollo; no sobrescribe un `.env` existente:
+
+```powershell
+.\delta.ps1 init
+.\delta.ps1 up
+.\delta.ps1 status
+.\delta.ps1 logs backend
+.\delta.ps1 connect backend
+.\delta.ps1 down
+```
+
+En Linux/macOS, usa los mismos comandos con `bash ./delta.sh`, o dale permiso de ejecución con `chmod +x ./delta.sh` y ejecútalo como `./delta.sh`. `connect` sin servicio abre una shell en `workspace`; también puedes indicar `backend`, `frontend`, `mysql`, `redis` o `mailpit`. `down` conserva los volúmenes de datos.
+
+En Linux/macOS el script pasa `id -u` e `id -g` a la construcción del contenedor `workspace`; en Windows usa `1000:1000`. No ejecutes el script como root en Linux/macOS. El servicio de desarrollo monta el proyecto y ejecuta VS Code con el usuario `vscode` que recibe esos IDs. MySQL y Redis conservan sus usuarios internos porque escriben en volúmenes Docker, no en carpetas del host; las imágenes del backend y frontend también mantienen sus usuarios no-root. Para VS Code Dev Containers, crea primero `.env` con `init` y luego abre el proyecto en el contenedor; `.devcontainer/devcontainer.json` se conecta al servicio `workspace`.
