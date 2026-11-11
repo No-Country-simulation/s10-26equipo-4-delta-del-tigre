@@ -123,7 +123,7 @@ export function AdicionalForm({
                                 PNG o JPG, máximo {MAX_FILE_SIZE_LABEL}.
                             </p>
 
-                            <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="mt-4 flex flex-col gap-3">
                                 <div className="relative aspect-16/8 w-full overflow-hidden rounded-xl bg-[#e8eeea] sm:w-64">
                                     {imagenUrl ? (
                                         <Image
@@ -140,7 +140,7 @@ export function AdicionalForm({
                                     )}
                                 </div>
 
-                                <div>
+                                <div className="flex flex-col items-start gap-2">
                                     {CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET ? (
                                         <CldUploadWidget
                                             uploadPreset={CLOUDINARY_UPLOAD_PRESET}
@@ -163,26 +163,26 @@ export function AdicionalForm({
                                                     type="button"
                                                     onClick={() => open()}
                                                     disabled={isLoading}
-                                                    className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[#dce5e0] bg-white px-4 py-2 text-sm font-medium text-[#174f40] hover:bg-[#f5f8f6] disabled:cursor-not-allowed disabled:opacity-60"
+                                                    className="mt-1 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[#174f40] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
                                                 >
-                                                    <Upload aria-hidden="true" className="size-4" />
+                                                    <Upload aria-hidden="true" className="size-3.5" />
                                                     {isLoading ? "Subiendo…" : imagenUrl ? "Cambiar imagen" : "Subir imagen"}
                                                 </button>
                                             )}
                                         </CldUploadWidget>
                                     ) : (
-                                        <p className="text-xs text-[#a33c2f]">
-                                            Configurá NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME y NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET para subir la imagen.
+                                        <p className="mt-1 text-xs text-[#a33c2f]">
+                                            Error al subir la imagen.
                                         </p>
                                     )}
                                     {imagenUrl && imagenUrl !== initialImage ? (
                                         <button
                                             type="button"
                                             onClick={() => setImagenUrl(initialImage ?? null)}
-                                            className="ml-3 text-xs text-[#8a3c30] hover:underline"
+                                            className="text-xs text-[#8a3c30] hover:underline"
                                         >
                                             <X aria-hidden="true" className="mr-1 inline size-3.5" />
-                                            Quitar selección
+                                            Quitar imagen
                                         </button>
                                     ) : null}
                                 </div>
