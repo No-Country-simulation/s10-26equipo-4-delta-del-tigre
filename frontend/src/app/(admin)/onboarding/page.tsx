@@ -82,7 +82,7 @@ async function OnboardingLinksTable({
         : [];
 
     return (
-        <div className="space-y-5">
+        <div className="mx-auto w-full max-w-2xl space-y-5">
             {data.complejos.length > 0 ? (
                 <ComplejoSelector
                     complejos={data.complejos}
