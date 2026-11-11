@@ -106,16 +106,16 @@ export async function guardarAdicional(
         };
     }
 
-    const imagenFile = formData.get("imagen");
+    const imagenValue = formData.get("imagen");
     let imagen: string | null | undefined;
-    if (imagenFile instanceof File && imagenFile.size > 0) {
-        if (!IMAGEN_ACCEPTED_TYPES.includes(imagenFile.type as typeof IMAGEN_ACCEPTED_TYPES[number])) {
+    if (imagenValue instanceof File && imagenValue.size > 0) {
+        if (!IMAGEN_ACCEPTED_TYPES.includes(imagenValue.type as typeof IMAGEN_ACCEPTED_TYPES[number])) {
             return {
                 status: "error",
                 errors: { imagen: "La imagen debe ser un archivo PNG o JPG." },
             };
         }
-        if (imagenFile.size > IMAGEN_MAX_BYTES) {
+        if (imagenValue.size > IMAGEN_MAX_BYTES) {
             return {
                 status: "error",
                 errors: {
@@ -123,7 +123,16 @@ export async function guardarAdicional(
                 },
             };
         }
-        imagen = await fileToDataUrl(imagenFile);
+        imagen = await fileToDataUrl(imagenValue);
+    } else if (typeof imagenValue === "string" && imagenValue.trim() !== "") {
+        const imagenUrl = imagenValue.trim();
+        if (!/^(https?:\/\/|data:image\/)/i.test(imagenUrl)) {
+            return {
+                status: "error",
+                errors: { imagen: "La URL de la imagen no es válida." },
+            };
+        }
+        imagen = imagenUrl;
     }
 
     const payload = {
