@@ -121,7 +121,7 @@ function AdicionalCard({
                                 variant="outline"
                                 size="icon"
                                 aria-label={`Eliminar ${adicional.nombre}`}
-                                className="size-10 border-[#e7c9c3] text-[#a33c2f] hover:bg-[#fff7f5]"
+                                className="size-10 border-[#e7c9c3] text-[#a33c2f] hover:bg-[#fff7f5] cursor-pointer"
                             >
                                 <Trash2 aria-hidden="true" className="size-4" />
                             </Button>

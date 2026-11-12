@@ -4,3 +4,5 @@ node_modules/
 .vscode/
 *.log
 coverage/
+.env*
+!.env.example

@@ -2,21 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useActionState, useState } from "react";
 import { ImagePlus, Save, Upload, X } from "lucide-react";
+import { CldUploadWidget, type CloudinaryUploadWidgetResults } from "next-cloudinary";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { guardarAdicional } from "./actions";
 import {
-    IMAGEN_ACCEPTED_TYPES,
     IMAGEN_MAX_BYTES,
     type AdicionalFormState,
 } from "./schemas/adicional.schema";
 
 const INITIAL_STATE: AdicionalFormState = { status: "idle", errors: {} };
 const MAX_FILE_SIZE_LABEL = `${IMAGEN_MAX_BYTES / (1024 * 1024)} MB`;
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
 type AdicionalFormProps = {
     complejoId: string;
@@ -50,52 +52,20 @@ export function AdicionalForm({
     initialImage,
 }: AdicionalFormProps) {
     const [state, formAction, pending] = useActionState(guardarAdicional, INITIAL_STATE);
-    const [imagenFile, setImagenFile] = useState<File | null>(null);
-    const [imagenPreview, setImagenPreview] = useState<string | null>(initialImage ?? null);
+    const [imagenUrl, setImagenUrl] = useState<string | null>(initialImage ?? null);
     const [imagenError, setImagenError] = useState("");
-    const previewUrlRef = useRef<string | null>(null);
-    const imagenInputRef = useRef<HTMLInputElement>(null);
     const errors = state.errors;
     const isEditing = Boolean(adicionalId);
     const volverHref = `/adicionales?complejo=${encodeURIComponent(complejoId)}`;
 
-    useEffect(() => () => {
-        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    }, []);
-
-    function handleImagenChange(
-        file: File | undefined,
-        input: HTMLInputElement,
-    ) {
+    function handleImagenUpload(result: CloudinaryUploadWidgetResults) {
         setImagenError("");
-        if (!file) {
-            setImagenFile(null);
+        const info = result.info;
+        if (!info || typeof info === "string" || !info.secure_url) {
+            setImagenError("No se pudo obtener la URL pública de la imagen.");
             return;
         }
-
-        if (!IMAGEN_ACCEPTED_TYPES.includes(file.type as typeof IMAGEN_ACCEPTED_TYPES[number])) {
-            setImagenError("La imagen debe ser un archivo PNG o JPG.");
-            input.value = "";
-            return;
-        }
-        if (file.size > IMAGEN_MAX_BYTES) {
-            setImagenError(`La imagen no puede superar ${MAX_FILE_SIZE_LABEL}.`);
-            input.value = "";
-            return;
-        }
-
-        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-        previewUrlRef.current = URL.createObjectURL(file);
-        setImagenFile(file);
-        setImagenPreview(previewUrlRef.current);
-    }
-
-    function quitarImagenSeleccionada() {
-        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-        previewUrlRef.current = null;
-        if (imagenInputRef.current) imagenInputRef.current.value = "";
-        setImagenFile(null);
-        setImagenPreview(initialImage ?? null);
+        setImagenUrl(info.secure_url);
     }
 
     return (
@@ -110,6 +80,7 @@ export function AdicionalForm({
             >
                 <input type="hidden" name="complexId" value={complejoId} />
                 {adicionalId ? <input type="hidden" name="id" value={adicionalId} /> : null}
+                <input type="hidden" name="imagen" value={imagenUrl ?? ""} />
 
                 <header className="flex flex-col gap-5 border-b border-[#dce5e0] pb-6 sm:flex-row sm:items-end sm:justify-between">
                     <div>
@@ -136,7 +107,7 @@ export function AdicionalForm({
                         <Button
                             type="submit"
                             disabled={pending}
-                            className="h-10 gap-2 bg-[#174f40] px-5 text-white hover:bg-[#123f33]"
+                            className="h-10 gap-2 bg-[#174f40] px-5 text-white hover:bg-[#123f33] cursor-pointer"
                         >
                             <Save aria-hidden="true" className="size-4" />
                             {pending ? "Guardando…" : isEditing ? "Guardar cambios" : "Crear adicional"}
@@ -152,11 +123,11 @@ export function AdicionalForm({
                                 PNG o JPG, máximo {MAX_FILE_SIZE_LABEL}.
                             </p>
 
-                            <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
-                                <div className="relative aspect-[16/8] w-full overflow-hidden rounded-xl bg-[#e8eeea] sm:w-64">
-                                    {imagenPreview ? (
+                            <div className="mt-4 flex flex-col gap-3">
+                                <div className="relative aspect-16/8 w-full overflow-hidden rounded-xl bg-[#e8eeea] sm:w-64">
+                                    {imagenUrl ? (
                                         <Image
-                                            src={imagenPreview}
+                                            src={imagenUrl}
                                             alt="Vista previa de la imagen del adicional"
                                             fill
                                             unoptimized
@@ -169,37 +140,49 @@ export function AdicionalForm({
                                     )}
                                 </div>
 
-                                <div>
-                                    <label
-                                        htmlFor="imagen"
-                                        className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[#dce5e0] bg-white px-4 py-2 text-sm font-medium text-[#174f40] hover:bg-[#f5f8f6]"
-                                    >
-                                        <Upload aria-hidden="true" className="size-4" />
-                                        {imagenPreview ? "Cambiar imagen" : "Subir imagen"}
-                                    </label>
-                                    <input
-                                        id="imagen"
-                                        ref={imagenInputRef}
-                                        name="imagen"
-                                        type="file"
-                                        accept={IMAGEN_ACCEPTED_TYPES.join(",")}
-                                        className="sr-only"
-                                        aria-describedby="imagen-help imagen-error"
-                                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                            handleImagenChange(
-                                                event.currentTarget.files?.[0],
-                                                event.currentTarget,
-                                            )
-                                        }
-                                    />
-                                    {imagenFile ? (
+                                <div className="flex flex-col items-start gap-2">
+                                    {CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET ? (
+                                        <CldUploadWidget
+                                            uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                                            onSuccess={handleImagenUpload}
+                                            onError={() => setImagenError("No se pudo subir la imagen. Intentá nuevamente.")}
+                                            options={{
+                                                maxFiles: 1,
+                                                multiple: false,
+                                                folder: "hostflow/adicionales",
+                                                sources: ["local", "url"],
+                                                clientAllowedFormats: ["png", "jpg", "jpeg"],
+                                                maxFileSize: IMAGEN_MAX_BYTES,
+                                                cropping: true,
+                                                croppingAspectRatio: 16 / 8,
+                                                language: "es",
+                                            }}
+                                        >
+                                            {({ open, isLoading }) => (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => open()}
+                                                    disabled={isLoading}
+                                                    className="mt-1 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[#174f40] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+                                                >
+                                                    <Upload aria-hidden="true" className="size-3.5" />
+                                                    {isLoading ? "Subiendo…" : imagenUrl ? "Cambiar imagen" : "Subir imagen"}
+                                                </button>
+                                            )}
+                                        </CldUploadWidget>
+                                    ) : (
+                                        <p className="mt-1 text-xs text-[#a33c2f]">
+                                            Error al subir la imagen.
+                                        </p>
+                                    )}
+                                    {imagenUrl && imagenUrl !== initialImage ? (
                                         <button
                                             type="button"
-                                            onClick={quitarImagenSeleccionada}
-                                            className="ml-3 text-xs text-[#8a3c30] hover:underline"
+                                            onClick={() => setImagenUrl(initialImage ?? null)}
+                                            className="text-xs text-[#8a3c30] hover:underline"
                                         >
                                             <X aria-hidden="true" className="mr-1 inline size-3.5" />
-                                            Quitar selección
+                                            Quitar imagen
                                         </button>
                                     ) : null}
                                 </div>
