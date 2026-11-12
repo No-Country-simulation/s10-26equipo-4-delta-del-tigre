@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect, type FormEvent, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { authCredentialsSchema } from "../schemas/auth.schema";
-import { loginWithMockSession } from "../actions";
+import { loginAction } from "../actions";
 import Unauthorized from "../../unauthorized";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -131,7 +131,13 @@ function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      await loginWithMockSession(validation.data);
+      const result = await loginAction(validation.data);
+
+      if (!result.ok) {
+        setFormErrors([result.message]);
+        if (result.fieldErrors) setFieldErrors(result.fieldErrors);
+        return;
+      }
 
       setSuccessMessage("Inicio de sesión exitoso. Redirigiendo...");
 

@@ -30,7 +30,16 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu";
 import {useState} from "react"
-import { logoutMockSession } from "@/app/(auth)/actions";
+import { logoutAction } from "@/app/(auth)/actions";
+import type { AuthUser } from "@/types/auth.types";
+
+function getInitials(name: string) {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "HF";
+    const first = parts[0]?.[0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? "" : "";
+    return `${first}${last}`.toUpperCase();
+}
 
 const items = [
     { title: "Inicio", url: "/dashboard", icon: House },
@@ -41,7 +50,7 @@ const items = [
     { title: "Link de onboarding", url: "/onboarding", icon: LinkIcon },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ user }: { user: AuthUser }) {
     const pathname = usePathname();
     const { setOpenMobile, isMobile } = useSidebar();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -106,15 +115,17 @@ export function AppSidebar() {
                     >
                         <Avatar className="size-10 rounded-xl">
                             <AvatarFallback className="rounded-xl bg-[#174f40] text-white">
-                                DG
+                                {getInitials(user.name)}
                             </AvatarFallback>
                         </Avatar>
 
                         <span className="min-w-0 flex-1 text-left">
                             <span className="block truncate text-sm font-semibold text-[#233a33]">
-                                Administrador
+                                {user.name}
                             </span>
-                            <span className="block text-xs text-[#71817b]">HostFlow</span>
+                            <span className="block truncate text-xs text-[#71817b]">
+                                {user.email}
+                            </span>
                         </span>
 
                         <ChevronRight className="size-5 text-[#526963]" />
@@ -130,7 +141,7 @@ export function AppSidebar() {
                             onClick={async() => {
                               try {
                                 setIsLoggingOut(true)
-                                await logoutMockSession();
+                                await logoutAction();
                                                                 window.location.replace("/login");
                               }catch (error) {
                                 console.error("Error al cerrar sesión:", error);

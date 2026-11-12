@@ -3,13 +3,13 @@ import { headers } from "next/headers";
 import { Building2, LayoutDashboard, Link2, LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { hasMockSession } from "@/services/auth/mock-session.server";
+import { hasSession } from "@/services/auth/session";
 
 export const instant = false;
 
 export default async function NotFound() {
   const [sessionActive, requestHeaders] = await Promise.all([
-    hasMockSession(),
+    hasSession(),
     headers(),
   ]);
   const referer = requestHeaders.get("referer");

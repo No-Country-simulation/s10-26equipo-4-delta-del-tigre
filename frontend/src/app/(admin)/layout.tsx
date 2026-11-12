@@ -10,7 +10,7 @@ import {
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { AdminHeader } from "@/components/layout/admin-header";
-import { hasMockSession } from "@/services/auth/mock-session.server";
+import { getCurrentUser } from "@/services/auth/session";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     return (
@@ -25,7 +25,9 @@ async function AuthenticatedAdminLayout({
 }: {
     children: ReactNode;
 }) {
-    if (!(await hasMockSession())) {
+    const user = await getCurrentUser();
+
+    if (!user) {
         redirect("/login?session=expired");
     }
 
@@ -38,10 +40,10 @@ async function AuthenticatedAdminLayout({
                 } as React.CSSProperties
             }
         >
-            <AppSidebar />
+            <AppSidebar user={user} />
 
             <SidebarInset className="min-h-dvh bg-[#f5f8f6]">
-                <AdminHeader />
+                <AdminHeader user={user} />
 
                 <main className=" min-h-0 flex-1 overflow-y-auto p-6 md:p-10">
                     {children}
