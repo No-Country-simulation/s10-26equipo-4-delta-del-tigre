@@ -1,5 +1,6 @@
 # ---- Secretos: lo mas importante de este archivo ----
 .env
+*.env
 .env.*
 !.env.example
 *.pem

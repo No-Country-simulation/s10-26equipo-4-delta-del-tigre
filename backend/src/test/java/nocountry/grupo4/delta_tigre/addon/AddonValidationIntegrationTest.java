@@ -23,13 +23,13 @@ class AddonValidationIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
 
     private String createComplex(String token, String name) throws Exception {
-        String response = mvc.perform(post("/api/v1/complexes")
+        String response = mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{\"name\":\"" + name + "\"}"))
                 .andExpect(status().isCreated())
@@ -44,7 +44,7 @@ class AddonValidationIntegrationTest {
     }
 
     private String create(String token, String complexId, String json, int expectedStatus) throws Exception {
-        return mvc.perform(post("/api/v1/complexes/" + complexId + "/addons")
+        return mvc.perform(post("/api/complexes/" + complexId + "/addons")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -87,7 +87,7 @@ class AddonValidationIntegrationTest {
 
         for (String body : new String[]{json("Nuevo@#*", null), json(" Nuevo", null), json("A", null),
                 json("Nuevo Valido", "Con @#*"), json("Nuevo Valido", "ab")}) {
-            mvc.perform(put("/api/v1/addons/" + id)
+            mvc.perform(put("/api/addons/" + id)
                             .header("Authorization", "Bearer " + token)
                             .contentType(APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest());
