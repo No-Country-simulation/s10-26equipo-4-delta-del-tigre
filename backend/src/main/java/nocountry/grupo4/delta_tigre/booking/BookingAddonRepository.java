@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public interface BookingAddonRepository extends JpaRepository<BookingAddon, UUID> {
 
-    @Query("select ba from BookingAddon ba join fetch ba.addon a "
-            + "where ba.booking.id = :bookingId order by a.name asc")
+    @Query("select ba from BookingAddon ba join fetch ba.addon a where ba.booking.id = :bookingId order by a.name asc")
     List<BookingAddon> findByBookingIdWithAddon(@Param("bookingId") UUID bookingId);
 }
