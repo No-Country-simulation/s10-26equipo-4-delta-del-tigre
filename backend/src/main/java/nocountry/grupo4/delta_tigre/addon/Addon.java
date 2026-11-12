@@ -34,6 +34,9 @@ public class Addon {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     @Column(nullable = false)
     private boolean active = true;
 

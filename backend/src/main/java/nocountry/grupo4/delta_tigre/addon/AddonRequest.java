@@ -2,6 +2,7 @@ package nocountry.grupo4.delta_tigre.addon;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import nocountry.grupo4.delta_tigre.complex.ImageUrlValidation;
 
 import java.math.BigDecimal;
 
@@ -25,6 +26,13 @@ public record AddonRequest(
         @NotNull(message = "El precio es obligatorio")
         @Positive(message = "El precio debe ser mayor a cero")
         @Digits(integer = 10, fraction = 2, message = "El precio admite hasta 2 decimales")
-        BigDecimal price
+        BigDecimal price,
+
+        @Schema(example = "https://res.cloudinary.com/demo/image/upload/v1/desayuno.png",
+                description = "Opcional. URL de la imagen subida a Cloudinary (https://res.cloudinary.com/...), máximo 500 caracteres. Omitir o enviar null si no hay imagen; no enviar \"\"")
+        @Size(max = ImageUrlValidation.MAX_URL_LENGTH, message = "La URL de la imagen no puede superar los 500 caracteres")
+        @Pattern(regexp = ImageUrlValidation.CLOUDINARY_REGEX,
+                message = "La imagen debe ser una URL de Cloudinary (https://res.cloudinary.com/...)")
+        String imageUrl
 ) {
 }
