@@ -246,9 +246,17 @@ Para empezar a preparar producción, usa `Copy-Item .env.produccion .env -Force`
 
 La plantilla de desarrollo usa credenciales solo locales. No reutilices esas contraseñas fuera de tu equipo. Mailpit se inicia con el perfil `development`; su interfaz está disponible en `http://localhost:8025`.
 
-Para preparar producción, copia `.env.produccion` como `.env` y completa cada valor requerido. Los defaults de Compose son solo para desarrollo: si una variable de producción falta o está vacía, puede usarse un valor local inseguro en su lugar. Verifica todas las variables e imágenes antes de desplegar; no subas el `.env` resultante al repositorio. En producción, inyecta los secretos desde el gestor de secretos de la plataforma siempre que sea posible.
+Para producción distribuida, configura las variables directamente en Render, Vercel y los gestores de secretos de esos servicios. No subas credenciales ni el `.env` resultante al repositorio. Los defaults de Compose son solo para desarrollo.
 
-`NEXT_PUBLIC_API_URL` se incorpora al bundle del frontend durante la compilación y debe ser una URL HTTPS accesible desde el navegador de los usuarios. Configura un proxy inverso con TLS para publicar frontend y API; los puertos de los contenedores se enlazan solo a `127.0.0.1` en el host. La aplicación aún no implementa un token de API/JWT, por lo que no hay un token que configurar en estas plantillas.
+Para el backend en Render con MySQL en Aiven, activa `SPRING_PROFILES_ACTIVE=production` y configura al menos:
+
+- `SPRING_DATASOURCE_URL`: URL JDBC de Aiven con host, puerto, base de datos y la configuración TLS indicada por Aiven.
+- `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_PASSWORD`.
+- `JWT_SECRET`: secreto aleatorio propio de al menos 32 caracteres.
+- `CORS_ALLOWED_ORIGINS`: origen HTTPS exacto de Vercel; separa varios orígenes con comas.
+- `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME` y `SPRING_MAIL_PASSWORD` del SMTP de Brevo. El perfil de producción habilita autenticación y STARTTLS de forma predeterminada; se pueden sobrescribir con `SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH` y `SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE`.
+
+Render proporciona `PORT`; Spring lo prioriza automáticamente y conserva `SERVER_PORT`/8080 como alternativa local. En Vercel, configura `NEXT_PUBLIC_API_URL` con la URL HTTPS pública de Render. Next.js la incorpora al bundle durante la compilación, así que hay que volver a desplegar Vercel si cambia. El frontend actual todavía usa un mock para el login y algunas rutas difieren de las publicadas por el backend: la conectividad de red no corrige esos desacuerdos de API.
 
 ### Scripts de desarrollo y Dev Container
 
