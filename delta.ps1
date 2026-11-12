@@ -48,21 +48,26 @@ if ($Command -eq "init") {
     exit 0
 }
 
-if (-not (Test-Path $envFile)) {
-    throw "Falta .env. Ejecuta .\delta.ps1 init y revisa el archivo creado."
-}
-
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     throw "No se encontró Docker. Instala Docker y asegúrate de que el daemon esté activo."
 }
 
 $previousUid = $env:LOCAL_UID
 $previousGid = $env:LOCAL_GID
+$previousProfiles = $env:COMPOSE_PROFILES
 $env:LOCAL_UID = "1000"
 $env:LOCAL_GID = "1000"
 
 try {
-    $composeArgs = @("compose", "--env-file", $envFile, "-f", $composeFile)
+    if (Test-Path $envFile) {
+        $composeArgs = @("compose", "--env-file", $envFile, "-f", $composeFile)
+    }
+    else {
+        $composeArgs = @("compose", "-f", $composeFile)
+        if ([string]::IsNullOrWhiteSpace($env:COMPOSE_PROFILES)) {
+            $env:COMPOSE_PROFILES = "development"
+        }
+    }
 
     switch ($Command) {
         "build" {
@@ -116,4 +121,5 @@ try {
 finally {
     $env:LOCAL_UID = $previousUid
     $env:LOCAL_GID = $previousGid
+    $env:COMPOSE_PROFILES = $previousProfiles
 }
