@@ -32,7 +32,7 @@ class OnboardingBookingIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
@@ -47,7 +47,7 @@ class OnboardingBookingIntegrationTest {
             }
             """.formatted(name);
 
-        return mvc.perform(post("/api/v1/complexes")
+        return mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content(body))
@@ -72,7 +72,7 @@ class OnboardingBookingIntegrationTest {
     }
 
     private String postOnboarding(String slug, String json, int expectedStatus) throws Exception {
-        return mvc.perform(post("/api/v1/public/complexes/" + slug + "/onboarding")
+        return mvc.perform(post("/api/public/complexes/" + slug + "/onboarding")
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
                 .andReturn().getResponse().getContentAsString();
@@ -113,7 +113,7 @@ class OnboardingBookingIntegrationTest {
         String created = createComplex(registerAndGetToken(), "Onboarding Sin Addons");
         String slug = JsonPath.read(created, "$.data.slug");
 
-        mvc.perform(post("/api/v1/public/complexes/" + slug + "/onboarding")
+        mvc.perform(post("/api/public/complexes/" + slug + "/onboarding")
                         .contentType(APPLICATION_JSON).content(body("")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.total").value(Double.valueOf(0.0)));

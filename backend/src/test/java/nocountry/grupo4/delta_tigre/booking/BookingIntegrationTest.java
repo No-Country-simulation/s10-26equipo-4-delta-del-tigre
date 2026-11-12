@@ -36,13 +36,13 @@ class BookingIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
 
     private String createComplex(String token, String name) throws Exception {
-        String response = mvc.perform(post("/api/v1/complexes")
+        String response = mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{\"name\":\"" + name + "\"}"))
                 .andExpect(status().isCreated())
@@ -51,7 +51,7 @@ class BookingIntegrationTest {
     }
 
     private String createBooking(String token, String complexId, String json, int expectedStatus) throws Exception {
-        return mvc.perform(post("/api/v1/complexes/" + complexId + "/bookings")
+        return mvc.perform(post("/api/complexes/" + complexId + "/bookings")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -63,7 +63,7 @@ class BookingIntegrationTest {
     }
 
     private String createAddon(String token, String complexId, String name) throws Exception {
-        String response = mvc.perform(post("/api/v1/complexes/" + complexId + "/addons")
+        String response = mvc.perform(post("/api/complexes/" + complexId + "/addons")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{\"name\":\"" + name + "\",\"price\":100}"))
                 .andExpect(status().isCreated())
@@ -90,7 +90,7 @@ class BookingIntegrationTest {
     }
 
     private String patchStatus(String token, String id, String json, int expectedStatus) throws Exception {
-        return mvc.perform(patch("/api/v1/bookings/" + id + "/status")
+        return mvc.perform(patch("/api/bookings/" + id + "/status")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -102,7 +102,7 @@ class BookingIntegrationTest {
         String token = registerAndGetToken();
         String complexId = createComplex(token, "Complejo Reservas");
 
-        mvc.perform(post("/api/v1/complexes/" + complexId + "/bookings")
+        mvc.perform(post("/api/complexes/" + complexId + "/bookings")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content("{\"guestName\":\"Juan Gomez\",\"checkIn\":\"2026-12-10\",\"checkOut\":\"2026-12-13\","
@@ -124,7 +124,7 @@ class BookingIntegrationTest {
     void create_booking_with_only_required_fields_returns_201() throws Exception {
         String token = registerAndGetToken();
         String complexId = createComplex(token, "Complejo Minimo");
-        mvc.perform(post("/api/v1/complexes/" + complexId + "/bookings")
+        mvc.perform(post("/api/complexes/" + complexId + "/bookings")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content(bookingJson("Solo Obligatorios", "2026-12-10", "2026-12-11")))
@@ -168,7 +168,7 @@ class BookingIntegrationTest {
 
     @Test
     void create_booking_without_token_returns_401() throws Exception {
-        mvc.perform(post("/api/v1/complexes/" + UUID.randomUUID() + "/bookings")
+        mvc.perform(post("/api/complexes/" + UUID.randomUUID() + "/bookings")
                         .contentType(APPLICATION_JSON)
                         .content(bookingJson("Sin token", "2026-12-10", "2026-12-12")))
                 .andExpect(status().isUnauthorized());
@@ -212,7 +212,7 @@ class BookingIntegrationTest {
         createBooking(token, complexId, bookingJson("Segundo", "2026-12-10", "2026-12-12"), 201);
         createBooking(token, otherId, bookingJson("De otro complejo", "2026-12-05", "2026-12-06"), 201);
 
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(3))
                 .andExpect(jsonPath("$.data[0].guestName").value("Primero"))
@@ -224,7 +224,7 @@ class BookingIntegrationTest {
     void list_bookings_empty_for_complex_without_bookings() throws Exception {
         String token = registerAndGetToken();
         String complexId = createComplex(token, "Complejo Sin Reservas");
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isEmpty());
     }
@@ -235,11 +235,11 @@ class BookingIntegrationTest {
         String complexId = createComplex(token, "Complejo Filtro Estado");
         createBooking(token, complexId, bookingJson("Pendiente", "2026-12-10", "2026-12-12"), 201);
 
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=PENDIENTE")
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings?status=PENDIENTE")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1));
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=CONFIRMADA")
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings?status=CONFIRMADA")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isEmpty());
@@ -249,7 +249,7 @@ class BookingIntegrationTest {
     void list_bookings_with_invalid_status_returns_400() throws Exception {
         String token = registerAndGetToken();
         String complexId = createComplex(token, "Complejo Estado Invalido");
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=ARCHIVADA")
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings?status=ARCHIVADA")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
     }
@@ -257,7 +257,7 @@ class BookingIntegrationTest {
     @Test
     void list_bookings_with_invalid_complex_id_returns_400() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(get("/api/v1/complexes/no-es-un-uuid/bookings").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/no-es-un-uuid/bookings").header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
     }
 
@@ -266,7 +266,7 @@ class BookingIntegrationTest {
         String tokenA = registerAndGetToken();
         String tokenB = registerAndGetToken();
         String complexId = createComplex(tokenA, "Complejo Lista Reservas Ajeno");
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + tokenB))
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings").header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
     }
 
@@ -284,7 +284,7 @@ class BookingIntegrationTest {
         attachAddon(bookingId, cena, 1, "50.50");
         attachBoatRequest(bookingId, 3);
 
-        mvc.perform(get("/api/v1/bookings/" + bookingId).header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/bookings/" + bookingId).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.guestName").value("Juan Gomez"))
                 .andExpect(jsonPath("$.data.guestEmail").value("juan@mail.com"))
@@ -306,7 +306,7 @@ class BookingIntegrationTest {
         String created = createBooking(token, complexId, bookingJson("Sin Extras", "2026-12-10", "2026-12-12"), 201);
         String bookingId = JsonPath.read(created, "$.data.id");
 
-        mvc.perform(get("/api/v1/bookings/" + bookingId).header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/bookings/" + bookingId).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.addons").isEmpty())
                 .andExpect(jsonPath("$.data.addonsTotal").value(Double.valueOf(0)))
@@ -321,27 +321,27 @@ class BookingIntegrationTest {
         String created = createBooking(tokenA, complexId, bookingJson("Mio", "2026-12-10", "2026-12-12"), 201);
         String bookingId = JsonPath.read(created, "$.data.id");
 
-        mvc.perform(get("/api/v1/bookings/" + bookingId).header("Authorization", "Bearer " + tokenB))
+        mvc.perform(get("/api/bookings/" + bookingId).header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void get_nonexistent_booking_returns_404() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(get("/api/v1/bookings/" + UUID.randomUUID()).header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/bookings/" + UUID.randomUUID()).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void get_booking_with_invalid_id_returns_400() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(get("/api/v1/bookings/no-es-un-uuid").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/bookings/no-es-un-uuid").header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void get_booking_without_token_returns_401() throws Exception {
-        mvc.perform(get("/api/v1/bookings/" + UUID.randomUUID()))
+        mvc.perform(get("/api/bookings/" + UUID.randomUUID()))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -366,12 +366,12 @@ class BookingIntegrationTest {
         String second = createBooking(token, complexId, bookingJson("Se Confirma", "2026-12-10", "2026-12-12"), 201);
         patchStatus(token, JsonPath.read(second, "$.data.id"), "{\"status\":\"CONFIRMADA\"}", 200);
 
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=CONFIRMADA")
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings?status=CONFIRMADA")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].guestName").value("Se Confirma"));
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/bookings?status=PENDIENTE")
+        mvc.perform(get("/api/complexes/" + complexId + "/bookings?status=PENDIENTE")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
@@ -406,7 +406,7 @@ class BookingIntegrationTest {
 
     @Test
     void update_booking_status_without_token_returns_401() throws Exception {
-        mvc.perform(patch("/api/v1/bookings/" + UUID.randomUUID() + "/status")
+        mvc.perform(patch("/api/bookings/" + UUID.randomUUID() + "/status")
                         .contentType(APPLICATION_JSON).content("{\"status\":\"CONFIRMADA\"}"))
                 .andExpect(status().isUnauthorized());
     }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/complexes")
+@RequestMapping("/api/complexes")
 @RequiredArgsConstructor
 @Tag(name = "Complejos", description = "Gestión de los complejos del dueño")
 @SecurityRequirement(name = "bearerAuth")
