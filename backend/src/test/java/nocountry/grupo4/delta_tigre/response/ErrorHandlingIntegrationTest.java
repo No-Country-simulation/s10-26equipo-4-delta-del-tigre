@@ -24,7 +24,7 @@ class ErrorHandlingIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
@@ -32,7 +32,7 @@ class ErrorHandlingIntegrationTest {
     @Test
     void unsupported_method_returns_405() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(patch("/api/v1/complexes")
+        mvc.perform(patch("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{}"))
                 .andExpect(status().isMethodNotAllowed())
@@ -43,7 +43,7 @@ class ErrorHandlingIntegrationTest {
     @Test
     void unsupported_content_type_returns_415() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(post("/api/v1/complexes")
+        mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType("text/plain").content("hola"))
                 .andExpect(status().isUnsupportedMediaType())

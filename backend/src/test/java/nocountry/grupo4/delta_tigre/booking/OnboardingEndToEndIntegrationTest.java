@@ -52,7 +52,7 @@ class OnboardingEndToEndIntegrationTest {
 
     private String register(String email) throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + email + "\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
@@ -67,7 +67,7 @@ class OnboardingEndToEndIntegrationTest {
             }
             """.formatted(name);
 
-        return mvc.perform(post("/api/v1/complexes")
+        return mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content(body))
@@ -109,7 +109,7 @@ class OnboardingEndToEndIntegrationTest {
     }
 
     private String postOnboarding(String slug, String json, int expectedStatus) throws Exception {
-        return mvc.perform(post("/api/v1/public/complexes/" + slug + "/onboarding")
+        return mvc.perform(post("/api/public/complexes/" + slug + "/onboarding")
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
                 .andReturn().getResponse().getContentAsString();
@@ -133,7 +133,7 @@ class OnboardingEndToEndIntegrationTest {
         String guestEmail = "ana-" + UUID.randomUUID() + "@mail.com";
 
         // 1) el turista ve la ficha pública del complejo
-        mvc.perform(get("/api/v1/public/complexes/" + s.slug()))
+        mvc.perform(get("/api/public/complexes/" + s.slug()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.open").value(true))
                 .andExpect(jsonPath("$.data.addons.length()").value(2));
@@ -147,14 +147,14 @@ class OnboardingEndToEndIntegrationTest {
         UUID bookingId = UUID.fromString(JsonPath.read(response, "$.data.bookingId"));
 
         // 3) el dueño ve la reserva en su listado y en el detalle
-        mvc.perform(get("/api/v1/complexes/" + s.complexId() + "/bookings")
+        mvc.perform(get("/api/complexes/" + s.complexId() + "/bookings")
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].id").value(bookingId.toString()))
                 .andExpect(jsonPath("$.data[0].guestName").value("Ana Perez"))
                 .andExpect(jsonPath("$.data[0].status").value("PENDIENTE"));
-        mvc.perform(get("/api/v1/bookings/" + bookingId)
+        mvc.perform(get("/api/bookings/" + bookingId)
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk());
 
@@ -186,7 +186,7 @@ class OnboardingEndToEndIntegrationTest {
         String response = postOnboarding(s.slug(), onboardingBody(s, "ana@mail.com"), 201);
         UUID bookingId = UUID.fromString(JsonPath.read(response, "$.data.bookingId"));
 
-        mvc.perform(get("/api/v1/complexes/" + s.complexId() + "/bookings")
+        mvc.perform(get("/api/complexes/" + s.complexId() + "/bookings")
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1));

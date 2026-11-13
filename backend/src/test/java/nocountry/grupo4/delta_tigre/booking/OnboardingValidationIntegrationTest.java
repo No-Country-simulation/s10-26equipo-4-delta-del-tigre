@@ -22,14 +22,14 @@ class OnboardingValidationIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
 
     private String createComplexAndGetSlug() throws Exception {
         String token = registerAndGetToken();
-        String created = mvc.perform(post("/api/v1/complexes")
+        String created = mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content("{\"name\":\"Onboarding " + UUID.randomUUID().toString().substring(0, 8) + "\"}"))
@@ -52,7 +52,7 @@ class OnboardingValidationIntegrationTest {
     }
 
     private void postOnboarding(String slug, String json, int expectedStatus) throws Exception {
-        mvc.perform(post("/api/v1/public/complexes/" + slug + "/onboarding")
+        mvc.perform(post("/api/public/complexes/" + slug + "/onboarding")
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus));
     }

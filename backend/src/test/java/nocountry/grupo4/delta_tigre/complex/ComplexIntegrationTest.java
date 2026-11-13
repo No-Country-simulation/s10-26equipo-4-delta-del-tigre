@@ -22,13 +22,13 @@ class ComplexIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
 
     private String create(String token, String json, int expectedStatus) throws Exception {
-        return mvc.perform(post("/api/v1/complexes")
+        return mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -37,7 +37,7 @@ class ComplexIntegrationTest {
 
 
     private String update(String token, String id, String json, int expectedStatus) throws Exception {
-        return mvc.perform(put("/api/v1/complexes/" + id)
+        return mvc.perform(put("/api/complexes/" + id)
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -50,7 +50,7 @@ class ComplexIntegrationTest {
     }
 
     private String patchPaymentInfo(String token, String id, String json, int expectedStatus) throws Exception {
-        return mvc.perform(patch("/api/v1/complexes/" + id + "/payment-info")
+        return mvc.perform(patch("/api/complexes/" + id + "/payment-info")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -60,7 +60,7 @@ class ComplexIntegrationTest {
     @Test
     void create_complex_generates_slug_without_accents() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(post("/api/v1/complexes")
+        mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content("{\"name\":\"Cabañas del Río\"}"))
@@ -87,7 +87,7 @@ class ComplexIntegrationTest {
 
     @Test
     void create_complex_without_token_returns_401() throws Exception {
-        mvc.perform(post("/api/v1/complexes").contentType(APPLICATION_JSON)
+        mvc.perform(post("/api/complexes").contentType(APPLICATION_JSON)
                         .content("{\"name\":\"Sin Token\"}"))
                 .andExpect(status().isUnauthorized());
     }
@@ -119,7 +119,7 @@ class ComplexIntegrationTest {
         create(tokenA, "{\"name\":\"Alfa Lista\"}", 201);
         create(tokenB, "{\"name\":\"Beta Ajeno\"}", 201);
 
-        mvc.perform(get("/api/v1/complexes").header("Authorization", "Bearer " + tokenA))
+        mvc.perform(get("/api/complexes").header("Authorization", "Bearer " + tokenA))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.data[0].name").value("Alfa Lista"))
@@ -129,14 +129,14 @@ class ComplexIntegrationTest {
     @Test
     void list_returns_empty_for_owner_without_complexes() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(get("/api/v1/complexes").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
     @Test
     void list_complexes_without_token_returns_401() throws Exception {
-        mvc.perform(get("/api/v1/complexes")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/complexes")).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -147,7 +147,7 @@ class ComplexIntegrationTest {
                         + "\"aliasCbu\":\"hostflow.delta\",\"bank\":\"Banco Nación\"}", 201);
         String id = JsonPath.read(created, "$.data.id");
 
-        mvc.perform(get("/api/v1/complexes/" + id).header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/" + id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.name").value("Detalle Completo"))
                 .andExpect(jsonPath("$.data.slug").value("detalle-completo"))
@@ -162,21 +162,21 @@ class ComplexIntegrationTest {
         String created = create(tokenA, "{\"name\":\"Complejo Ajeno\"}", 201);
         String id = JsonPath.read(created, "$.data.id");
 
-        mvc.perform(get("/api/v1/complexes/" + id).header("Authorization", "Bearer " + tokenB))
+        mvc.perform(get("/api/complexes/" + id).header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void get_nonexistent_complex_returns_404() throws Exception {
         String token = registerAndGetToken();
-        mvc.perform(get("/api/v1/complexes/" + UUID.randomUUID()).header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/" + UUID.randomUUID()).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Complejo no encontrado"));
     }
 
     @Test
     void get_complex_without_token_returns_401() throws Exception {
-        mvc.perform(get("/api/v1/complexes/" + UUID.randomUUID()))
+        mvc.perform(get("/api/complexes/" + UUID.randomUUID()))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -187,7 +187,7 @@ class ComplexIntegrationTest {
                 "{\"name\":\"Nombre Original\",\"aliasCbu\":\"hostflow.delta\",\"bank\":\"Banco Nación\"}", 201);
         String id = JsonPath.read(created, "$.data.id");
 
-        mvc.perform(put("/api/v1/complexes/" + id)
+        mvc.perform(put("/api/complexes/" + id)
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content("{\"name\":\"Nombre Nuevo\",\"address\":\"Calle 1\",\"brandColors\":\"#1A73E8\"}"))                .andExpect(jsonPath("$.data.name").value("Nombre Nuevo"))
@@ -225,7 +225,7 @@ class ComplexIntegrationTest {
 
     @Test
     void update_complex_without_token_returns_401() throws Exception {
-        mvc.perform(put("/api/v1/complexes/" + UUID.randomUUID())
+        mvc.perform(put("/api/complexes/" + UUID.randomUUID())
                         .contentType(APPLICATION_JSON).content("{\"name\":\"Sin token\"}"))
                 .andExpect(status().isUnauthorized());
     }
@@ -235,7 +235,7 @@ class ComplexIntegrationTest {
         String token = registerAndGetToken();
         String id = createComplexId(token, "Pago Con Alias");
 
-        mvc.perform(patch("/api/v1/complexes/" + id + "/payment-info")
+        mvc.perform(patch("/api/complexes/" + id + "/payment-info")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content("{\"accountHolder\":\"Maria Lopez\",\"aliasCbu\":\"hostflow.mp\",\"bank\":\"Banco Nación\"}"))
@@ -285,7 +285,7 @@ class ComplexIntegrationTest {
 
     @Test
     void update_payment_info_without_token_returns_401() throws Exception {
-        mvc.perform(patch("/api/v1/complexes/" + UUID.randomUUID() + "/payment-info")
+        mvc.perform(patch("/api/complexes/" + UUID.randomUUID() + "/payment-info")
                         .contentType(APPLICATION_JSON).content("{}"))
                 .andExpect(status().isUnauthorized());
     }

@@ -23,13 +23,13 @@ class AddonIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
 
     private String createComplex(String token, String name) throws Exception {
-        String response = mvc.perform(post("/api/v1/complexes")
+        String response = mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{\"name\":\"" + name + "\"}"))
                 .andExpect(status().isCreated())
@@ -38,7 +38,7 @@ class AddonIntegrationTest {
     }
 
     private String createAddon(String token, String complexId, String json, int expectedStatus) throws Exception {
-        return mvc.perform(post("/api/v1/complexes/" + complexId + "/addons")
+        return mvc.perform(post("/api/complexes/" + complexId + "/addons")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -50,7 +50,7 @@ class AddonIntegrationTest {
         String token = registerAndGetToken();
         String complexId = createComplex(token, "Complejo Adicionales");
 
-        mvc.perform(post("/api/v1/complexes/" + complexId + "/addons")
+        mvc.perform(post("/api/complexes/" + complexId + "/addons")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content("{\"name\":\"Desayuno\",\"description\":\"Para dos\",\"price\":15000.00}"))
@@ -86,7 +86,7 @@ class AddonIntegrationTest {
 
     @Test
     void create_addon_without_token_returns_401() throws Exception {
-        mvc.perform(post("/api/v1/complexes/" + UUID.randomUUID() + "/addons")
+        mvc.perform(post("/api/complexes/" + UUID.randomUUID() + "/addons")
                         .contentType(APPLICATION_JSON).content("{\"name\":\"Sin token\",\"price\":100}"))
                 .andExpect(status().isUnauthorized());
     }
@@ -100,7 +100,7 @@ class AddonIntegrationTest {
         createAddon(token, complexId, "{\"name\":\"Alfa\",\"price\":100}", 201);
         createAddon(token, otherId, "{\"name\":\"De otro complejo\",\"price\":100}", 201);
 
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.data[0].name").value("Alfa"))
@@ -111,7 +111,7 @@ class AddonIntegrationTest {
     void list_addons_empty_for_complex_without_addons() throws Exception {
         String token = registerAndGetToken();
         String complexId = createComplex(token, "Complejo Vacio");
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isEmpty());
     }
@@ -121,12 +121,12 @@ class AddonIntegrationTest {
         String tokenA = registerAndGetToken();
         String tokenB = registerAndGetToken();
         String complexId = createComplex(tokenA, "Complejo Lista Ajeno");
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + tokenB))
+        mvc.perform(get("/api/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
     }
 
     private String updateAddon(String token, String id, String json, int expectedStatus) throws Exception {
-        return mvc.perform(put("/api/v1/addons/" + id)
+        return mvc.perform(put("/api/addons/" + id)
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -140,7 +140,7 @@ class AddonIntegrationTest {
         String created = createAddon(token, complexId, "{\"name\":\"Original\",\"price\":100}", 201);
         String id = JsonPath.read(created, "$.data.id");
 
-        mvc.perform(put("/api/v1/addons/" + id)
+        mvc.perform(put("/api/addons/" + id)
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content("{\"name\":\"Nuevo\",\"description\":\"Detalle\",\"price\":250.50}"))
@@ -177,7 +177,7 @@ class AddonIntegrationTest {
     }
 
     private String patchStatus(String token, String id, String json, int expectedStatus) throws Exception {
-        return mvc.perform(patch("/api/v1/addons/" + id + "/status")
+        return mvc.perform(patch("/api/addons/" + id + "/status")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -193,7 +193,7 @@ class AddonIntegrationTest {
 
         patchStatus(token, id, "{\"active\":false}", 200);
 
-        mvc.perform(get("/api/v1/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
+        mvc.perform(get("/api/complexes/" + complexId + "/addons").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].active").value(false));

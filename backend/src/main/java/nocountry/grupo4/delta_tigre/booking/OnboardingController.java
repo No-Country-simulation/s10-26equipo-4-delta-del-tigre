@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/public/complexes")
+@RequestMapping("/api/public/complexes")
 @RequiredArgsConstructor
 @Tag(name = "Onboarding público", description = "Ficha del huésped: crea la reserva desde el link del complejo (no requiere autenticación)")
 public class OnboardingController {

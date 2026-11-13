@@ -38,4 +38,4 @@ COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
 
 # Definimos el comando de arranque del contenedor
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70.0", "-XX:+UseSerialGC", "-jar", "app.jar"]
