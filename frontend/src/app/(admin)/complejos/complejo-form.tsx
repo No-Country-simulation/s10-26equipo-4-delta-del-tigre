@@ -3,15 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { ImagePlus, Save, Upload, X } from "lucide-react";
+import { CldUploadWidget, type CloudinaryUploadWidgetResults } from "next-cloudinary";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
     complejoFormSchema,
-    LOGO_ACCEPTED_TYPES,
     LOGO_MAX_BYTES,
     type ComplejoFormValues,
 } from "@/app/(admin)/complejos/schemas/complejo-form.schema";
@@ -24,6 +24,8 @@ type ComplejoFormProps = {
 };
 
 const MAX_FILE_SIZE_LABEL = `${LOGO_MAX_BYTES / (1024 * 1024)} MB`;
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
 function FieldError({ id, message }: { id: string; message?: string }) {
     return message ? (
@@ -143,10 +145,8 @@ function getServerErrors(payload: unknown) {
 
 export function ComplejoForm({ complejoId, initialValues, initialLogo }: ComplejoFormProps) {
     const router = useRouter();
-    const [logoFile, setLogoFile] = useState<File | null>(null);
-    const [logoPreview, setLogoPreview] = useState<string | null>(initialLogo ?? null);
+    const [logoUrl, setLogoUrl] = useState<string | null>(initialLogo ?? null);
     const [colorValue, setColorValue] = useState(() => getColorValue(initialValues?.coloresMarca));
-    const previewUrlRef = useRef<string | null>(null);
     const [logoError, setLogoError] = useState("");
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [formErrors, setFormErrors] = useState<string[]>([]);
@@ -156,26 +156,14 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
     const [isOpen, setIsOpen] = useState(initialValues?.estadoOperativo !== "cerrado");
     const isEditing = Boolean(complejoId);
 
-    useEffect(() => () => {
-        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    }, []);
-
-    function handleLogoChange(file: File | undefined) {
+    function handleLogoUpload(result: CloudinaryUploadWidgetResults) {
         setLogoError("");
-        if (!file) return;
-
-        if (!LOGO_ACCEPTED_TYPES.includes(file.type as typeof LOGO_ACCEPTED_TYPES[number])) {
-            setLogoError("El logo debe ser una imagen PNG o JPG.");
+        const info = result.info;
+        if (!info || typeof info === "string" || !info.secure_url) {
+            setLogoError("No se pudo obtener la URL pública del logo.");
             return;
         }
-        if (file.size > LOGO_MAX_BYTES) {
-            setLogoError(`El logo no puede superar ${MAX_FILE_SIZE_LABEL}.`);
-            return;
-        }
-        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-        previewUrlRef.current = URL.createObjectURL(file);
-        setLogoFile(file);
-        setLogoPreview(previewUrlRef.current);
+        setLogoUrl(info.secure_url);
     }
 
     function handleFieldChange(event: ChangeEvent<HTMLInputElement>) {
@@ -206,7 +194,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
         for (const [field, value] of Object.entries(validation.data)) {
             payload.append(field, value == null ? "" : String(value));
         }
-        if (logoFile) payload.append("logo", logoFile);
+        if (logoUrl) payload.append("logo", logoUrl);
 
         setIsSubmitting(true);
         try {
@@ -290,8 +278,8 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
 
                         <div className="flex items-center gap-3">
                             <div className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-[#174f40] text-xs font-semibold text-white">
-                                {logoPreview ? (
-                                    <Image src={logoPreview} alt="Vista previa del logo" fill unoptimized className="object-cover" />
+                                {logoUrl ? (
+                                    <Image src={logoUrl} alt="Vista previa del logo" fill unoptimized className="object-cover" />
                                 ) : (
                                     getInitials(initialValues?.nombre) || <ImagePlus aria-hidden="true" className="size-5" />
                                 )}
@@ -301,35 +289,48 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                 <p id="logo-help" className="mt-0.5 text-xs text-[#71817b]">
                                     PNG o JPG, máximo {MAX_FILE_SIZE_LABEL}.
                                 </p>
-                                <label
-                                    htmlFor="logo"
-                                    className="mt-1 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[#174f40] hover:underline"
-                                >
-                                    <Upload aria-hidden="true" className="size-3.5" />
-                                    {logoPreview ? "Cambiar logo" : "Subir nuevo logo"}
-                                </label>
-                                <input
-                                    id="logo"
-                                    name="logoFile"
-                                    type="file"
-                                    accept={LOGO_ACCEPTED_TYPES.join(",")}
-                                    className="sr-only"
-                                    aria-describedby="logo-help logo-error"
-                                    onChange={(event) => handleLogoChange(event.currentTarget.files?.[0])}
-                                />
-                                {logoFile ? (
+                                {CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET ? (
+                                    <CldUploadWidget
+                                        uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                                        onSuccess={handleLogoUpload}
+                                        onError={() => setLogoError("No se pudo subir la imagen. Intentá nuevamente.")}
+                                        options={{
+                                            maxFiles: 1,
+                                            multiple: false,
+                                            folder: "hostflow/logos",
+                                            sources: ["local", "url"],
+                                            clientAllowedFormats: ["png", "jpg", "jpeg"],
+                                            maxFileSize: LOGO_MAX_BYTES,
+                                            cropping: true,
+                                            croppingAspectRatio: 1,
+                                            language: "es",
+                                        }}
+                                    >
+                                        {({ open, isLoading }) => (
+                                            <button
+                                                type="button"
+                                                onClick={() => open()}
+                                                disabled={isLoading}
+                                                className="mt-1 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[#174f40] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+                                            >
+                                                <Upload aria-hidden="true" className="size-3.5" />
+                                                {isLoading ? "Subiendo…" : logoUrl ? "Cambiar logo" : "Subir nuevo logo"}
+                                            </button>
+                                        )}
+                                    </CldUploadWidget>
+                                ) : (
+                                    <p className="mt-1 text-xs text-[#a33c2f]">
+                                        Error al subir el logo.
+                                    </p>
+                                )}
+                                {logoUrl ? (
                                     <button
                                         type="button"
-                                        onClick={() => {
-                                            if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-                                            previewUrlRef.current = null;
-                                            setLogoFile(null);
-                                            setLogoPreview(initialLogo ?? null);
-                                        }}
+                                        onClick={() => setLogoUrl(null)}
                                         className="ml-3 text-xs text-[#8a3c30] hover:underline"
                                     >
                                         <X aria-hidden="true" className="mr-1 inline size-3.5" />
-                                        Quitar selección
+                                        Quitar logo
                                     </button>
                                 ) : null}
                             </div>
@@ -448,7 +449,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         </div>
                     </CardContent>
                 </Card>
-                  <div className="flex items-center justify-between gap-4 rounded-xl bg-[#eef4f1] px-4 py-3.5">
+                <div className="flex items-center justify-between gap-4 rounded-xl bg-[#eef4f1] px-4 py-3.5">
                     <div>
                         <p className="text-sm font-semibold text-[#172c28]">
                             Complejo {isOpen ? "abierto" : "cerrado"}<RequiredMark />
@@ -467,9 +468,8 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         aria-required="true"
                         aria-label="Complejo abierto"
                         onClick={() => setIsOpen((open) => !open)}
-                        className={`flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28745b] focus-visible:ring-offset-2 ${
-                            isOpen ? "justify-end bg-[#28745b]" : "justify-start bg-[#a7b3ae]"
-                        }`}
+                        className={`flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28745b] focus-visible:ring-offset-2 ${isOpen ? "justify-end bg-[#28745b]" : "justify-start bg-[#a7b3ae]"
+                            }`}
                     >
                         <span className="size-4 rounded-full bg-white shadow-sm" />
                     </button>

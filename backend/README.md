@@ -61,6 +61,8 @@ Direcciones útiles:
 
 ## Variables de entorno
 
+Las variables solo aplican al correr con Maven o en Render
+
 | Variable | Obligatoria | Valor por defecto | Descripción |
 |---|---|---|---|
 | `SPRING_DATASOURCE_URL` | No | MySQL en `localhost:3306/mydatabase` | URL JDBC de la base |
@@ -109,20 +111,20 @@ Las respuestas exitosas llegan dentro de `data`. Las rutas privadas requieren `A
 
 | Método y ruta | Descripción |
 |---|---|
-| `POST /api/v1/auth/register` | Registro de dueño; devuelve `data.accessToken` |
-| `POST /api/v1/auth/login` | Inicio de sesión; devuelve `data.accessToken` |
-| `POST /api/v1/auth/logout` | Cierre de sesión |
+| `POST /api/auth/register` | Registro de dueño; devuelve `data.accessToken` |
+| `POST /api/auth/login` | Inicio de sesión; devuelve `data.accessToken` |
+| `POST /api/auth/logout` | Cierre de sesión |
 
 ### Complejos (privada)
 
 | Método y ruta | Descripción |
 |---|---|
-| `POST /api/v1/complexes` | Crear complejo (nombre, dirección, datos de transferencia y `logoUrl` opcionales) |
-| `GET /api/v1/complexes` | Listar los complejos del dueño |
-| `GET /api/v1/complexes/{id}` | Ver un complejo |
-| `PUT /api/v1/complexes/{id}` | Editar nombre, dirección, color y logo (reemplaza: sin `logoUrl` se quita el logo) |
-| `PATCH /api/v1/complexes/{id}/payment-info` | Editar titular, alias o CBU y banco |
-| `PATCH /api/v1/complexes/{id}/status` | Abrir o cerrar el complejo: `{"open": true}` |
+| `POST /api/complexes` | Crear complejo (nombre, dirección, datos de transferencia y `logoUrl` opcionales) |
+| `GET /api/complexes` | Listar los complejos del dueño |
+| `GET /api/complexes/{id}` | Ver un complejo |
+| `PUT /api/complexes/{id}` | Editar nombre, dirección, color y logo (reemplaza: sin `logoUrl` se quita el logo) |
+| `PATCH /api/complexes/{id}/payment-info` | Editar titular, alias o CBU y banco |
+| `PATCH /api/complexes/{id}/status` | Abrir o cerrar el complejo: `{"open": true}` |
 
 El slug lo genera el backend a partir del nombre.
 
@@ -134,17 +136,17 @@ Alta, listado, edición y activación o desactivación de los adicionales de un 
 
 | Método y ruta | Descripción |
 |---|---|
-| `POST /api/v1/complexes/{complexId}/bookings` | Crear una reserva manual |
-| `GET /api/v1/complexes/{complexId}/bookings` | Listar reservas; filtro opcional `?status=PENDIENTE`, `CONFIRMADA`, `FINALIZADA` o `CANCELADA` |
-| `GET /api/v1/bookings/{id}` | Detalle de una reserva (incluye adicionales y solicitud de bote) |
-| `PATCH /api/v1/bookings/{id}/status` | Cambiar el estado de la reserva |
+| `POST /api/complexes/{complexId}/bookings` | Crear una reserva manual |
+| `GET /api/complexes/{complexId}/bookings` | Listar reservas; filtro opcional `?status=PENDIENTE`, `CONFIRMADA`, `FINALIZADA` o `CANCELADA` |
+| `GET /api/bookings/{id}` | Detalle de una reserva (incluye adicionales y solicitud de bote) |
+| `PATCH /api/bookings/{id}/status` | Cambiar el estado de la reserva |
 
 ### Público (sin autenticación)
 
 | Método y ruta | Descripción |
 |---|---|
-| `GET /api/v1/public/complexes/{slug}` | Ficha del complejo: nombre, dirección, `logoUrl`, color, `open` y adicionales activos con su `imageUrl` |
-| `POST /api/v1/public/complexes/{slug}/onboarding` | El huésped completa la ficha y se crea la reserva en estado `PENDIENTE` |
+| `GET /api/public/complexes/{slug}` | Ficha del complejo: nombre, dirección, `logoUrl`, color, `open` y adicionales activos con su `imageUrl` |
+| `POST /api/public/complexes/{slug}/onboarding` | El huésped completa la ficha y se crea la reserva en estado `PENDIENTE` |
 
 Cuerpo del onboarding:
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/public/complexes")
+@RequestMapping("/api/public/complexes")
 @RequiredArgsConstructor
 @Tag(name = "Ficha pública", description = "Datos públicos del complejo para la ficha del huésped (no requiere autenticación)")
 public class PublicComplexController {

@@ -1,11 +1,37 @@
 import Link from "next/link";
-import { Building2, LayoutDashboard, LogIn } from "lucide-react";
+import { headers } from "next/headers";
+import { Building2, LayoutDashboard, Link2, LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { hasMockSession } from "@/services/auth/mock-session.server";
 
+export const instant = false;
+
 export default async function NotFound() {
-  const sessionActive = await hasMockSession();
+  const [sessionActive, requestHeaders] = await Promise.all([
+    hasMockSession(),
+    headers(),
+  ]);
+  const referer = requestHeaders.get("referer");
+  const requestHost = requestHeaders.get("x-forwarded-host")?.split(",")[0]?.trim()
+    ?? requestHeaders.get("host");
+  let backToOnboarding = false;
+  let onboardingHref = "/onboarding";
+
+  if (referer && requestHost) {
+    try {
+      const refererUrl = new URL(referer);
+      if (refererUrl.host === requestHost && refererUrl.pathname === "/onboarding") {
+        backToOnboarding = true;
+        const selectedComplex = refererUrl.searchParams.get("complejo");
+        if (selectedComplex) {
+          onboardingHref += `?complejo=${encodeURIComponent(selectedComplex)}`;
+        }
+      }
+    } catch {
+      // Ignore malformed referrers and keep the default 404 destination.
+    }
+  }
 
   return (
     <main className="flex min-h-dvh items-center justify-center bg-[#f5f8f6] px-6 py-12 text-[#172c28]">
@@ -31,11 +57,15 @@ export default async function NotFound() {
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Button
               nativeButton={false}
-              render={<Link href="/complejos" />}
+              render={<Link href={backToOnboarding ? onboardingHref : "/complejos"} />}
               className="h-11 gap-2 bg-[#174f40] px-4 text-white hover:bg-[#21634f]"
             >
-              <Building2 className="size-4" aria-hidden="true" />
-              Volver a complejos
+              {backToOnboarding ? (
+                <Link2 className="size-4" aria-hidden="true" />
+              ) : (
+                <Building2 className="size-4" aria-hidden="true" />
+              )}
+              {backToOnboarding ? "Volver a onboarding" : "Volver a complejos"}
             </Button>
             <Button
               nativeButton={false}

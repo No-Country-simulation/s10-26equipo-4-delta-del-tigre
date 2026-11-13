@@ -223,7 +223,19 @@ HostFlow busca que el ingreso de datos del huésped, la solicitud de adicionales
 
 ## Configuración de contenedores
 
-Para desarrollo local, copia la plantilla y levanta el stack desde la raíz del repositorio:
+Para desarrollo local, puedes levantar el stack desde la raíz con los valores por defecto de desarrollo. Los scripts también activan el perfil `development` cuando no existe `.env`:
+
+```powershell
+.\delta.ps1 up
+```
+
+En Linux/macOS:
+
+```bash
+bash ./delta.sh up
+```
+
+Si prefieres usar Compose directamente sin `.env`, activa el perfil explícitamente con `COMPOSE_PROFILES=development` en el entorno. Si prefieres personalizar la configuración local, copia la plantilla:
 
 ```powershell
 Copy-Item .env.desarrollo .env -Force
@@ -234,15 +246,21 @@ Para empezar a preparar producción, usa `Copy-Item .env.produccion .env -Force`
 
 La plantilla de desarrollo usa credenciales solo locales. No reutilices esas contraseñas fuera de tu equipo. Mailpit se inicia con el perfil `development`; su interfaz está disponible en `http://localhost:8025`.
 
-Para preparar producción, copia `.env.produccion` como `.env` y completa cada valor requerido. Los campos vacíos están intencionalmente incompletos: Compose se detendrá si falta una variable obligatoria. No despliegues esa plantilla sin rellenar y revisar secretos, imágenes y parámetros TLS. No subas el `.env` resultante al repositorio; en producción, inyecta los secretos desde el gestor de secretos de la plataforma siempre que sea posible.
+Para producción distribuida, configura las variables directamente en Render, Vercel y los gestores de secretos de esos servicios. No subas credenciales ni el `.env` resultante al repositorio. Los defaults de Compose son solo para desarrollo.
 
-`NEXT_PUBLIC_API_URL` se incorpora al bundle del frontend durante la compilación y debe ser una URL HTTPS accesible desde el navegador de los usuarios. Configura un proxy inverso con TLS para publicar frontend y API; los puertos de los contenedores se enlazan solo a `127.0.0.1` en el host.
+Para el backend en Render con MySQL en Aiven, activa `SPRING_PROFILES_ACTIVE=production` y configura al menos:
 
-El backend autentica con JWT: define JWT_SECRET (mínimo 32 caracteres) en el .env.
+- `SPRING_DATASOURCE_URL`: URL JDBC de Aiven con host, puerto, base de datos y la configuración TLS indicada por Aiven.
+- `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_PASSWORD`.
+- `JWT_SECRET`: secreto aleatorio propio de al menos 32 caracteres.
+- `CORS_ALLOWED_ORIGINS`: origen HTTPS exacto de Vercel; separa varios orígenes con comas.
+- `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME` y `SPRING_MAIL_PASSWORD` del SMTP de Brevo. El perfil de producción habilita autenticación y STARTTLS de forma predeterminada; se pueden sobrescribir con `SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH` y `SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE`.
+
+Render proporciona `PORT`; Spring lo prioriza automáticamente y conserva `SERVER_PORT`/8080 como alternativa local. En Vercel, configura `NEXT_PUBLIC_API_URL` con la URL HTTPS pública de Render. Next.js la incorpora al bundle durante la compilación, así que hay que volver a desplegar Vercel si cambia. El frontend actual todavía usa un mock para el login y algunas rutas difieren de las publicadas por el backend: la conectividad de red no corrige esos desacuerdos de API.
 
 ### Scripts de desarrollo y Dev Container
 
-Los scripts `delta.ps1` (Windows) y `delta.sh` (Linux/macOS) administran Compose. Ejecuta `init` una vez para crear `.env` desde la plantilla de desarrollo; no sobrescribe un `.env` existente:
+Los scripts `delta.ps1` (Windows) y `delta.sh` (Linux/macOS) administran Compose. Ejecuta `init` si quieres crear `.env` desde la plantilla de desarrollo; no sobrescribe un `.env` existente:
 
 ```powershell
 .\delta.ps1 init
@@ -255,8 +273,4 @@ Los scripts `delta.ps1` (Windows) y `delta.sh` (Linux/macOS) administran Compose
 
 En Linux/macOS, usa los mismos comandos con `bash ./delta.sh`, o dale permiso de ejecución con `chmod +x ./delta.sh` y ejecútalo como `./delta.sh`. `connect` sin servicio abre una shell en `workspace`; también puedes indicar `backend`, `frontend`, `mysql`, `redis` o `mailpit`. `down` conserva los volúmenes de datos.
 
-En Linux/macOS el script pasa `id -u` e `id -g` a la construcción del contenedor `workspace`; en Windows usa `1000:1000`. No ejecutes el script como root en Linux/macOS. El servicio de desarrollo monta el proyecto y ejecuta VS Code con el usuario `vscode` que recibe esos IDs. MySQL y Redis conservan sus usuarios internos porque escriben en volúmenes Docker, no en carpetas del host; las imágenes del backend y frontend también mantienen sus usuarios no-root. Para VS Code Dev Containers, crea primero `.env` con `init` y luego abre el proyecto en el contenedor; `.devcontainer/devcontainer.json` se conecta al servicio `workspace`.
-
-## Backend
-
-La API (Spring Boot) tiene su propia guía en [backend/README.md](backend/README.md): requisitos, variables de entorno, cómo levantarla y probarla, y el contrato de la API.
+En Linux/macOS el script pasa `id -u` e `id -g` a la construcción del contenedor `workspace`; en Windows usa `1000:1000`. No ejecutes el script como root en Linux/macOS. Sin `.env`, los scripts activan el perfil `development`; el servicio monta el proyecto y ejecuta VS Code con el usuario `vscode` que recibe esos IDs. MySQL y Redis conservan sus usuarios internos porque escriben en volúmenes Docker, no en carpetas del host; las imágenes del backend y frontend también mantienen sus usuarios no-root. Para VS Code Dev Containers, puedes crear `.env` con `init` o dejar que Compose use sus defaults; `.devcontainer/devcontainer.json` se conecta al servicio `workspace`.

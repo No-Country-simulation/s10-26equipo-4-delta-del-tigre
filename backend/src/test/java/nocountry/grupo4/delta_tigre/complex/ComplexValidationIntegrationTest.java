@@ -23,7 +23,7 @@ class ComplexValidationIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
@@ -33,7 +33,7 @@ class ComplexValidationIntegrationTest {
     }
 
     private String create(String token, String json, int expectedStatus) throws Exception {
-        return mvc.perform(post("/api/v1/complexes")
+        return mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus))
@@ -41,7 +41,7 @@ class ComplexValidationIntegrationTest {
     }
 
     private void update(String token, String id, String json, int expectedStatus) throws Exception {
-        mvc.perform(put("/api/v1/complexes/" + id)
+        mvc.perform(put("/api/complexes/" + id)
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().is(expectedStatus));
