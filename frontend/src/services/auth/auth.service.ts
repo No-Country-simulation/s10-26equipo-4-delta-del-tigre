@@ -7,14 +7,14 @@ import type {
 } from "@/types/auth.types";
 
 export function loginRequest(credentials: AuthCredentials): Promise<AuthToken> {
-  return apiRequest<AuthToken>("/api/v1/auth/login", {
+  return apiRequest<AuthToken>("/api/auth/login", {
     method: "POST",
     body: JSON.stringify(credentials),
   });
 }
 
 export function registerRequest(data: RegisterData): Promise<AuthToken> {
-  return apiRequest<AuthToken>("/api/v1/auth/register", {
+  return apiRequest<AuthToken>("/api/auth/register", {
     method: "POST",
     body: JSON.stringify({
       name: data.name,
@@ -25,11 +25,11 @@ export function registerRequest(data: RegisterData): Promise<AuthToken> {
 }
 
 export function fetchMe(token: string): Promise<AuthUser> {
-  return apiRequest<AuthUser>("/api/v1/auth/me", { token });
+  return apiRequest<AuthUser>("/api/auth/me", { token });
 }
 
 export async function logoutRequest(token: string): Promise<void> {
-  await apiRequest<null>("/api/v1/auth/logout", {
+  await apiRequest<null>("/api/auth/logout", {
     method: "POST",
     token,
   });

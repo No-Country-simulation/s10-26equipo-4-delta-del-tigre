@@ -12,7 +12,11 @@ import { Button } from "@/components/ui/button";
 import { ComplejoSelector } from "@/components/complejo-selector";
 import { getOwnedComplejos } from "../complejos/data/complejos.data";
 import { actualizarEstadoAdicional, eliminarAdicional } from "./actions";
-import { formatearPrecio, listarAdicionales, type Adicional } from "./data/adicionales.data";
+import {
+    formatearPrecio,
+    listarAdicionales,
+    type Adicional,
+} from "./data/adicionales.data";
 
 type SearchParams = Promise<{
     complejo?: string | string[];
@@ -188,15 +192,20 @@ export default async function AdicionalesPage({ searchParams }: { searchParams: 
     const complejoParam = typeof params.complejo === "string" ? params.complejo : undefined;
     const complejoActual = complejos.find((complejo) => complejo.id === complejoParam) ?? complejos[0];
 
+
     let adicionales: Adicional[] = [];
     let errorDeCarga = false;
+
     try {
         adicionales = await listarAdicionales(complejoActual.id);
-    } catch {
+    } catch (error) {
+        console.error("Error cargando adicionales:", error);
         errorDeCarga = true;
     }
 
-    const puedeEliminar = !process.env.NEXT_PUBLIC_API_URL?.trim();
+    const puedeEliminar = false;
+
+
 
     const mensajeExito = params.creado === "1"
         ? "Adicional creado correctamente."
@@ -269,7 +278,7 @@ export default async function AdicionalesPage({ searchParams }: { searchParams: 
                 </div>
             ) : null}
 
-            {adicionales.length > 0 ? (
+            {!errorDeCarga && adicionales.length > 0 ? (
                 <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                     {adicionales.map((adicional) => (
                         <AdicionalCard

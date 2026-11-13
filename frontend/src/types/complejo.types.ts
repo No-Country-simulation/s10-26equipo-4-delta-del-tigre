@@ -17,12 +17,14 @@ export interface CreateComplexInput {
   accountHolder?: string;
   aliasCbu?: string;
   bank?: string;
+  logoUrl?: string;
 }
 
 export interface UpdateComplexInput {
   name: string;
   address?: string;
   brandColors?: string;
+  logoUrl?: string;
 }
 
 export interface PaymentInfoInput {

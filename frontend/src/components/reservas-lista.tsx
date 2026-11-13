@@ -14,10 +14,10 @@ import {
 import {
     formatFecha,
     formatTotal,
-    getReservas,
     iniciales,
     type FiltrosReservas,
-} from "../lib/reservas";
+} from "@/lib/reservas";
+import { getReservas } from "@/app/(admin)/reservas/data/reservas.data";
 import { EstadoBadge } from "./estado-badge";
 
 const COLUMNAS = ["Huésped", "Complejo", "Check-in", "Check-out", "Huéspedes", "Total", "Estado"];
@@ -37,9 +37,8 @@ function Encabezado() {
                 {COLUMNAS.map((col, i) => (
                     <TableHead
                         key={col}
-                        className={`h-12 text-xs font-semibold uppercase tracking-wider text-[#71817b] ${
-                            i === 0 ? "pl-6" : ""
-                        }`}
+                        className={`h-12 text-xs font-semibold uppercase tracking-wider text-[#71817b] ${i === 0 ? "pl-6" : ""
+                            }`}
                     >
                         {col}
                     </TableHead>
@@ -88,7 +87,11 @@ export async function ReservasLista(filtros: FiltrosReservas) {
                         <TableCell className="text-[#4f5f59]">{formatFecha(r.checkIn)}</TableCell>
                         <TableCell className="text-[#4f5f59]">{formatFecha(r.checkOut)}</TableCell>
                         <TableCell className="text-[#4f5f59]">
-                            {r.personas} {r.personas === 1 ? "persona" : "personas"}
+                            {r.personas != null ? (
+                                `${r.personas} ${r.personas === 1 ? "persona" : "personas"}`
+                            ) : (
+                                <NoDisponible />
+                            )}
                         </TableCell>
                         <TableCell className="text-[#4f5f59]">
                             {r.total != null ? formatTotal(r.total) : <NoDisponible />}
@@ -132,7 +135,7 @@ function ListaVacia({ hayFiltros }: { hayFiltros: boolean }) {
                 <p className="mt-1 text-sm text-[#71817b]">
                     {hayFiltros
                         ? "Probá con otro nombre o quitá el filtro de estado."
-                        : "Cuando cargues la primera reserva, va a aparecer acá."}
+                        : "Compartí el link de onboarding con tus huéspedes y sus reservas van a aparecer acá."}
                 </p>
             </div>
             {hayFiltros ? (
@@ -147,10 +150,10 @@ function ListaVacia({ hayFiltros }: { hayFiltros: boolean }) {
             ) : (
                 <Button
                     nativeButton={false}
-                    render={<Link href="/reservas/nueva" />}
+                    render={<Link href="/onboarding" />}
                     className="rounded-xl bg-[#174f40] text-white hover:bg-[#123f33]"
                 >
-                    Nueva reserva
+                    Compartir link de onboarding
                 </Button>
             )}
         </div>

@@ -6,12 +6,17 @@ import { ChevronDownIcon } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
 
-type Props = {
-    complejos: { id: string; nombre: string }[];
-    value: string;
+type Complejo = {
+    id: string;
+    nombre: string;
 };
 
-export function ComplejoSelector({ complejos, value }: Props) {
+type Props = {
+    value: string;
+    complejos: Complejo[];
+};
+
+export function ComplejoSelector({ value, complejos }: Props) {
     const router = useRouter();
     const pathname = usePathname();
     const [pending, startTransition] = useTransition();

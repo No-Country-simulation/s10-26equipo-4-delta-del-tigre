@@ -111,10 +111,19 @@ export async function apiRequest<T>(
       headers,
       cache: init.cache ?? "no-store",
     });
-  } catch {
+  } catch (error) {
+    console.error("Error al conectar con la API:", {
+      url: `${baseUrl}${path}`,
+      error,
+    });
+
     throw new ApiError(
-      "No se pudo conectar con el servidor. Revisá tu conexión e intentá nuevamente.",
+      error instanceof Error
+        ? `Error de conexión: ${error.message}`
+        : "No se pudo conectar con el servidor.",
       0,
+      {},
+      error,
     );
   }
 

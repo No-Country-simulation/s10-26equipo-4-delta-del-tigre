@@ -109,6 +109,7 @@ export async function crearComplejoAction(
       accountHolder: payment?.accountHolder,
       aliasCbu: payment?.aliasCbu,
       bank: payment?.bank,
+      logoUrl: values.logoUrl || undefined,
     });
 
     if (values.coloresMarca) {
@@ -116,6 +117,7 @@ export async function crearComplejoAction(
         name: values.nombre,
         address: values.direccion,
         brandColors: values.coloresMarca,
+        logoUrl: values.logoUrl || undefined,
       });
     }
 
@@ -145,6 +147,7 @@ export async function actualizarComplejoAction(
       name: values.nombre,
       address: values.direccion,
       brandColors: values.coloresMarca || undefined,
+      logoUrl: values.logoUrl || undefined,
     });
 
     const payment = paymentInfo(values);

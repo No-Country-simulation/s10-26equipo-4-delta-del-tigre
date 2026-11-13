@@ -14,20 +14,16 @@ export default async function EditarComplejoPage({ params }: { params: Params })
     return (
         <ComplejoForm
             complejoId={complejo.id}
-            initialLogo={complejo.logo}
+            initialSlug={complejo.slug}
             initialValues={{
                 nombre: complejo.nombre,
                 direccion: complejo.direccion,
+                logoUrl: complejo.logo ?? "",
                 estadoOperativo: complejo.estadoOperativo ?? "abierto",
-                slug: complejo.slug ?? "",
                 coloresMarca: complejo.coloresMarca ?? "",
-                minPersonas: complejo.minPersonas ?? undefined,
-                maxPersonas: complejo.maxPersonas ?? undefined,
-                maxReservas: complejo.maxReservas ?? undefined,
                 titularCuenta: complejo.titularCuenta ?? "",
                 aliasCbu: complejo.aliasCbu ?? "",
                 banco: complejo.banco ?? "",
-                cuenta: complejo.cuenta ?? "",
             }}
         />
     );
