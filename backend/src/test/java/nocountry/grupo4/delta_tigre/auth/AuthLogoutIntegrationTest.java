@@ -23,7 +23,7 @@ class AuthLogoutIntegrationTest {
 
     @Test
     void logout_without_token_returns_200() throws Exception {
-        mvc.perform(post("/api/v1/auth/logout"))
+        mvc.perform(post("/api/auth/logout"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Sesión cerrada"));
     }
@@ -31,11 +31,11 @@ class AuthLogoutIntegrationTest {
     @Test
     void logout_with_valid_token_returns_200() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         String token = JsonPath.read(response, "$.data.accessToken");
 
-        mvc.perform(post("/api/v1/auth/logout").header("Authorization", "Bearer " + token))
+        mvc.perform(post("/api/auth/logout").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Sesión cerrada"));
     }

@@ -33,13 +33,13 @@ class PublicComplexIntegrationTest {
 
     private String registerAndGetToken() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID() + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
 
     private String create(String token, String json) throws Exception {
-        return mvc.perform(post("/api/v1/complexes")
+        return mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content(json))
                 .andExpect(status().isCreated())
@@ -66,7 +66,7 @@ class PublicComplexIntegrationTest {
         String id = JsonPath.read(created, "$.data.id");
         String slug = JsonPath.read(created, "$.data.slug");
 
-        mvc.perform(get("/api/v1/public/complexes/" + slug))
+        mvc.perform(get("/api/public/complexes/" + slug))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(id))
                 .andExpect(jsonPath("$.data.name").value("Publico Visible"))
@@ -80,7 +80,7 @@ class PublicComplexIntegrationTest {
 
     @Test
     void get_by_unknown_slug_returns_404() throws Exception {
-        mvc.perform(get("/api/v1/public/complexes/no-existe-xyz-" + UUID.randomUUID()))
+        mvc.perform(get("/api/public/complexes/no-existe-xyz-" + UUID.randomUUID()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Complejo no encontrado"));
     }
@@ -94,7 +94,7 @@ class PublicComplexIntegrationTest {
         saveAddon(id, "Desayuno Activo", "1500.00", true);
         saveAddon(id, "Kayak Inactivo", "8000.00", false);
 
-        mvc.perform(get("/api/v1/public/complexes/" + slug))
+        mvc.perform(get("/api/public/complexes/" + slug))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.addons.length()").value(1))
                 .andExpect(jsonPath("$.data.addons[0].name").value("Desayuno Activo"))
@@ -109,7 +109,7 @@ class PublicComplexIntegrationTest {
         saveAddon(JsonPath.read(first, "$.data.id"), "Solo Del Uno", "900.00", true);
         String secondSlug = JsonPath.read(second, "$.data.slug");
 
-        mvc.perform(get("/api/v1/public/complexes/" + secondSlug))
+        mvc.perform(get("/api/public/complexes/" + secondSlug))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.addons").isEmpty());
     }

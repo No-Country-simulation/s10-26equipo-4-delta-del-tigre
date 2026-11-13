@@ -76,7 +76,7 @@ export async function obtenerAdicionalesApi(complexId: string): Promise<unknown[
     if (!apiUrl) return undefined;
 
     const response = await fetch(
-        `${apiUrl}/api/v1/complexes/${encodeURIComponent(complexId)}/addons`,
+        `${apiUrl}/api/complexes/${encodeURIComponent(complexId)}/addons`,
         {
             headers: { Accept: "application/json" },
             cache: "no-store",
@@ -101,7 +101,7 @@ export async function crearAdicionalApi(
     if (!apiUrl) return undefined;
 
     const response = await fetch(
-        `${apiUrl}/api/v1/complexes/${encodeURIComponent(complexId)}/addons`,
+        `${apiUrl}/api/complexes/${encodeURIComponent(complexId)}/addons`,
         {
             method: "POST",
             headers: {
@@ -130,7 +130,7 @@ export async function actualizarAdicionalApi(
     const apiUrl = getApiUrl();
     if (!apiUrl) return undefined;
 
-    const response = await fetch(`${apiUrl}/api/v1/addons/${encodeURIComponent(id)}`, {
+    const response = await fetch(`${apiUrl}/api/addons/${encodeURIComponent(id)}`, {
         method: "PUT",
         headers: {
             Accept: "application/json",
@@ -158,7 +158,7 @@ export async function actualizarEstadoAdicionalApi(
     if (!apiUrl) return undefined;
 
     const response = await fetch(
-        `${apiUrl}/api/v1/addons/${encodeURIComponent(id)}/status`,
+        `${apiUrl}/api/addons/${encodeURIComponent(id)}/status`,
         {
             method: "PATCH",
             headers: {
@@ -184,7 +184,7 @@ export async function eliminarAdicionalApi(id: string): Promise<unknown | undefi
     const apiUrl = getApiUrl();
     if (!apiUrl) return undefined;
 
-    const response = await fetch(`${apiUrl}/api/v1/addons/${encodeURIComponent(id)}`, {
+    const response = await fetch(`${apiUrl}/api/addons/${encodeURIComponent(id)}`, {
         method: "DELETE",
         headers: { Accept: "application/json" },
         cache: "no-store",
