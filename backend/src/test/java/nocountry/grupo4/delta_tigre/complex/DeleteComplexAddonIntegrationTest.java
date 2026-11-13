@@ -39,7 +39,7 @@ class DeleteComplexAddonIntegrationTest {
     private String register() throws Exception {
         String body = "{\"name\":\"Ana Perez\",\"email\":\"" + UUID.randomUUID()
                 + "@mail.com\",\"password\":\"clave-segura-1\"}";
-        String response = mvc.perform(post("/api/v1/auth/register").contentType(APPLICATION_JSON).content(body))
+        String response = mvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(response, "$.data.accessToken");
     }
@@ -53,7 +53,7 @@ class DeleteComplexAddonIntegrationTest {
                 "bank": "Banco Nación"
             }
             """;
-        return mvc.perform(post("/api/v1/complexes")
+        return mvc.perform(post("/api/complexes")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON)
                         .content(body))
@@ -83,7 +83,7 @@ class DeleteComplexAddonIntegrationTest {
         String body = "{\"guestName\":\"Ana Perez\",\"guestEmail\":\"g-" + UUID.randomUUID() + "@mail.com\","
                 + "\"checkIn\":\"2099-01-10\",\"checkOut\":\"2099-01-12\",\"guestsCount\":2,"
                 + "\"addons\":[{\"addonId\":\"" + s.addonId() + "\",\"quantity\":1}]}";
-        mvc.perform(post("/api/v1/public/complexes/" + s.slug() + "/onboarding")
+        mvc.perform(post("/api/public/complexes/" + s.slug() + "/onboarding")
                         .contentType(APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated());
     }
@@ -92,12 +92,12 @@ class DeleteComplexAddonIntegrationTest {
     void unused_addon_is_deleted() throws Exception {
         Setup s = setup();
 
-        mvc.perform(delete("/api/v1/addons/" + s.addonId())
+        mvc.perform(delete("/api/addons/" + s.addonId())
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.deleted").value(true));
 
-        mvc.perform(get("/api/v1/complexes/" + s.complexId() + "/addons")
+        mvc.perform(get("/api/complexes/" + s.complexId() + "/addons")
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(0));
@@ -108,13 +108,13 @@ class DeleteComplexAddonIntegrationTest {
         Setup s = setup();
         bookWithAddon(s);
 
-        mvc.perform(delete("/api/v1/addons/" + s.addonId())
+        mvc.perform(delete("/api/addons/" + s.addonId())
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.deleted").value(false))
                 .andExpect(jsonPath("$.data.addon.active").value(false));
 
-        mvc.perform(get("/api/v1/complexes/" + s.complexId() + "/addons")
+        mvc.perform(get("/api/complexes/" + s.complexId() + "/addons")
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
@@ -126,7 +126,7 @@ class DeleteComplexAddonIntegrationTest {
         Setup s = setup();
         String otherToken = register();
 
-        mvc.perform(delete("/api/v1/addons/" + s.addonId())
+        mvc.perform(delete("/api/addons/" + s.addonId())
                         .header("Authorization", "Bearer " + otherToken))
                 .andExpect(status().isNotFound());
         assertThat(addonRepository.findById(s.addonId())).isPresent();
@@ -136,11 +136,11 @@ class DeleteComplexAddonIntegrationTest {
     void complex_without_bookings_is_deleted_with_its_addons() throws Exception {
         Setup s = setup();
 
-        mvc.perform(delete("/api/v1/complexes/" + s.complexId())
+        mvc.perform(delete("/api/complexes/" + s.complexId())
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk());
 
-        mvc.perform(get("/api/v1/complexes/" + s.complexId())
+        mvc.perform(get("/api/complexes/" + s.complexId())
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isNotFound());
         assertThat(addonRepository.findByComplexIdOrderByNameAsc(UUID.fromString(s.complexId()))).isEmpty();
@@ -151,11 +151,11 @@ class DeleteComplexAddonIntegrationTest {
         Setup s = setup();
         bookWithAddon(s);
 
-        mvc.perform(delete("/api/v1/complexes/" + s.complexId())
+        mvc.perform(delete("/api/complexes/" + s.complexId())
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isConflict());
 
-        mvc.perform(get("/api/v1/complexes/" + s.complexId())
+        mvc.perform(get("/api/complexes/" + s.complexId())
                         .header("Authorization", "Bearer " + s.token()))
                 .andExpect(status().isOk());
     }
@@ -165,7 +165,7 @@ class DeleteComplexAddonIntegrationTest {
         Setup s = setup();
         String otherToken = register();
 
-        mvc.perform(delete("/api/v1/complexes/" + s.complexId())
+        mvc.perform(delete("/api/complexes/" + s.complexId())
                         .header("Authorization", "Bearer " + otherToken))
                 .andExpect(status().isNotFound());
     }
@@ -174,9 +174,9 @@ class DeleteComplexAddonIntegrationTest {
     void delete_without_token_is_rejected() throws Exception {
         Setup s = setup();
 
-        mvc.perform(delete("/api/v1/complexes/" + s.complexId()))
+        mvc.perform(delete("/api/complexes/" + s.complexId()))
                 .andExpect(status().is4xxClientError());
-        mvc.perform(delete("/api/v1/addons/" + s.addonId()))
+        mvc.perform(delete("/api/addons/" + s.addonId()))
                 .andExpect(status().is4xxClientError());
     }
 }
