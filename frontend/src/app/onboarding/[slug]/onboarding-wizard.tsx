@@ -16,11 +16,11 @@ import {
 
 import { Input } from "@/components/ui/input";
 import {
-    enviarOnboarding,
     type ComplejoPublico,
     type OnboardingPayload,
     type OnboardingResultado,
 } from "@/services/public/public.service";
+import { enviarOnboardingAction } from "./actions";
 import {
     ALERGIAS_OPCIONES,
     ahoraLocalISO,
@@ -529,13 +529,19 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
 
         setEnviando(true);
         try {
-            const respuesta = await enviarOnboarding(complejo.slug, payload);
-            setResultado(respuesta);
-        } catch (error) {
+            const respuesta = await enviarOnboardingAction(
+                complejo.slug,
+                payload,
+            );
+
+            if (respuesta.ok) {
+                setResultado(respuesta.data);
+            } else {
+                setErrorEnvio(respuesta.message);
+            }
+        } catch {
             setErrorEnvio(
-                error instanceof Error
-                    ? error.message
-                    : "No se pudo enviar el onboarding. Intentá nuevamente.",
+                "No se pudo enviar el onboarding. Intentá nuevamente.",
             );
         } finally {
             setEnviando(false);
