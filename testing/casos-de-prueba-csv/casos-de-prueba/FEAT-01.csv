@@ -1,20 +1,282 @@
-ID,Feature,Historia,Tipo,Título,Precondiciones,Pasos,Datos de prueba,Resultado esperado,Prioridad,Fase,Requisito,Estado
-TC-001,FEAT-01,US-01.1,Funcional,Login exitoso del dueño,Dueño registrado,1. Abrir login; 2. Ingresar correo y contraseña válidos; 3. Pulsar Ingresar,Credenciales del dueño A,Accede al dashboard y ve solo los datos de su complejo,P1,Fase 1,Por definir,No ejecutado
-TC-002,FEAT-01,US-01.1,Negativa,Login con contraseña incorrecta,Dueño registrado,1. Ingresar correo válido; 2. Ingresar contraseña errónea; 3. Pulsar Ingresar,Contraseña incorrecta,Mensaje genérico (no revela si falló el correo o la clave); no ingresa,P1,Fase 1,Por definir,No ejecutado
-TC-003,FEAT-01,US-01.1,Negativa,Login con campos vacíos,Pantalla de login abierta,1. Dejar correo y/o contraseña vacíos; 2. Pulsar Ingresar,Campos vacíos,No avanza; advertencia visible en cada campo vacío,P1,Fase 1,Por definir,No ejecutado
-TC-004,FEAT-01,US-01.1,Partición de equivalencia,Formato de correo en login y registro,Pantalla abierta,1. Ingresar cada valor de la hoja Equivalencia y Límites (EL-EMAIL); 2. Enviar,Ver EL-EMAIL,Solo los formatos válidos avanzan; los inválidos muestran advertencia,P2,Fase 1,Por definir,No ejecutado
-TC-005,FEAT-01,US-01.1,UI / Responsive,"Contraseña enmascarada, sin botón de visualización",Pantalla de login,1. Escribir la contraseña; 2. Buscar opción de mostrarla,Cualquier texto,Caracteres enmascarados y sin botón de ver contraseña,P2,Fase 2,Definido,No ejecutado
-TC-006,FEAT-01,US-01.1,Funcional,Enlaces '¿Olvidaste tu contraseña?' y '¿Aún no tienes cuenta?',Pantalla de login,1. Pulsar cada enlace,N/A,Ambos enlaces existen y llevan a su pantalla,P2,Fase 2,Definido,No ejecutado
-TC-007,FEAT-01,US-01.1,Negativa,Acceso al dashboard sin sesión,Sin sesión iniciada,1. Pegar en el navegador la URL de una pantalla del dashboard,URL directa,Redirige al login; no muestra datos,P1,Fase 1,Por definir,No ejecutado
-TC-008,FEAT-01,US-01.1,Negativa,Botón Atrás tras cerrar sesión,Dueño con sesión iniciada,1. Cerrar sesión; 2. Pulsar el botón Atrás del navegador,Sesión cerrada,No se muestran datos del complejo; pide iniciar sesión de nuevo,P1,Fase 1,Por definir,No ejecutado
-TC-009,FEAT-01,US-01.1,Negativa,Un dueño no ve datos de otro complejo (ID cambiado en la URL),Dueños A y B con complejos distintos,1. Iniciar sesión como A; 2. Cambiar el ID del complejo en la URL por el de B,ID de B en la URL,Acceso denegado o mensaje claro; no se ve ni edita nada de B,P1,Fase 1,Definido,No ejecutado
-TC-010,FEAT-01,US-01.2,Funcional,Configurar branding con datos válidos,Dueño con sesión,"1. Completar nombre, dirección, color HEX y logo válidos; 2. Guardar","Nombre, dirección, #FF5733, logo.png 500 KB",Se guarda y aparece un mensaje de éxito,P1,Fase 1,Definido,No ejecutado
-TC-011,FEAT-01,US-01.2,Negativa,Campos obligatorios del complejo vacíos,Dueño con sesión,"1. Dejar vacío uno por uno: nombre, dirección, color y logo; 2. Guardar",Un campo vacío por intento,No guarda; advertencia en el campo faltante,P1,Fase 1,Definido,No ejecutado
-TC-012,FEAT-01,US-01.2,Valor límite,Peso máximo del logo (2 MB),Dueño con sesión,1. Subir cada archivo de EL-LOGO-PESO,Ver EL-LOGO-PESO,Se acepta hasta 2 MB; más de 2 MB muestra error claro,P1,Fase 1,Definido,No ejecutado
-TC-013,FEAT-01,US-01.2,Partición de equivalencia,Formatos permitidos del logo (.png y .jpg),Dueño con sesión,1. Subir cada archivo de EL-LOGO-FMT,Ver EL-LOGO-FMT,Solo .png y .jpg se aceptan; los demás muestran error claro,P1,Fase 1,Definido,No ejecutado
-TC-014,FEAT-01,US-01.2,Funcional,Logo y color se aplican en la ficha del turista,Complejo configurado,1. Abrir la ficha pública del complejo,Enlace de onboarding,Se ven el logo y el color definidos,P1,Fase 1,Definido,No ejecutado
-TC-015,FEAT-01,US-01.2,UI / Responsive,Estado visual por defecto sin logo,Complejo sin logo (si el sistema lo permite),1. Abrir la ficha pública,N/A,"Se muestra un estado por defecto presentable, sin imagen rota",P2,Fase 2,Definido,No ejecutado
-TC-016,FEAT-01,US-01.2,Partición de equivalencia,Código de color HEX,Dueño con sesión,1. Ingresar cada valor de EL-HEX; 2. Guardar,Ver EL-HEX,Solo HEX válidos se aceptan; los demás muestran advertencia,P2,Fase 1,Definido,No ejecutado
-TC-017,FEAT-01,US-01.3,Funcional,Desactivar complejo con el toggle,Complejo activo,1. Desactivar el toggle; 2. Abrir la ficha pública en otra ventana,Enlace de onboarding,Recuadro gris con 'Complejo no disponible'; no permite ingresos,P1,Fase 1,Definido,No ejecutado
-TC-018,FEAT-01,US-01.3,Funcional,Reactivar un complejo desactivado,Complejo desactivado,1. Activar el toggle; 2. Abrir la ficha pública,Enlace de onboarding,La ficha vuelve a estar disponible y el formulario funciona,P1,Fase 1,Definido,No ejecutado
-TC-019,FEAT-01,US-01.3,Funcional,Dar de baja / eliminar complejo,Complejo existente,1. Pulsar 'Dar de baja complejo'; 2. Confirmar (si existe confirmación),N/A,El complejo se elimina de forma definitiva; la ficha deja de estar disponible,P2,Fase 2,Definido,No ejecutado
+ID,Feature,User Story,Tipo de prueba,Título,Precondiciones,Pasos,Datos de prueba,Resultado esperado,Prioridad,Fase,Requisito,Estado,Resultado obtenido,Dispositivo / Navegador,Fecha ejecución,Bug (ID / GitHub),Responsable,Notas,Resumen EL (auto),Revisión (auto) vacío = todo OK
+TC-001,FEAT-01,US-01.1,Funcional,[UI + API] Registro exitoso del dueño,Dueño no registrado,"1. Abrir la pagina de registro
+2. Ingresar nombre, correo y contraseña válidos
+3. Pulsar enviar",Credenciales del dueño A,Se guarda correctamente. Se confirma al ingresar al login,P1,Fase 1,Definido,N/A,,Chrome,,,,,,
+TC-002,FEAT-01,US-01.1,Partición de equivalencia,[UI + API] Registro con contraseñas incorrectas,Dueño no registrado,"1. Ingresar nombre válido y correo válido
+2. Ingresar cada valor de la hoja Equivalencia y Límites (EL-PWD)
+3. Pulsar enviar",Contraseña incorrecta,"Mensaje genérico de error ""La contraseña debe tener al menos 8 caracteres.""; y no ingresa",P1,Fase 2,Definido,Pasó,"Mensaje genérico ""La contraseña debe tener al menos 8 caracteres.""; y no ingresa
+con la segunda revision Todas las pruebas relacionadas a este caso pasan la prueba por eso la pongo como estado pasó",Chrome,2026-10-25,BUG-004,,,6 pasó · 5 falló · 0 bloq. · 0 pend.,La EL tiene fallos: revisar Estado.
+TC-003,FEAT-01,US-01.1,Negativa,[UI + API] Registro con campos vacíos,Pantalla de registro abierta,"1. Dejar nombre, correo y contraseña vacíos
+2. Pulsar Ingresar",Campos vacíos,No avanza; advertencia visible en cada campo vacío,P1,Fase 1,Definido,Pasó,No avanza; advertencia visible en cada campo,Chrome,2026-10-25,,,,,
+TC-004,FEAT-01,US-01.1,Partición de equivalencia,[UI + API] Formato de correo en Registro / Dueño,Pantalla abierta,"1. Ingresar cada valor de la hoja Equivalencia y Límites (EL-EMAIL-D)
+2. Enviar",Ver EL-EMAIL-D,Solo los formatos válidos avanzan; los inválidos muestran advertencia,P2,Fase 2,Definido,Pasó,Solo los formatos válidos avanzan; los inválidos muestran advertencia con la segunda revision Todas las pruebas relacionadas a este caso pasan la prueba por eso la pongo como estado pasó,Chrome,2026-10-25,BUG-003,,"Todas las pruebas pasan con el mensaje ""La API no está configurada"" aun no se puede ingresar al dashboard",15 pasó · 2 falló · 0 bloq. · 0 pend.,La EL tiene fallos: revisar Estado.
+TC-005,FEAT-01,US-01.1,UI / Responsive,"[UI] Contraseña enmascarada, sin botón de visualización",Pantalla de registro abierta,"1. Escribir la contraseña
+2. Buscar opción de mostrarla",Cualquier texto,Caracteres enmascarados y sin botón de ver contraseña,P2,Fase 1,Definido,Pasó,Caracteres enmascarados y sin botón de ver contraseña,Chrome,2026-10-25,,,,,
+TC-006,FEAT-01,US-01.1,Funcional,[UI] Enlaces '¿Olvidaste tu contraseña?' y '¿Aún no tienes cuenta?' en la pantalla de Login,Pantalla de login abierta,1. Pulsar cada enlace,N/A,Ambos enlaces existen y llevan a su pantalla,P2,Fase 2,Definido,No ejecutado,,,,,,,,
+TC-007,FEAT-01,US-01.1,Negativa,[UI] Acceso al dashboard sin sesión,Sin sesión iniciada,1. Pegar en el navegador la URL de una pantalla del dashboard,URL directa,dirige al login; no muestra datos,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-008,FEAT-01,US-01.1,Negativa,[UI] Botón Atrás tras cerrar sesión,Dueño con sesión iniciada,"1. Cerrar sesión
+2. Pulsar el botón Atrás del navegador",Sesión cerrada,No se muestran datos del complejo; pide iniciar sesión de nuevo,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-009,FEAT-01,US-01.1,Negativa,[UI + API] Un dueño no ve datos de otro complejo (ID cambiado en la URL),Dueños A y B con complejos distintos,"1. Iniciar sesión como A
+2. Cambiar el ID del complejo en la URL por el de B",ID de B en la URL,Acceso denegado o mensaje claro; no se ve ni editar nada de B,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-010,FEAT-01,US-01.2,Funcional,"[UI + API] Registro de complejo con branding válido (logo, color HEX y datos bancarios opcionales)",Dueño con sesión (OWNER) en ComplejoForm,"1. Completar Nombre, Dirección, Color HEX, Logo y datos bancarios válidos
+2. Guardar","Nombre: ""Cabañas del Sol"", Dir: ""Ruta 1 Km 5"", #FF5733, logo.png (500 KB), CBU y Alias válidos
+Ejemplo UI: Nombre ""UTOPIA CABAÑAS"", Dirección ""Aleutas M51 S2, 80500 Ciudad del Plata"", Color #FF5733, Logo logo.png","Se envía mediante complejos.service.ts, retorna éxito, guarda los datos y genera el enlace con slug único
+API: POST /api/v1/complexes con token OWNER retorna 201 Created con el slug generado y asocia el complejo al dueño (detalle de slug y colisiones en TC-156 y TC-157).",P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-011,FEAT-01,US-01.2,Negativa,"[UI] Validación en tiempo real (Zod) de campos obligatorios vacíos: Nombre, Dirección, Color y Logo",Dueño con sesión en ComplejoForm,"1. Tocar los campos Nombre, Dirección, Color de marca y Logo y dejarlos en blanco
+2. Intentar Guardar",Campos vacíos,Zod resalta los campos en rojo con mensajes de error instantáneos y bloquea el guardado,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-012,FEAT-01,US-01.2,Valor límite,[UI] Peso máximo del logo en cliente (2 MB),Dueño con sesión en ComplejoForm,1. En ComplejoForm cargar un logo de 1.9 MB y otro de 2.1 MB (valores de EL-LOGO-PESO),Archivos de EL-LOGO-PESO,"El de 1.9 MB se previsualiza; el de 2.1 MB se rechaza en el cliente con el mensaje ""El logo no puede superar 2 MB."" sin contactar a la API",P1,Fase 1,Definido,Pasó,,,2026-10-25,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,4 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-013,FEAT-01,US-01.2,Partición de equivalencia,"[UI] Formatos de logo permitidos (.png, .jpg) y rechazados (.pdf, .svg, .webp, .exe) en cliente",Dueño con sesión en ComplejoForm,"1. En ComplejoForm intentar cargar archivos .pdf, .svg, .webp y .exe y luego .png y .jpg (valores de EL-LOGO-FMT)",Archivos de EL-LOGO-FMT,Solo se aceptan .png y .jpg; los demás formatos se rechazan de inmediato en la interfaz con advertencia explícita,P1,Fase 1,Definido,Pasó,,,2026-10-25,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,3 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-014,FEAT-01,US-01.2,Funcional,[UI] Reflejo inmediato del logo y del color HEX en la ficha pública de onboarding,Complejo recién configurado,"1. Guardar el complejo con logo y color HEX
+2. Abrir la ruta pública /onboarding/{slug} en escritorio y móvil",Slug generado,La ficha aplica el logo como encabezado y el color HEX configurado en los botones principales,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-015,FEAT-01,US-01.2,UI / Responsive,[UI] Estado por defecto con iniciales cuando el complejo no tiene logo,Complejo creado por API sin logo configurado,1. Abrir la ruta pública /onboarding/{slug} de un complejo sin logo,"Complejo ""Costa Azul""","Muestra un círculo con las iniciales (""CA"") y ningún ícono de imagen rota",P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-016,FEAT-01,US-01.2,Partición de equivalencia,[UI] Validación en tiempo real del color de marca (#RRGGBB),Dueño con sesión en ComplejoForm,"1. Ingresar los valores de EL-HEX (ej. ""rojo"", ""FF0000"" sin #, ""#ZZ9900"", ""#FFF"")",Valores de EL-HEX,"Zod marca el campo inválido en tiempo real hasta ingresar ""#"" seguido de 6 caracteres hexadecimales (7 caracteres en total)",P1,Fase 1,Definido,Pasó,,,,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,4 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-017,FEAT-01,US-01.5,Funcional,[UI + API] Desactivar complejo con el toggle,Complejo activo,"1. Desactivar el toggle
+2. Abrir la ficha pública en otra ventana",Enlace de onboarding,Recuadro gris con 'Complejo no disponible'; no permite ingresos,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-018,FEAT-01,US-01.5,Funcional,[UI + API] Reactivar un complejo desactivado,Complejo desactivado,"1. Activar el toggle
+2. Abrir la ficha pública",Enlace de onboarding,La ficha vuelve a estar disponible y el formulario funciona,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-019,FEAT-01,US-01.6,Funcional,[UI + API] Dar de baja / eliminar complejo,Complejo existente,"1. Pulsar 'Dar de baja complejo'
+2. Confirmar (si existe confirmación)",N/A,El complejo se elimina de forma definitiva; la ficha deja de estar disponible,P2,Fase 2,Por definir,No ejecutado,,,,,,,,
+TC-104,FEAT-01,US-01.1,Partición de equivalencia,[UI + API] Formato de Nombre en registro / Dueño,Pantalla abierta,"1. Ingresar cada valor de la hoja Equivalencia y Límites (EL-NOMBRE-D)
+2. Enviar",Ver Nombre,Solo los formatos válidos avanzan; los inválidos muestran advertencia,P2,Fase 1,Definido,Pasó,,Chrome,2026-10-25,"BUG-001, BUG-002",,"v3.2: fecha de ejecución tomada de la fecha de reporte de BUG-001/BUG-002.
+v3.2: navegador según el entorno del bug vinculado o de sus clases EL.",2 pasó · 0 falló · 0 bloq. · 0 pend.,
+TC-111,FEAT-01,US-01.1,Funcional,[UI + API] Login exitoso del dueño,Dueño registrado,"1. Abrir login
+2. Ingresar nombre, correo y contraseña válidos
+3. Pulsar Ingresar",Credenciales del dueño A,Accede al dashboard y ve solo los datos de su complejo,P1,Fase 1,Definido,No ejecutado,,Chrome,,,,,,
+TC-112,FEAT-01,US-01.1,Partición de equivalencia,[UI + API] Login con contraseñas incorrectas,Dueño registrado,"1. Ingresar nombre válido y correo válido
+2. Ingresar cada valor de la hoja Equivalencia y Límites (EL-PWD)
+3. Pulsar Ingresar",Contraseña incorrecta,"Mensaje genérico de error ""La contraseña debe tener al menos 8 caracteres.""; y no ingresa",P1,Fase 1,Definido,Pasó,"Mensaje genérico ""La contraseña debe tener al menos 8 caracteres.""; y no ingresa",Chrome,2026-10-25,,,"recomiendo que se ponga un mensaje tipo instrucción ""ingresa contraseña de 8 caracteres"" o ""ingresa al menos 8 caracteres"" para que la persona sepa de antemano que ingresar",,
+TC-113,FEAT-01,US-01.1,Negativa,[UI + API] Login con campos vacíos,Pantalla de login abierta,"1. Dejar nombre, correo y contraseña vacíos
+2. Pulsar Ingresar",Campos vacíos,No avanza; advertencia visible en cada campo vacío,P1,Fase 1,Definido,Pasó,No avanza; advertencia visible en cada campo,Chrome,2026-10-25,,,,,
+TC-114,FEAT-01,US-01.1,UI / Responsive,"[UI] Contraseña enmascarada, sin botón de visualización (Sección Login Dueño)",Pantalla de login,"1. Escribir la contraseña
+2. Buscar opción de mostrarla",Cualquier texto,Caracteres enmascarados y sin botón de ver contraseña,P2,Fase 1,Definido,Pasó,Caracteres enmascarados y sin botón de ver contraseña,Chrome,2026-10-25,,,,,
+TC-115,FEAT-01,US-01.1,Negativa,[API] Registro con email repetido (duplicado),Haber registrado previamente el email en TC-120,"1. En Swagger -> POST /api/v1/auth/register
+2. Enviar nuevamente el mismo email ya registrado
+3. Pulsar ""Execute""","{
+  ""name"": ""Cami Velez"",
+  ""email"": ""camila.dueno1@hostflow.com"",
+  ""password"": ""Pass1234""
+}",Código HTTP 409 Conflict.,P1,Fase 1,Definido,Pasó,Código HTTP 409 Conflict.,Swagger / Localhost,,,Karol,PR #28 Backend Auth JWT.,,Falta fecha o navegador.
+TC-116,FEAT-01,US-01.1,Valor límite,[API] Registro con contraseña de 7 caracteres (bajo el límite mínimo),Swagger abierto en POST /api/v1/auth/register,"1. Ingresar name válido y email nuevo
+2. Ingresar password de exactamente 7 caracteres
+3. Pulsar ""Execute""","{
+  ""name"": ""Manuela Mora"",
+  ""email"": ""manu.test7@hostflow.com"",
+  ""password"": ""1234567""
+}","Código HTTP 400 Bad Request, con el detalle en data.password.",P1,Fase 1,Definido,Pasó,"Código HTTP 400 Bad Request, con el detalle en data.password.
+
+{
+  ""data"": {
+    ""password"": ""size must be between 8 and 72""
+  },
+  ""message"": ""size must be between 8 and 72"",
+  ""status"": 400
+}",Swagger / Localhost,,,Karol,Válida límite inferior inválido en API (7 caracteres).,,Falta fecha o navegador.
+TC-117,FEAT-01,US-01.1,Valor límite,[API] Registro con contraseña de exactamente 8 caracteres (límite válido),Swagger abierto en POST /api/v1/auth/register,"1. Ingresar name válido y email nuevo
+2. Ingresar password de exactamente 8 caracteres
+3. Pulsar ""Execute""","{
+  ""name"": ""Pablo Pelaez"",
+  ""email"": ""pablo.test8@hostflow.com"",
+  ""password"": ""12345678""
+}",Código HTTP 201 Created y accessToken en data.,P1,Fase 1,Definido,Pasó,Código HTTP 201 Created y accessToken en data.,Swagger / Localhost,,,Karol,Válida límite inferior exacto en API (8 caracteres).,,Falta fecha o navegador.
+TC-119,FEAT-01,US-01.1,Negativa,[API] Registro con email de formato inválido,Swagger abierto en POST /api/v1/auth/register,"1. Ingresar name válido y password de 8+ caracteres
+2. Ingresar email con formato inválido (sin @ o sin dominio)
+3. Pulsar ""Execute""","{
+  ""name"": ""Catalina Lukas"",
+  ""email"": ""catalinasinarroba.com"",
+  ""password"": ""12345678""
+}","Código HTTP 400 Bad Request, con el detalle en data.email.",P1,Fase 1,Definido,Pasó,"Código HTTP 400 Bad Request, con el detalle en data.email.",Swagger / Localhost,,,Karol,PR #28 Backend Auth JWT.,,Falta fecha o navegador.
+TC-120,FEAT-01,US-01.1,Integración,[API] Registro válido con contraseña de 8 o más caracteres,.env con JWT_SECRET (>=32 chars) y JWT_EXPIRATION_MINUTES=120. Entorno arriba con ./delta.sh up. Swagger en http://localhost:8080/swagger-ui.html,"1. En Swagger ir a sección Auth -> POST /api/v1/auth/register
+2. Pulsar ""Try it out""
+3. Enviar JSON con name válido, email nuevo y password >= 8 caracteres
+4. Pulsar ""Execute""","{
+  ""name"": ""Camila Perez"",
+  ""email"": ""camila.dueno1@hostflow.com"",
+  ""password"": ""Password1234""
+}",Código HTTP 201 Created y un accessToken dentro de data.,P1,Fase 1,Definido,Falló,"Si se puede ejecutar y sale Código HTTP 201 Created y un accessToken dentro de data
+Pero el Request body del Swagger no corresponde a lo acordado en el documento
+{
+  ""name"": ""string"",
+  ""email"": ""user@example.com"",
+  ""password"": ""stringst"",
+  ""phone"": ""string"",
+  ""country"": ""string"",
+  ""identificationType"": ""string"",
+  ""identificationNumber"": ""string""
+}",Swagger / Localhost,2026-10-30,BUG-007,Karol,"PR #28 Backend Auth JWT. Anotar código de respuesta y mensaje.
+v3.2: fecha de ejecución tomada de la fecha de reporte de BUG-007.",,
+TC-121,FEAT-01,US-01.1,Negativa,[API] Registro con nombre vacío,Swagger abierto en POST /api/v1/auth/register,"1. Dejar el campo name vacío ("""")
+2. Ingresar email válido nuevo y password de 8+ caracteres
+3. Pulsar ""Execute""","{
+  ""name"": """",
+  ""email"": ""lina.sinnombre@hostflow.com"",
+  ""password"": ""12345678""
+}",Código HTTP 400 Bad Request.,P1,Fase 1,Definido,Pasó,Código HTTP 400 Bad Request.,Swagger / Localhost,,,Karol,"Nota de Samanta: El largo máximo de nombre sigue ""A definir"" (H-05), no marcar máximo como fallo.",,Falta fecha o navegador.
+TC-122,FEAT-01,US-01.1,Negativa,[API] Registro con nombre de 1 carácter (bajo el límite mínimo de 2 caracteres),Swagger abierto en POST /api/v1/auth/register,"1. En Swagger -> POST /api/v1/auth/register
+2. Enviar una solicitud con un nombre de solo 1 caracter y los demás campos llenos
+3. Pulsar ""Execute""","{
+  ""name"": ""a"",
+  ""email"": ""alex@hostflow.com"",
+  ""password"": ""12345678""
+}","Código HTTP 400 Bad Request, rechazando nombre de 1 solo carácter (mínimo 2 caracteres según Matriz v3.0).",P1,Fase 1,Definido,Falló,Código HTTP 201 Created y accessToken en data.,Swagger / Localhost,2026-10-30,BUG-8,Karol,"PR #28 Backend Auth JWT.
+v3.2: fecha de ejecución tomada de la fecha de reporte de BUG-8.",,
+TC-123,FEAT-01,US-01.1,Integración,[API] Login correcto con credenciales válidas,Usuario registrado previamente en TC-120,"1. En Swagger ir a POST /api/v1/auth/login -> ""Try it out""
+2. Ingresar email y password registrados
+3. Pulsar ""Execute""","{
+  ""email"": ""javier.test8@hostflow.com"",
+  ""password"": ""P4ssw0rd""
+}",Código HTTP 200 OK y devuelve accessToken.,P1,Fase 1,Definido,Pasó,Código HTTP 200 OK y devuelve accessToken.,Swagger / Localhost,,,Karol,PR #28 Backend Auth JWT.,,Falta fecha o navegador.
+TC-124,FEAT-01,US-01.1,Negativa,[API] Login con contraseña incorrecta,Usuario registrado previamente en TC-120,"1. En POST /api/v1/auth/login ingresar email válido registrado pero contraseña incorrecta
+2. Pulsar ""Execute""","{
+  ""email"": ""javier.test8@hostflow.com"",
+  ""password"": ""PasswordIncorrecta99""
+}","Código HTTP 401 Unauthorized con el mensaje exacto ""Credenciales inválidas"".",P1,Fase 1,Definido,Pasó,"Código HTTP 401 Unauthorized con el mensaje exacto ""Credenciales inválidas"".",Swagger / Localhost,,,Karol,Debe devolver exactamente el mismo mensaje que TC-128 por seguridad.,,Falta fecha o navegador.
+TC-125,FEAT-01,US-01.1,Negativa,[API] Login con email que no existe,Swagger abierto en POST /api/v1/auth/login,"1. Ingresar un email que no exista en la base de datos
+2. Ingresar cualquier contraseña
+3. Pulsar ""Execute""","{
+  ""email"": ""no.registrado.999@hostflow.com"",
+  ""password"": ""Password123""
+}","Código HTTP 401 Unauthorized con el mismo mensaje ""Credenciales inválidas"".",P1,Fase 1,Definido,Pasó,"Código HTTP 401 Unauthorized con el mismo mensaje ""Credenciales inválidas"".",Swagger / Localhost,,,Karol,Verifica que no revele si el correo existe o no.,,Falta fecha o navegador.
+TC-126,FEAT-01,US-01.1,Negativa,[API] Acceso a endpoint protegido sin token (401),Swagger abierto (ej. GET /api/v1/complexes),"1. Ejecutar GET /api/v1/auth/me sin haber cargado token en ""Authorize""",Sin token,Código HTTP 401 Unauthorized (en formato JSON),P1,Fase 1,Definido,Pasó,Código HTTP 401 Unauthorized (en formato JSON) en ambos casos.,Swagger / Localhost,,,Karol,Válida la protección JWT en rutas privadas.,,Falta fecha o navegador.
+TC-127,FEAT-01,US-01.1,Negativa,[API] Registro con correo vacío,Swagger abierto en POST /api/v1/auth/register,"1. Dejar el campo name vacío ("""")
+2. Ingresar email válido nuevo y password de 8+ caracteres
+3. Pulsar ""Execute""","{
+   ""name"": ""Lupita Rincon"",
+  ""email"": """",
+  ""password"": ""12345678""
+}",Código HTTP 400 Bad Request.,P1,Fase 1,Definido,Pasó,Código HTTP 400 Bad Request.,Swagger / Localhost,,,Karol,"Nota de Samanta: El largo máximo de nombre sigue ""A definir"" (H-05), no marcar máximo como fallo.",,Falta fecha o navegador.
+TC-128,FEAT-01,US-01.1,Negativa,[API] Registro con contraseña vacía,Swagger abierto en POST /api/v1/auth/register,"1. Dejar el campo name vacío ("""")
+2. Ingresar email válido nuevo y password de 8+ caracteres
+3. Pulsar ""Execute""","{
+  ""name"": ""Lupita Rincon"",
+  ""email"": ""Lupita@gmail.com"",
+  ""password"": """"
+}",Código HTTP 400 Bad Request.,P1,Fase 1,Definido,Pasó,Código HTTP 400 Bad Request.,Swagger / Localhost,,,Karol,"Nota de Samanta: El largo máximo de nombre sigue ""A definir"" (H-05), no marcar máximo como fallo.",,Falta fecha o navegador.
+TC-129,FEAT-01,US-01.1,Negativa,[API] Registro con todas la peticiones vacías,Swagger abierto en POST /api/v1/auth/register,"1. Dejar el campo name vacío ("""")
+2. Ingresar email válido nuevo y password de 8+ caracteres
+3. Pulsar ""Execute""","{
+  ""name"": """",
+  ""email"": """",
+  ""password"": """"
+}",Código HTTP 400 Bad Request.,P1,Fase 1,Definido,Pasó,Código HTTP 400 Bad Request.,Swagger / Localhost,,,Karol,"Nota de Samanta: El largo máximo de nombre sigue ""A definir"" (H-05), no marcar máximo como fallo.",,Falta fecha o navegador.
+TC-130,FEAT-01,US-01.1,Integración,[API] Acceso a endpoint protegido con token válido (200),Swagger abierto (ej. GET /api/v1/complexes),"1. Ejecutar GET /api/v1/auth/me con token previamente cargado en ""Authorize""
+2. En el candado ""Authorize"" pegar el token y ejecutar GET /api/v1/complexes",con token real,Código HTTP 200 OK (en formato JSON),P1,Fase 1,Definido,Pasó,Código HTTP 200 OK (en formato JSON),Swagger / Localhost,,,Karol,Válida la protección JWT en rutas privadas.,,Falta fecha o navegador.
+TC-131,FEAT-01,US-01.1,Negativa,[API] Acceso a endpoint protegido con token inventado,Swagger abierto (ej. GET /api/v1/complexes),"1.  Ejecutar GET /api/v1/auth/me sin haber cargado token
+2. En el candado ""Authorize"" pegar un token inventado y ejecutar GET /api/v1/auth/me",Con token_inventado_falso,Código HTTP 401 Unauthorized (en formato JSON),P1,Fase 1,Definido,Pasó,Código HTTP 401 Unauthorized (en formato JSON),Swagger / Localhost,,,Karol,Válida la protección JWT en rutas privadas.,,Falta fecha o navegador.
+TC-132,FEAT-01,US-01.4,Funcional,[UI] Visualización de botón Editar en tarjeta de complejo,Dueño con un complejo registrado,"1. Iniciar sesión.
+2. Ir al dashboard principal.
+3. Ubicar la tarjeta o fila del complejo.",,"Se visualiza un botón de tres puntos con acceso directo a Ver detalles, Editar y Eliminar el complejo. Está claramente identificado en la tarjeta o fila del complejo.",P1,Fase 1,Definido,Pasó,,Chrome,,,,v3.2: navegador completado por convención del libro (casos [UI] ejecutados en Chrome); confirmar.,,Falta fecha o navegador.
+TC-133,FEAT-01,US-01.4,Negativa,[UI] Validación de campos obligatorios vacíos en edición,Formulario de edición abierto,"1. Borrar el contenido de los campos obligatorios (ej. nombre).
+2. Pulsar el botón de guardar cambios.",,"El sistema rechaza el envío, resalta los campos vacíos y muestra mensajes de error indicando que son obligatorios.",P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-134,FEAT-01,US-01.3,Funcional,[UI] Validar la correcta visualización de la lista de complejos,Dueño autenticado en el panel,"1. Iniciar sesión en el panel.
+2. Ir al menú lateral y hacer clic en Complejos.",,El sistema muestra la tabla o tarjetas con los complejos cargados desde el mock correctamente.,P1,Fase 1,Definido,Pasó,El sistema muestra la tabla o tarjetas con los complejos cargados desde el mock correctamente.,Chrome,,,,v3.2: navegador completado por convención del libro (casos [UI] ejecutados en Chrome); confirmar.,,Falta fecha o navegador.
+TC-135,FEAT-01,US-01.3,UI / Responsive,[UI] Verificar la navegación desde el listado hacia el detalle,Listado de complejos visible con al menos un registro,1. Hacer clic sobre una de las tarjetas o filas del complejo en el listado.,,"La vista cambia correctamente mostrando la información general, capacidades y datos de pago del complejo seleccionado.",P1,Fase 1,Definido,Pasó,"La vista cambia correctamente mostrando la información general, capacidades y datos de pago del complejo seleccionado.",Chrome,,,,v3.2: navegador completado por convención del libro (casos [UI] ejecutados en Chrome); confirmar.,,Falta fecha o navegador.
+TC-136,FEAT-01,US-01.3,Negativa,[UI] Comprobar el manejo de errores y reintento en la carga,Módulo de complejos accesible,"1. Simular un fallo de red o error de carga en el módulo de complejos.
+2. Observar la pantalla de error y hacer clic en Reintentar.",,El componente ComplejosError maneja el fallo visualmente y el botón de reintento vuelve a disparar la consulta.,P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-137,FEAT-01,US-01.5,Funcional,[UI] Visualización de selector de estado operativo,Dueño en el panel del complejo,1. Acceder al detalle o listado del complejo.,,"Se visualiza un selector o interruptor claro para cambiar el estado operativo (Activo, En Mantenimiento, Temporalmente Cerrado).",P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-138,FEAT-01,US-01.5,UI / Responsive,[UI] Cambio visual inmediato de etiquetas por colores en el estado del complejo,Selector de estado visible,"1. Cambiar el estado a ""En Mantenimiento"" o ""Activo"".",,"El estado se refleja de manera inmediata mediante etiquetas con códigos de color (ej. Verde para activo, amarillo para mantenimiento).",P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-139,FEAT-01,US-01.5,Funcional,[UI] Confirmación previa a cambio crítico de estado,Selector de estado visible,1. Intentar cambiar el estado operativo a inactivo o cerrado temporalmente.,,Se despliega una ventana de confirmación en pantalla advirtiendo el impacto antes de aplicar el cambio crítico.,P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-140,FEAT-01,US-01.5,Integración,[UI + API] Sincronización del estado operativo con la API,Confirmación de cambio aceptada,"1. Modificar y confirmar el estado operativo.
+2. Verificar el comportamiento en la plataforma general.",,El cambio se sincroniza con la API y se refleja en tiempo real tanto para el administrador como en el flujo general de búsqueda.,P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-141,FEAT-01,US-01.5,UI / Responsive,[UI] Validar el componente de carga (Loader),Módulo de complejos listo para recargar,1. Recargar el módulo de complejos con una conexión lenta o simulada.,,Se visualiza correctamente el indicador de carga antes de renderizar la información definitiva.,P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-142,FEAT-01,US-01.5,UI / Responsive,[UI] Validar mensaje de estado vacío al buscar o filtrar sin coincidencias,Estando en el módulo de complejos,"1. Seleccionar un filtro de estado que no coincida con ningún complejo existente.
+2. Hacer clic en ""Filtrar""",,"El sistema muestra un mensaje claro de estado vacío, Muestra el siguiente mensaje ""No encontramos complejos con estos filtros
+Prueba con otros criterios o limpia los filtros."" y muestra 2 botones ""Añadir complejo"" y ""Limpiar busqueda""",P1,Fase 1,Definido,Pasó,"El sistema Si muestra un mensaje claro de estado vacío, son su respectivo mensaje, y los dos botones  ""Añadir complejo"" y ""Limpiar busqueda""",Chrome,,,,v3.2: navegador completado por convención del libro (casos [UI] ejecutados en Chrome); confirmar.,,Falta fecha o navegador.
+TC-143,FEAT-01,US-01.6,Negativa,[UI + API] Modal de advertencia para evitar clics accidentales,Opción de eliminar seleccionada,"1. Hacer clic en ""Eliminar"" o ""Dar de baja"".",,Se despliega un modal de confirmación explícita advirtiendo que la acción afectará el historial y requiere validación.,P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-144,FEAT-01,US-01.6,Negativa,[UI + API] Validación de reservas activas antes de baja,Complejo con reservas pendientes o activas,1. Intentar confirmar la eliminación de un complejo con reservas activas.,,"El sistema bloquea la acción, advierte que posee reservas pendientes y no permite completar la baja.",P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-145,FEAT-01,US-01.6,Funcional,[UI + API] Eliminación exitosa y remoción dinámica del dashboard,Complejo sin reservas activas,1. Confirmar la baja en el modal de seguridad.,,"Muestra un mensaje de confirmación, procesa la baja y remueve el elemento del dashboard del usuario de forma dinámica.",P1,Fase 1,Definido,Bloqueado,Aun no esta habilitada esta opción,,,,,,,
+TC-146,FEAT-01,US-01.2,Partición de equivalencia,[UI + API] Validación de CBU y Alias bancario en formulario / API,Dueño con sesión / Swagger,1. Probar cada clase de EL-CBU y EL-ALIAS en el registro de complejo,Ver EL-CBU y EL-ALIAS,"Acepta CBU de 22 dígitos y Alias de 6-20 chars (a-z, 0-9, ., -) o vacíos (opcionales); rechaza inválidos con error / HTTP 400",P1,Fase 1,Definido,No ejecutado,,Chrome / Swagger,,,,,,
+TC-147,FEAT-01,US-01.2,Integración,[API] Registro exitoso de complejo y generación de slug limpio (201),Token JWT válido con rol OWNER en Swagger,"1. En POST /api/v1/complexes autorizar con Bearer Token
+2. Enviar JSON con name (con tildes/espacios/ñ), address y datos bancarios opcionales
+3. Ejecutar","{""name"": ""Cabañas del Río"", ""address"": ""Delta 123"", ""cbu"": ""0170204640000000876543"", ""alias"": ""cabanas.rio.delta""}","Retorna HTTP 201 Created, devuelve slug: ""cabanas-del-rio"" (minúsculas, sin tildes ni ñ, separado por guiones) y asocia el complejo al OWNER autenticado",P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,,,,
+TC-148,FEAT-01,US-01.2,Integración,"[API] Colisión de nombres genera slug con sufijo secuencial (-2, -3)","Complejo ""Cabañas del Río"" (cabanas-del-rio) ya registrado en BD","1. Enviar POST /api/v1/complexes con el mismo nombre ""Cabañas del Río"" por 2da vez
+2. Enviar una 3ra vez con el mismo nombre","{""name"": ""Cabañas del Río"", ""address"": ""Otra calle 456""} (x2)",Ambas peticiones retornan HTTP 201 Created asignando cabanas-del-rio-2 en el segundo registro y cabanas-del-rio-3 en el tercero,P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,,,,
+TC-149,FEAT-01,US-01.5,Funcional,[UI] Comprobar el filtrado por estado operativo,Estando en el listado de complejos,"1. Hacer clic en el filtro de estados.
+2. Seleccionar un estado (ej. ""Abierto"").
+3.Dar al boton ""Filtrar""",,El listado se actualiza de inmediato mostrando únicamente los complejos que coinciden con el estado seleccionado.,P1,Fase 1,Definido,Falló,"No se filtra correctamente, los complejos se filtran con etiquetas mezcladas. Los filtros que fallan son:
+- Sin publicar
+- Completado
+- Abierto
+- Cerrado",Chrome,2026-11-01,BUG-9,,"v3.2: fecha de ejecución tomada de la fecha de reporte de BUG-9.
+v3.2: navegador según el entorno del bug vinculado o de sus clases EL.",,
+TC-150,FEAT-01,US-01.2,Negativa,[API] Rechazo por campo name vacío o ausente (400 Bad Request),Token JWT válido con rol OWNER,"1. Enviar POST /api/v1/complexes con ""name"": """" o ""name"": "" ""
+2. Enviar omitiendo la propiedad name","{""name"": """", ""address"": ""Calle 1""}",Retorna HTTP 400 Bad Request indicando error de validación en name; no crea registro en BD,P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,,,,
+TC-151,FEAT-01,US-01.2,Negativa,"[API] Seguridad: Petición sin token, token vencido o rol distinto a OWNER (401/403)",Swagger / Postman en POST /api/v1/complexes,"1. Enviar petición sin header Authorization
+2. Enviar con JWT expirado o alterado
+3. Enviar con JWT sin rol OWNER (si aplica)",Body válido + Sin token / Token expirado,Sin token o con token vencido/inválido deniega el acceso con HTTP 401 Unauthorized (y 403 si el rol no es OWNER),P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,,,,
+TC-152,FEAT-01,US-01.2,Funcional,"[UI] Transiciones fluidas entre Listado, Formulario y Detalle",Dueño autenticado en dashboard,"1. Abrir Añadir Complejo 
+2. Volver al listado 
+3. Abrir Detalle 
+4. Ir a Editar y regresar",Rutas del frontend,"Transiciones instantáneas sin recargas completas, sin errores 404 ni pérdida del estado de sesión.",P1,Fase 1,Definido,Pasó,"Transiciones instantáneas sin recargas completas, sin errores 404 ni pérdida del estado de sesión.",Chrome,,,,v3.2: navegador completado por convención del libro (casos [UI] ejecutados en Chrome); confirmar.,,Falta fecha o navegador.
+TC-153,FEAT-01,US-01.2,Negativa,[UI] Bloqueo por campos obligatorios vacíos en tiempo real (Zod),Dueño autenticado en ComplejoForm,"1. Tocar los campos Nombre, Dirección, Color y Logo, y dejarlos en blanco 
+2. Intentar Guardar",Campos vacíos,El esquema Zod resalta los campos en rojo con mensajes de error instantáneos y deshabilita/bloquea el guardado.,P1,Fase 1,Definido,N/A,"Solo resaltan en rojo
+-Nombre del complejo
+-Dirección",,,,,,,
+TC-154,FEAT-01,US-01.2,Partición de equivalencia,[UI] Lógica matemática en Capacidad y Máximo de reservas (Zod),Dueño autenticado en ComplejoForm,"1. Ir a sección Datos del alojamiento 2. Ingresar cada valor de EL-CAPMIN, EL-CAPMAX y EL-MAXRES","Ver EL-CAPMIN, EL-CAPMAX y EL-MAXRES","Zod rechaza números negativos, decimales, texto, y asegura en tiempo real que la Capacidad máxima nunca sea menor que la mínima.",P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-155,FEAT-01,US-01.2,Partición de equivalencia,[UI] Formato de caracteres para el Slug (Zod),Dueño autenticado en ComplejoForm,"1. En el campo Slug, ingresar cada valor de EL-SLUG 2. Verificar validación en tiempo real",Ver EL-SLUG,"Zod restringe el ingreso obligando a usar minúsculas y guiones (o limpia el formato al vuelo, sin permitir espacios ni caracteres especiales).",P2,Fase 1,Definido,Pasó,,,,BUG-12,,"Se reportó BUG-12 (resuelto el 04/11/2026); pendiente re-ejecutar clases EL-SLUG.
+v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).",8 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-156,FEAT-01,US-01.2,Partición de equivalencia,[UI] Caracteres y longitudes límite en Nombre y Dirección (Zod),Dueño autenticado en ComplejoForm,"1. Ir a los campos ""Nombre del complejo"" y ""Dirección"" 2. Ingresar cada valor de EL-NOMBRE y EL-DIR 3. Observar validaciones",Ver EL-NOMBRE y EL-DIR,"Zod restringe campos vacíos, solo espacios y excede los límites máximos de caracteres, mostrando mensajes de error en tiempo real.",P1,Fase 1,Definido,No ejecutado,,,,BUG-11,,Se reportó BUG-11 (resuelto el 04/11/2026); pendiente re-ejecutar clases EL-NOMBRE y EL-DIR.,,
+TC-157,FEAT-01,US-01.4,Funcional,[UI] Precarga correcta de datos en el componente ComplejoForm al Editar,Dueño autenticado en el detalle del complejo,"1. Pulsar el botón ""Editar"" en la tarjeta/detalle del complejo 
+2. Observar los campos del formulario",Complejo con datos completos en BD,"El componente ComplejoForm se abre con todos los campos (Nombre, Dirección, Color, etc.) ya llenos con la información actual registrada.",P1,Fase 1,Definido,Bloqueado,,,,,,,,
+TC-158,FEAT-01,US-01.4,Funcional,[UI] Actualización exitosa y refresco automático de la vista,Dueño autenticado con el formulario de edición abierto,"1. Modificar el Nombre y la Dirección 
+2. Pulsar Guardar",Nuevos datos válidos,"Se muestra mensaje de éxito, el modal/formulario se cierra, y la vista se actualiza automáticamente con los nuevos datos mediante complejos.service.ts sin recargar la página entera.",P1,Fase 1,Definido,Bloqueado,,,,,,,,
+TC-159,FEAT-01,US-01.4,Negativa,[UI] Manejo de errores de servidor manteniendo los datos en pantalla,Dueño autenticado editando un complejo (Simular caída de red o error 500),"1. Modificar campos en el formulario 
+2. Desconectar internet o forzar error 500 en backend 3. Pulsar Guardar",Datos válidos + Error de red,"La UI muestra un mensaje de error claro (ej. ""Error al guardar""), pero NO borra lo que el usuario escribió ni cierra el formulario, permitiendo reintentar.",P1,Fase 1,Definido,Bloqueado,,,,,,,,
+TC-160,FEAT-01,US-01.4,Integración,[API] Actualización exitosa (HTTP 200) mediante PUT /complexes/{id},Swagger / Postman con Token JWT válido (OWNER),"1. Enviar petición PUT a /api/v1/complexes/{id} con un nuevo nombre, dirección y color hexadecimal válido","{""name"": ""Nuevo Nombre"", ""address"": ""Nueva Dir"", ""brandColor"": ""#000000""}",Retorna HTTP 200 OK con los campos actualizados en la respuesta.,P1,Fase 1,Definido,Pasó,"Pero al hacer un GET/api/v1/complex
+No se ve una actualizacion en el Slug
+",Swagger / Localhost,,,,v3.2: navegador completado por convención del libro (casos [API] se ejecutan en Swagger / Localhost); confirmar.,,Falta fecha o navegador.
+TC-161,FEAT-01,US-01.4,Valor límite,[API] Inmutabilidad estricta del Slug y Datos Bancarios en el endpoint PUT,Swagger / Postman con Token JWT válido,"1. Enviar petición PUT intentando inyectar un nuevo slug y nuevos datos bancarios (cbu, alias)",Ver EL-PUT-PAYLOAD-01,"Retorna HTTP 200 OK actualizando info general, manteniendo intactos el slug, el logo y los datos bancarios (cuya edición posterior se gestionará mediante un endpoint PATCH independiente según Manual v3.0).",P1,Fase 1,Definido,Pasó,"No cambian los Slug y Datos Bancarios en el endpoint PUT (Pero esto es bueno?, que pasa si el cliente neceita cambiar sus datos bancarios por que migro a otro banco?)",Swagger / Localhost,,,,"Duda aclarada en Manual v3.0 (US-01.4 Escenario 1): los datos bancarios y el logo se editarán mediante un endpoint PATCH independiente.
+v3.2: navegador completado por convención del libro (casos [API] se ejecutan en Swagger / Localhost); confirmar.",,Falta fecha o navegador.
+TC-162,FEAT-01,US-01.2,Negativa,[UI] El formulario de complejo no permite guardar si falta un campo obligatorio (uno a la vez),Dueño autenticado en ComplejoForm,"1. Llenar Nombre de complejo, Dirección, Slug, Capacidad máxima, capacidad mínima y maximo de reservas 
+2. Nombre de complejo vacio (repetir con los otros campos)
+3. Guardar",,El formulario No permite el guardado y muestra un mensaje de error por campo,P1,Fase 1,Definido,Falló,"Los campos no tienen mensaje de error parecen opcionales:
+- Slug no es obligatorio
+- Capacidad Máxima
+- Capacidad Mínima
+- Máximo de reservas",Chrome,2026-11-04,BUG-10,,"v3.2: fecha de ejecución tomada de la fecha de reporte de BUG-10.
+v3.2: navegador según el entorno del bug vinculado o de sus clases EL.",,
+TC-163,FEAT-01,US-01.4,Partición de equivalencia,[API] Aislamiento B2B y validación del path parameter {id},Swagger / Postman con Token JWT válido,"1. Intentar actualizar complejos usando los IDs definidos en las particiones (Propio, Ajeno, Inexistente)",Ver EL-PUT-ID,"ID propio retorna 200 OK. ID ajeno o ID inexistente (ej. 00000000-0000-0000-0000-000000000000) retornan el mismo código HTTP 404 Not Found con el mensaje ""Complejo no encontrado"" (protección contra enumeración según Manual v3.0).",P1,Fase 1,Definido,Pasó,"Todas las particiones de EL-PUT-ID (propio 200 OK, ajeno 404, inexistente 404) pasaron correctamente.",Swagger / Localhost,,,,,,Falta fecha o navegador.
+TC-164,FEAT-01,US-01.1,Integración,[API] Cierre de sesión seguro e invalidación de token JWT (POST /api/v1/auth/logout),Dueño autenticado con token JWT activo en Swagger / Postman,"1. Autorizar en Swagger con un Bearer Token válido
+2. Ejecutar POST /api/v1/auth/logout
+3. Intentar consumir una ruta protegida (ej. GET /api/v1/complexes) usando el mismo token recién cerrado",Bearer Token JWT activo,POST /api/v1/auth/logout retorna HTTP 200 OK e invalida el token JWT activo; el intento posterior con ese token retorna 401 Unauthorized.,P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,Karol,Agregado según Manual v3.0 (US-01.1 API).,,
+TC-165,FEAT-01,US-01.3,UI / Responsive,[UI] Estado vacío limpio cuando el dueño recién registrado no tiene complejos,Dueño recién registrado y autenticado sin complejos creados,"1. Iniciar sesión en el dashboard con cuenta nueva sin complejos
+2. Abrir la sección de listado de complejos",Cuenta OWNER con 0 complejos,"Muestra un estado vacío limpio e informativo invitando a registrar el primer complejo, sin errores ni componentes rotos.",P2,Fase 1,Definido,No ejecutado,,Chrome,,,Karol,Agregado según Manual v3.0 (US-01.3 Criterio UI 2).,,
+TC-166,FEAT-01,US-01.3,Integración,[API] Listar complejos propios ordenados alfabéticamente A-Z (GET /api/v1/complexes),"Token JWT válido con rol OWNER que posee 2 o más complejos (ej. ""Zorzal Delta"" y ""Alba Lodge"")","1. Autorizar con Bearer Token OWNER
+2. Ejecutar GET /api/v1/complexes",OWNER con múltiples complejos registrados,"Retorna HTTP 200 OK únicamente con los complejos pertenecientes al dueño autenticado, ordenados ascendentemente por nombre (A-Z).",P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,Karol,Manual v3.0 (US-01.3 Escenario 1).,,
+TC-167,FEAT-01,US-01.3,Funcional,[API] Listar complejos de dueño sin registros retorna lista vacía [] (GET /api/v1/complexes),Token JWT válido con rol OWNER recién registrado (sin complejos),"1. Autorizar con Bearer Token de OWNER sin complejos
+2. Ejecutar GET /api/v1/complexes",OWNER sin complejos,Retorna HTTP 200 OK con un arreglo JSON vacío [].,P2,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,Karol,Manual v3.0 (US-01.3 Escenario 2).,,
+TC-168,FEAT-01,US-01.3,Negativa,[API] Seguridad y roles en listado de complejos: 401 sin token y 403 sin rol OWNER (GET /api/v1/complexes),Swagger / Postman en GET /api/v1/complexes y existencia de complejos de otros dueños,"1. Ejecutar GET /api/v1/complexes sin token o con token inválido
+2. Ejecutar con token válido sin rol OWNER
+3. Ejecutar con OWNER A y verificar que no aparezcan complejos de OWNER B",Sin token / Token sin rol OWNER / Token OWNER A,"Retorna 401 Unauthorized sin token válido, 403 Forbidden si no posee rol OWNER, y omite estrictamente cualquier complejo de otros dueños.",P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,Karol,Manual v3.0 (US-01.3 Escenario 3).,,
+TC-169,FEAT-01,US-01.3,Integración,[API] Consulta detallada exitosa de complejo propio (GET /api/v1/complexes/{id}),Token JWT válido (OWNER) y un {id} de complejo perteneciente a ese dueño,"1. Autorizar con Bearer Token OWNER
+2. Ejecutar GET /api/v1/complexes/{id} con un ID propio existente",ID de complejo propio,"Retorna HTTP 200 OK con el JSON completo del complejo (nombre, slug, dirección, logo, colores y datos bancarios: titular, alias, banco).",P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,Karol,Manual v3.0 (US-01.3 Escenario 4).,,
+TC-170,FEAT-01,US-01.3,Negativa,[API] Privacidad contra enumeración de IDs ajenos o inexistentes en detalle (GET /api/v1/complexes/{id}),Token JWT válido (OWNER A) y un {id} perteneciente a OWNER B,"1. Consultar GET /api/v1/complexes/{id} con el ID de otro propietario
+2. Consultar con un UUID inexistente (00000000-0000-0000-0000-000000000000)",ID ajeno / UUID 00000000-0000-0000-0000-000000000000,"En ambos casos retorna exactamente el mismo código HTTP 404 Not Found con el mensaje genérico ""Complejo no encontrado"".",P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,Karol,Manual v3.0 (US-01.3 Escenario 5).,,
+TC-171,FEAT-01,US-01.3,Negativa,[API] Bloqueo sin credenciales o con token expirado en detalle de complejo (GET /api/v1/complexes/{id}),Swagger / Postman en GET /api/v1/complexes/{id},"1. Enviar petición omitiendo cabecera Authorization
+2. Enviar petición con token JWT malformado o expirado",Sin cabecera Authorization / JWT expirado,"Rechaza la petición con HTTP 401 Unauthorized y el mensaje ""Token ausente, inválido o vencido"".",P1,Fase 1,Definido,Pasó,,Swagger / Localhost,2026-11-12,,Karol,"Manual v3.0 (US-01.3 Escenario 6).
+v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).",7 pasó · 0 falló · 0 bloq. · 0 pend.,
+TC-172,FEAT-01,US-01.4,Funcional,[API] Comportamiento de reemplazo completo en PUT: opcionales omitidos quedan vacíos (PUT /api/v1/complexes/{id}),Complejo propio existente con campos opcionales cargados y Token OWNER válido,"1. Enviar petición PUT /api/v1/complexes/{id} incluyendo solo los campos obligatorios (ej. name) y omitiendo los opcionales editables
+2. Consultar el complejo actualizado",Body PUT solo con campos obligatorios,Retorna HTTP 200 OK y los campos editables opcionales no enviados en la petición quedan vacíos en el registro (reemplazo PUT).,P2,Fase 1,Definido,Falló,,Swagger / Localhost,2026-11-04,BUG-12,Karol,"Manual v3.0 (US-01.4 Escenario 2).
+v3.3: Estado Falló porque EL-SLUG-02 figura Falló (BUG-12, resuelto). Si se repitió la prueba tras la corrección, actualizar.",1 pasó · 1 falló · 0 bloq. · 0 pend.,
+TC-173,FEAT-01,US-01.4,Partición de equivalencia,[API] Validación de nombre obligatorio y color #RRGGBB con error en español (PUT /api/v1/complexes/{id}),Token JWT válido (OWNER) y complejo propio existente,"1. Enviar PUT /api/v1/complexes/{id} probando cada clase de EL-PUT-NAME y EL-PUT-HEX (name vacío, cuerpo mal formado, color fuera de #RRGGBB de 7 caracteres)",Ver EL-PUT-NAME y EL-PUT-HEX,Rechaza la edición devolviendo HTTP 400 Bad Request con mensajes de validación en español.,P1,Fase 1,Definido,Pasó,,Swagger / Localhost,,,Karol,"Manual v3.0 (US-01.4 Escenario 3).
+v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).",6 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-174,FEAT-01,US-01.4,Negativa,[API] Bloqueo sin autenticación en edición de complejo (PUT /api/v1/complexes/{id}),Swagger / Postman en PUT /api/v1/complexes/{id},"1. Enviar petición PUT sin token JWT
+2. Enviar petición PUT con token inválido o vencido",Sin token / Token vencido,"Responde con HTTP 401 Unauthorized y el mensaje ""Token ausente, inválido o vencido"".",P1,Fase 1,Definido,No ejecutado,,Swagger / Localhost,,,Karol,Manual v3.0 (US-01.4 Escenario 5).,,
+TC-202,FEAT-01,US-01.5,Funcional,[API PR#117] Restricción de reserva según estado operativo (is_open),Complejo configurado,"1. Cambiar estado a cerrado (open: false) e intentar reservar.
+
+2. Cambiar a abierto (open: true) y reintentar.","{""open"": false} y {""open"": true}","Cerrado retorna 409 Conflict (""El alojamiento no está recibiendo reservas""); abierto retorna 201 Created",P1,Fase 1,Definido,Pasó,409 Conflict en cerrado y 201 en abierto,Swagger / Localhost,,,,,,Falta fecha o navegador.
+TC-205,FEAT-01,US-01.2,Funcional,[API PR#120] Creación o edición con URL de logo válida de Cloudinary,Endpoint de complejos activo y token OWNER,Ejecutar POST o PUT enviando una URL segura de Cloudinary,[https://res.cloudinary.com/demo/image/upload/sample.jpg](https://res.cloudinary.com/demo/image/upload/sample.jpg),La API procesa con éxito y retorna 201 Created (o 200 OK en PUT) guardando la URL,P1,Fase 1,Definido,Pasó,201 Created / 200 OK con logo guardado,Swagger / Localhost,,,,,1 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-206,FEAT-01,US-01.2,Negativa,[API PR#120] Rechazo con URLs de dominios no permitidos o inseguros,Endpoint de complejos activo y token OWNER,Enviar una URL ajena o sin protocolo HTTPS seguro en logoUrl,[http://res.cloudinary.com/](http://res.cloudinary.com/)... o [https://mi-sitio-malicioso.com/logo.jpg](https://mi-sitio-malicioso.com/logo.jpg),El sistema deniega la operación y responde con 400 Bad Request,P1,Fase 1,Definido,Pasó,400 Bad Request por validación de URL,Swagger / Localhost,,,,,1 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-207,FEAT-01,US-01.4,Funcional,[API PR#120] Validación de campo de logo opcional (nulo o ausente),Endpoint de complejos activo y token OWNER,Enviar payload omitiendo el campo logoUrl o enviándolo como null,logoUrl: null o campo ausente,Al crear registra sin logo; al editar por PUT actualiza dejando el logo vacío,P2,Fase 1,Definido,Pasó,201 Created con/sin logo según corresponda,Swagger / Localhost,,,,,1 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-218,FEAT-01,US-01.5,Backend / API,Validar la regla de negocio defensiva al eliminar complejos vacíos frente a complejos con historial de reservas,Complejo vacío (sin reservas) y complejo con reservas en su historial.,"1.Enviar un DELETE /api/v1/complexes/{id} de un complejo vacío (HTTP 200 y el complejo desaparece).
+2.Enviar un DELETE /api/v1/complexes/{id} de un complejo con reservas.",,"-El complejo sin reservas se borra por completo (Complejo eliminado).
+-El complejo con reservas se protege, respondiendo con un código 409 Conflict y el mensaje indicando que debe cerrarse lógicamente (open=false).",P1,Fase 1,Definido,Pasó,Comportamiento defensivo validado correctamente).,,,,,"v3.2: Feature corregido de FEAT-05 a FEAT-01 (DELETE /api/v1/complexes/{id}, PR #128, pertenece a US-01.5).",,Falta fecha o navegador.
+TC-219,FEAT-01,US-01.5,Backend / API / Seguridad,Validar que solo el dueño legítimo del complejo pueda ejecutar operaciones de eliminación,"Tokens de usuario legítimo, de un usuario ajeno y petición anónima.","1.Intentar eliminar un complejo o adicional utilizando el token de un dueño ajeno.
+2.Intentar realizar la misma petición sin incluir token de autorización.",,"-Si se usa el token de un usuario ajeno, la API responde con un código 404 Not Found.
+-Si se envía sin token, la API rechaza la solicitud por seguridad (401 / 403).",P1,Fase 1,Definido,Pasó,(Controles de seguridad validados).,,,,,"v3.2: Feature corregido de FEAT-05 a FEAT-01 (DELETE /api/v1/complexes/{id}, PR #128, pertenece a US-01.5).",,Falta fecha o navegador.
+TC-222,FEAT-01,US-01.2,Funcional,[UI Selenium] Carga de Datos de pago por complejo con Alias o CBU y nota informativa de transferencia directa,"Dueño autenticado (OWNER) en /datos-pago (menú lateral Datos de pago). Complejo ""Complejo Los Sauces"" seleccionado en <select id=""complejo"">.","1. Seleccionar el complejo en el desplegable.
+2. Completar banco, aliasCbu y titular.
+3. Clic en Guardar cambios.
+4. Verificar la nota informativa.","Banco ""Mercado Pago""; aliasCbu ""ISLASAUCE.MP"" (Alias) o CBU de 22 dígitos; titular ""Juan Pérez"".","Permanece en /datos-pago y muestra la nota informativa de negocio (""no procesa pagos ni solicita datos de tarjetas. El huésped coordina la transferencia directamente con vos"").",P2,Fase 1,Definido,Pasó,"Se visualiza la nota informativa. Observación: la nota al pie nombra ""DeltaFlow"" en lugar de HostFlow (BUG-018).",Selenium + Behave (local),2026-11-12,BUG-018,,"datos_pago.feature, escenario 1. Corresponde al TC-099 del borrador. Asignado a FEAT-01 / US-01.2 (carga del Alias/CBU, H-11); también respalda US-05.2 (dato que ve el turista). Solo verifica la vista: no comprueba la persistencia en backend (endpoint no documentado, H-16).",,
+TC-223,FEAT-01,US-01.2,Negativa,[UI Selenium] Validación de campos obligatorios y formato de Alias/CBU en Datos de pago,Dueño autenticado (OWNER) en /datos-pago con un complejo seleccionado.,"1. Ingresar cada combinación inválida de la tabla Gherkin @validaciones en <form id=""datos-pago-form"">.
+2. Clic en Guardar cambios.
+3. Verificar que el formulario intercepta el envío sin recargar la página y muestra el mensaje de error debajo de cada campo.","Tabla Gherkin @validaciones (13 combinaciones). Banco: vacío, 1 carácter, con símbolos. aliasCbu: vacío, menos de 6 caracteres (ej. ""CORTO""), más de 20 caracteres, CBU de 21 y de 23 dígitos. Titular: vacío, 1 carácter, con símbolos (@#*).",El formulario intercepta el submit sin recargar la página (sin envío por GET) y muestra los mensajes de validación correspondientes debajo de cada campo.,P1,Fase 1,Definido,Falló,"El <form id=""datos-pago-form""> ejecuta un submit HTML nativo por GET hacia /datos-pago?banco=...&aliasCbu=...&titular=..., recarga la página, vacía los inputs y no muestra ningún mensaje de error (ver BUG-017).",Selenium + Behave (local),2026-11-12,BUG-017,,"datos_pago.feature, escenario 2. Corresponde al TC-100 del borrador. Causa informada: el formulario carece de manejador onSubmit y de validación Zod.",,

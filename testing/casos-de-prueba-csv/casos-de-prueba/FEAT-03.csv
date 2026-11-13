@@ -1,22 +1,104 @@
-ID,Feature,Historia,Tipo,Título,Precondiciones,Pasos,Datos de prueba,Resultado esperado,Prioridad,Fase,Requisito,Estado
-TC-031,FEAT-03,US-03.1,Funcional,La ficha carga desde /onboarding/{id-complejo},Complejo activo,1. Abrir el enlace desde un móvil,URL de onboarding,Carga la ficha del complejo correcto con su marca,P1,Fase 1,Definido,No ejecutado
-TC-032,FEAT-03,US-03.1,Negativa,ID de complejo inexistente,N/A,1. Abrir /onboarding/id-que-no-existe,ID inválido,Página de error clara; sin datos de otros complejos ni trazas técnicas,P1,Fase 1,Definido,No ejecutado
-TC-033,FEAT-03,US-03.1,Funcional,Marca propia sin cruce de datos entre complejos,Dos complejos con marcas distintas,1. Abrir ambas fichas en pestañas separadas; 2. Enviar una ficha en cada una,2 complejos,Cada ficha muestra su marca; cada envío queda en su complejo,P1,Fase 1,Definido,No ejecutado
-TC-034,FEAT-03,US-03.1,UI / Responsive,Contraste legible con colores claros y oscuros,Colores de marca extremos,1. Configurar color muy claro y muy oscuro; 2. Revisar la ficha en móvil,#FFFFFF / #000000 / #FFFF00,Texto legible en todos los casos,P2,Fase 2,Definido,No ejecutado
-TC-035,FEAT-03,US-03.2,Funcional,Envío con todos los datos obligatorios válidos,Ficha abierta,1. Completar todos los campos obligatorios; 2. Enviar,Datos válidos,Pantalla de éxito; la ficha aparece en el dashboard,P1,Fase 1,Definido,No ejecutado
-TC-036,FEAT-03,US-03.2,Negativa,Campos obligatorios vacíos,Ficha abierta,1. Dejar vacío un campo obligatorio a la vez; 2. Enviar,1 campo vacío por intento,No avanza; el campo se resalta en rojo con letrero y mensaje explicativo,P1,Fase 1,Definido,No ejecutado
-TC-037,FEAT-03,US-03.2,Partición de equivalencia,"Nombre y apellido: especiales sí, emojis no",Ficha abierta,1. Ingresar cada valor de EL-NOMBRE,Ver EL-NOMBRE,"Acepta tildes, ñ, apóstrofes y guiones; rechaza emojis",P1,Fase 1,Definido,No ejecutado
-TC-038,FEAT-03,US-03.2,Partición de equivalencia,DNI o Pasaporte,Ficha abierta,1. Ingresar cada valor de EL-DOC,Ver EL-DOC,Formatos válidos avanzan; inválidos muestran advertencia,P1,Fase 1,Por definir,No ejecutado
-TC-039,FEAT-03,US-03.2,Partición de equivalencia,Teléfono de contacto,Ficha abierta,1. Ingresar cada valor de EL-TEL,Ver EL-TEL,Formatos válidos avanzan; inválidos muestran advertencia,P1,Fase 1,Por definir,No ejecutado
-TC-040,FEAT-03,US-03.2,Partición de equivalencia,Email del turista,Ficha abierta,1. Ingresar cada valor de EL-EMAIL,Ver EL-EMAIL,Solo emails válidos avanzan,P1,Fase 1,Definido,No ejecutado
-TC-041,FEAT-03,US-03.2,Valor límite,Cantidad de huéspedes,Ficha abierta,1. Ingresar cada valor de EL-HUESPEDES,Ver EL-HUESPEDES,Acepta el rango válido; fuera de rango muestra advertencia,P1,Fase 1,Por definir,No ejecutado
-TC-042,FEAT-03,US-03.2,Valor límite,Fecha/hora de llegada y salida,Ficha abierta,1. Probar cada caso de EL-FECHAS,Ver EL-FECHAS,Salida posterior a llegada; casos inválidos muestran advertencia,P1,Fase 1,Definido,No ejecutado
-TC-043,FEAT-03,US-03.2,Funcional,Protección contra doble clic en Enviar,Ficha completa,1. Hacer doble clic rápido en Enviar,Doble clic,Se crea un solo registro; el botón se deshabilita,P1,Fase 1,Definido,No ejecutado
-TC-044,FEAT-03,US-03.2,Funcional,Se conservan los datos tras un error de validación,Ficha con un error,1. Enviar con un campo inválido; 2. Corregirlo,N/A,Los demás campos siguen completos,P2,Fase 1,Definido,No ejecutado
-TC-045,FEAT-03,US-03.2,Integración,Los datos de la ficha aparecen en el dashboard,Ficha enviada,1. Iniciar sesión como dueño; 2. Revisar la reserva/ficha,Ficha del caso anterior,Todos los datos coinciden con lo enviado,P1,Fase 1,Definido,No ejecutado
-TC-046,FEAT-03,US-03.3,Funcional,Botones de preferencias rápidas,Ficha abierta,"1. Marcar Sin gluten, Sin lactosa, Vegetariano, Vegano y Alergia a frutos secos",5 opciones,Se pueden marcar/desmarcar y se guardan,P2,Fase 1,Definido,No ejecutado
-TC-047,FEAT-03,US-03.3,Valor límite,Texto libre '¿Querés contarnos algo más?' (máx. 50),Ficha abierta,1. Ingresar cada valor de EL-TXT50,Ver EL-TXT50,Acepta hasta 50 caracteres; más de 50 se bloquea o avisa,P2,Fase 1,Definido,No ejecutado
-TC-048,FEAT-03,US-03.3,Funcional,Sección opcional vacía no bloquea el envío,Ficha con obligatorios completos,1. Dejar preferencias vacías; 2. Enviar,Sin preferencias,El envío es exitoso,P1,Fase 1,Definido,No ejecutado
-TC-049,FEAT-03,US-03.1,UI / Responsive,"Ficha en móviles de 320 a 414 px, sin scroll horizontal",Móvil o DevTools,"1. Abrir la ficha en 320, 360, 375, 390 y 414 px; 2. Completarla",5 anchos,Sin scroll horizontal; botones tocables; sin elementos cortados,P1,Fase 1,Definido,No ejecutado
-TC-050,FEAT-03,US-03.2,UI / Responsive,Teclado correcto por campo en móvil,Móvil real,"1. Tocar email, teléfono, cantidad y fecha",N/A,"Teclado de email, numérico y selector de fecha según el campo",P2,Fase 2,Definido,No ejecutado
-TC-051,FEAT-03,US-03.2,Compatibilidad,Flujo completo en Chrome Android y Safari iOS,2 móviles,1. Completar y enviar la ficha en cada navegador,Datos válidos,Funciona igual en ambos,P1,Fase 1,Definido,No ejecutado
+ID,Feature,User Story,Tipo de prueba,Título,Precondiciones,Pasos,Datos de prueba,Resultado esperado,Prioridad,Fase,Requisito,Estado,Resultado obtenido,Dispositivo / Navegador,Fecha ejecución,Bug (ID / GitHub),Responsable,Notas,Resumen EL (auto),Revisión (auto) vacío = todo OK
+TC-031,FEAT-03,US-03.1,Funcional,"[UI + API] Consulta pública del complejo por {slug} sin autenticación, en formato Mobile-First",Complejo activo existente con logo y color HEX configurados,"1. Abrir el enlace público desde viewport móvil (360px-430px). 
+2. Ejecutar GET /api/v1/public/complexes/{slug} sin token JWT.","slug: ""cabanas-del-rio""",Carga la ficha del complejo correcto con su marca en móvil (360px-430px); GET /api/v1/public/complexes/{slug} retorna 200 OK (PublicComplexResponse) sin requerir token JWT,P1,Fase 1,Definido,Pasó,(Solo API) GET /api/v1/public/complexes/{slug} retorna 200 OK (PublicComplexResponse) sin requerir token JWT,,,,,,,Falta fecha o navegador.
+TC-032,FEAT-03,US-03.1,Negativa,"[UI + API] Consulta pública con {slug} inexistente (404 ""Complejo no encontrado"")",Endpoint público GET /api/v1/public/complexes/{slug} disponible,Ejecutar GET /api/v1/public/complexes/{slug} enviando un slug que no existe en la base de datos.,"slug: ""complejo-inexistente-999""","Página de error clara sin datos de otros complejos; GET /api/v1/public/complexes/{slug} retorna 404 Not Found con el mensaje ""Complejo no encontrado""",P1,Fase 1,Definido,Pasó,"(Solo API)GET /api/v1/public/complexes/{slug} retorna 404 Not Found con el mensaje ""Complejo no encontrado""",,,,,,,Falta fecha o navegador.
+TC-033,FEAT-03,US-03.1,Funcional,[UI + API] Ficha pública sin datos bancarios ni del owner y solo con adicionales activos,"Complejo con adicionales activos (""active"": true), inactivos (""active"": false) y datos bancarios configurados",Ejecutar GET /api/v1/public/complexes/{slug} sin token JWT y verificar el cuerpo de PublicComplexResponse.,slug válido con addons activos e inactivos,"API: 200 OK (PublicComplexResponse) listando solo adicionales activos, sin los inactivos y sin exponer paymentInfo ni datos del owner.
+UI: la ficha muestra la marca del complejo y solo sus adicionales activos",P1,Fase 1,Definido,Pasó,"(Solo API): 200 OK (PublicComplexResponse) listando solo adicionales activos, sin los inactivos y sin exponer paymentInfo ni datos del owner.",,,,,,,Falta fecha o navegador.
+TC-034,FEAT-03,US-03.1,UI / Responsive,[UI] Contraste legible con colores claros y oscuros,Colores de marca extremos,"1. Configurar color muy claro y muy oscuro
+2. Revisar la ficha en móvil",#FFFFFF / #000000 / #FFFF00,Texto legible en todos los casos,P2,Fase 2,Definido,No ejecutado,,,,,,,,
+TC-035,FEAT-03,US-03.2,Funcional,[UI + API] Envío exitoso con todos los datos válidos (reserva en estado PENDIENTE),UI: ficha abierta. API: complejo existente y token OWNER en Swagger,"1. Completar todos los campos del formulario con valores válidos
+2. Enviar
+3. API: ejecutar POST /api/v1/complexes/{complexId}/bookings con los datos de ejemplo","checkIn: ""2026-12-10""
+checkOut: ""2026-12-15""
+guestName: ""María José O'Brien-Núñez""
+Tipo de documento: ""DNI""
+Número de documento: ""30.123.456""
+Correo: ""maria.jose+hf@mail.com""
+Teléfono: ""+54 (351) 555-1234""","UI: pantalla de éxito y la ficha aparece en el dashboard.
+API: la reserva queda en estado ""PENDIENTE"" y retorna 201 Created (sin validar superposición de fechas ni capacidad)",P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-036,FEAT-03,US-03.2,Negativa,[UI + API] Campos obligatorios vacíos,Ficha abierta,"1. UI: dejar vacío un campo obligatorio a la vez y enviar
+2. API: enviar el body sin guestName, sin checkIn o sin checkOut",1 campo vacío por intento,"UI: no avanza; el campo se resalta en rojo con mensaje en español.
+API: 400 Bad Request con mensajes en español (en API solo son obligatorios checkIn, checkOut y guestName)",P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-037,FEAT-03,US-03.2,Partición de equivalencia,"[UI + API] Nombre del huésped: letras latinas, tildes, ñ, apóstrofes y guiones sí; números, símbolos, no latinos y espacio inicial no",Ficha abierta,1. Ingresar cada valor de EL-NOMBRE-T,"Ver EL-NOMBRE-T
+Válido: ""María José O'Brien-Núñez"" (201)
+Inválidos: ""Juan123"", ""Juan@#"", ""张伟"", "" Juan"", ""A"" (1 carácter), más de 120 caracteres","Acepta de 2 a 120 caracteres con letras latinas (tildes y ñ), espacios internos, apóstrofes y guiones; rechaza números, símbolos, emojis, alfabetos no latinos, espacio inicial y longitud fuera de rango.
+UI: impide el envío con mensaje en español. API: 400 Bad Request",P1,Fase 1,Definido,Pasó,,,2026-11-12,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,4 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-038,FEAT-03,US-03.2,Partición de equivalencia,[UI + API] Tipo y número de documento (DNI / Pasaporte),Ficha abierta,1. Ingresar cada valor de EL-DOC,"Ver EL-DOC
+API válido: tipo ""DNI""; número ""30.123.456"" (201)
+API inválido: tipo ""D1"" o ""A""; número ""12"" (menos de 5) o ""12 345 678"" (espacios internos)","API (PR #98): tipo de documento de 2 a 20 letras; número de 5 a 20 caracteres con letras, números, puntos y guiones, sin espacios internos; lo demás se rechaza con 400 Bad Request.
+UI (Matriz v3.0): DNI numérico (7-8 dígitos) o Pasaporte alfanumérico (6-12 chars); rechaza vacío, símbolos y letras en modo DNI.
+Conflicto Matriz vs API pendiente de confirmar con el equipo",P1,Fase 1,Definido,Pasó,,,2026-11-12,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,4 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-039,FEAT-03,US-03.2,Partición de equivalencia,[UI + API] Teléfono de contacto,Ficha abierta,1. Ingresar cada valor de EL-TEL,"Ver EL-TEL
+API válido: ""+54 (351) 555-1234"" (201)
+API inválido: ""abc123456"" y ""12345"" (menos de 7)","API (PR #98): de 7 a 20 caracteres; admite números, espacios, paréntesis, guiones y un + inicial; rechaza letras o longitud menor a 7 con 400 Bad Request.
+UI (Matriz v3.0): mínimo 8 dígitos y máximo 15 dígitos.
+Conflicto Matriz vs API pendiente de confirmar con el equipo",P1,Fase 1,Definido,Pasó,,,2026-11-12,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,5 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-040,FEAT-03,US-03.2,Valor límite,[UI] Cantidad de huéspedes,Ficha abierta,1. Ingresar cada valor de EL-HUESPEDES,Ver EL-HUESPEDES,Acepta el rango válido; fuera de rango muestra advertencia,P1,Fase 1,Por definir,No ejecutado,,,,,,,,
+TC-041,FEAT-03,US-03.2,Valor límite,[UI + API] Fechas de check-in y check-out de la ficha en Onboarding,Ficha abierta,1. Probar cada caso de EL-FECHAS,"Ver EL-FECHAS
+Ejemplos inválidos: checkIn ""2026-12-10"" y checkOut ""2026-12-10"" (iguales); checkOut ""2026-12-09"" (anterior); formato distinto de ""yyyy-MM-dd""","-Formato ""yyyy-MM-dd"" sin hora ni zona; checkOut debe ser posterior a checkIn; en OnboardingRequest (PR #108) checkIn no puede ser una fecha pasada (@AssertTrue).
+-Casos inválidos: UI muestra advertencia en español; API retorna 400 Bad Request con mensajes en español",P1,Fase 1,Definido,Pasó,"(Solo API) 
+-fechas iguales 400
+-Fecha chechkout anterior 501
+-Formato invalido
+
+PENDIENTE POR IMPLEMENTAR",,2026-11-12,,,"Base de prueba {
+  ""guestName"": ""Juan Perez"",
+ ""guestEmail"": ""juan.perez@gmail.com"",
+ ""guestPhone"": ""3511234567"",
+  ""guestIdentificationType"": ""DNI"",
+  ""guestIdentificationNumber"": ""12345678"",
+  ""checkIn"": ""2026-11-10"",
+  ""checkOut"": ""2026-11-12"",
+  ""preferences"": ""Habitación con buena vista"",
+  ""allergies"": [
+    ""GLUTEN""
+  ],
+  ""otherAllergies"": null,
+  ""addons"": [
+  ],
+  ""boat"": null
+}
+v3.3: fecha tomada de sus clases EL.",4 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-042,FEAT-03,US-03.2,Funcional,[UI] Protección contra doble clic en Enviar,Ficha completa,1. Hacer doble clic rápido en Enviar,Doble clic,Se crea un solo registro; el botón se deshabilita,P1,Fase 1,Definido,Pasó,,,2026-11-12,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,5 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-043,FEAT-03,US-03.2,Funcional,[UI] Se conservan los datos tras un error de validación,Ficha con un error,"1. Enviar con un campo inválido
+2. Corregirlo",N/A,Los demás campos siguen completos,P2,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-044,FEAT-03,US-03.2,Integración,[UI + API] Los datos de la ficha aparecen en el dashboard,Ficha enviada,"1. Iniciar sesión como dueño
+2. Revisar la reserva/ficha",Ficha del caso anterior,Todos los datos coinciden con lo enviado,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-045,FEAT-03,US-03.3,Funcional,[UI + API] Alergias con chips (selección múltiple) y catálogo enum Allergy,Ficha abierta,"1. UI: marcar uno, varios y desmarcar los chips: Gluten, Lácteos, Maní, frutos secos, Huevo, Soja, Mariscos, Pescado
+2. API: enviar la reserva con alergias del catálogo y textos libres válidos","allergies: [""GLUTEN"", ""MANI""]
+otherAllergies: ""Alergia leve al kiwi""
+preferences: ""Dieta vegetariana, sin azúcar refinada.""","UI: permite marcar uno, varios o desmarcarlos y se guardan correctamente.
+API: 201 Created y devuelve las alergias asociadas a la reserva (los valores fuera del enum se rechazan: ver TC-219)",P2,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-046,FEAT-03,US-03.3,Valor límite,[UI + API] Texto libre de otras alergias y preferencias (longitud y caracteres permitidos),Ficha abierta,1. Ingresar cada valor de EL-TXT50,"Ver EL-TXT50
+API inválidos: ""ab"" (2 caracteres), ""Sin @#*"", texto de más de 500 (otras alergias) o de 1000 (preferencias), alfabeto no latino","API (PR #98): otras alergias de 3 a 500 caracteres y preferencias de 3 a 1000, con letras latinas, números y puntuación básica; rechaza con 400 Bad Request menos de 3 caracteres, símbolos especiales o alfabeto no latino. UI: advertencia equivalente.
+Matriz v3.0 indica texto libre de máx. 50 caracteres (H-12): conflicto pendiente de confirmar con el equipo",P2,Fase 1,Definido,No ejecutado,,,,,,v3.2: preferencias admite 0 (vacío) o 3 a 1000 caracteres (antes 50). Ver H-12 y EL-TXT50.,,
+TC-047,FEAT-03,US-03.3,Funcional,[UI + API] Sección opcional de alergias y preferencias vacía no bloquea el envío,Ficha con obligatorios completos,"1. UI: dejar alergias y preferencias vacías y enviar
+2. API: enviar el body sin allergies, otherAllergies ni preferences (omitidos o null)",Sin alergias ni preferencias,"UI: el envío es exitoso.
+API: 201 Created (omitidos o null no bloquean; enviar """" se rechaza, ver TC-212)",P1,Fase 1,Definido,Pasó,,,2026-11-12,,,v3.3: Estado actualizado a Pasó porque todas sus clases en Equivalencia y Límites figuran Pasó (ejecución informada por QA).,4 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-048,FEAT-03,US-03.1,UI / Responsive,"[UI] Ficha en móviles de 360 a 430 px (Mobile-First), sin scroll horizontal",Móvil o DevTools,"1. Abrir la ficha en 360, 375, 390, 414 y 430 px
+2. Completarla",Anchos Mobile-First (360px–430px),Sin scroll horizontal; botones tocables; sin elementos cortados,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-049,FEAT-03,US-03.2,UI / Responsive,[UI] Teclado correcto por campo en móvil,Móvil real,"1. Tocar email, teléfono, cantidad y fecha",N/A,"Teclado de email, numérico y selector de fecha según el campo",P2,Fase 2,Definido,No ejecutado,,,,,,,,
+TC-050,FEAT-03,US-03.2,Compatibilidad,[UI] Flujo completo en Chrome Android y Safari iOS,2 móviles,1. Completar y enviar la ficha en cada navegador,Datos válidos,Funciona igual en ambos,P1,Fase 1,Definido,No ejecutado,,,,,,,,
+TC-103,FEAT-03,US-03.2,Partición de equivalencia,[UI + API] Formato de email del turista,Pantalla abierta,"1. Ingresar cada valor de EL-EMAIL-C en el formulario y enviar
+2. API: enviar cada valor en el campo de correo del body de reserva","Ver EL-EMAIL-C
+Válido: ""maria.jose+hf@mail.com""
+Inválidos: ""juan@"", correo con caracteres no latinos, más de 180 caracteres","Acepta formato estándar (admite alias +tag), máximo 180 caracteres y sin caracteres no latinos.
+Inválidos: UI con advertencia; API con 400 Bad Request y mensaje en español",P2,Fase 1,Definido,Pasó,API con 400 Bad email invalido,,,,,,,Falta fecha o navegador.
+TC-187,FEAT-03,US-03.2,Negativa,"[API] Campos opcionales enviados como cadena vacía """" se rechazan (400)",Complejo existente ({complexId}).,"Ejecutar POST /api/v1/complexes/{complexId}/bookings enviando campos opcionales con string vacío """" en lugar de omitirlos o enviar null.","documentType: """", documentNumber: """", email: """", phone: """"",Rechaza la petición devolviendo HTTP 400 Bad Request con mensajes de validación en español.,P1,Fase 1,Definido,Pasó,Rechaza la petición devolviendo HTTP 400 Bad Request con mensajes de validación en español.,Swagger / Localhost,,,,v3.2: navegador completado por convención del libro (casos [API] se ejecutan en Swagger / Localhost); confirmar.,,Falta fecha o navegador.
+TC-188,FEAT-03,US-03.2,Negativa,[API] Alta de reserva: complejo ajeno/inexistente (404) y sin token (401),Endpoint POST /api/v1/complexes/{complexId}/bookings.,1) Invocar con {complexId} inexistente o perteneciente a otro dueño. 2) Invocar en Swagger sin token JWT.,"complexId: ""00000000-0000-0000-0000-000000000000""","1) Retorna HTTP 404 Not Found con mensaje ""Complejo no encontrado"". 2) Sin token retorna HTTP 401 Unauthorized.",P1,Fase 1,Definido,Pasó,,Swagger / Localhost,,,,v3.2: navegador completado por convención del libro (casos [API] se ejecutan en Swagger / Localhost); confirmar.,,Falta fecha o navegador.
+TC-189,FEAT-03,US-03.3,Negativa,[API] Alergia fuera del catálogo enum Allergy se rechaza (400),Endpoint POST /api/v1/complexes/{complexId}/bookings (BookingRequest).,Enviar dentro del array de alergias un valor que no pertenece al enumerado Allergy.,"allergies: [""POLEN""]",Rechaza la solicitud con HTTP 400 Bad Request.,P1,Fase 1,Definido,Pasó,Rechaza la solicitud con HTTP 400 Bad Request.,Swagger / Localhost,,,,v3.2: navegador según el entorno del bug vinculado o de sus clases EL.,3 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-190,FEAT-03,US-03.2,Negativa,[API] Onboarding con body inválido hacia un {slug} inexistente devuelve 400 (@Valid se ejecuta antes de buscar el slug),Endpoint de onboarding público (PR #108); {slug} que no existe,"Enviar un OnboardingRequest con body inválido (ej. nombre con números, fecha pasada o campo opcional como """") hacia un {slug} inexistente.","slug: ""slug-no-existe"", guestName: ""Juan123"", email: """"",Retorna HTTP 400 Bad Request con los errores de validación en español (la validación @Valid se ejecuta antes de buscar el slug y no devuelve 404).,P1,Fase 2,Definido,Pasó,Retorna HTTP 400 Bad Request con los errores de validación en español (la validación @Valid se ejecuta antes de buscar el slug y no devuelve 404).,Swagger / Localhost,,,,v3.2: navegador completado por convención del libro (casos [API] se ejecutan en Swagger / Localhost); confirmar.,,Falta fecha o navegador.
+TC-195-211,FEAT-03,US-03.2,Funcional,"[API] Alta de reserva enviando solo los campos obligatorios (checkIn, checkOut y guestName)",Complejo existente ({complexId}); token OWNER válido en Swagger.,Ejecutar POST /api/v1/complexes/{complexId}/bookings enviando solo datos obligatorios.,"{
+  ""checkIn"": ""2026-12-19"",
+  ""checkOut"": ""2026-12-22"",
+  ""guestName"": ""Nicole Pereira""
+}","201 Created y reserva en estado ""PENDIENTE""; los opcionales omitidos (documento, correo, teléfono, preferencias y alergias) no bloquean el alta",P1,Fase 1,Definido,Falló,"Retorna HTTP 400 Bad Request ""El cuerpo de la solicitud es inválido o tiene un JSON mal formado""
+
+Aparece que las alergias son obligatorias",Swagger / Localhost,2026-11-07,BUG-15,,"v3.2: fecha de ejecución tomada de la fecha de reporte de BUG-15.
+v3.2: navegador según el entorno del bug vinculado o de sus clases EL.",,
+TC-196,FEAT-03,US-03.2,Funcional,[API PR#117] Validación de cantidad de huéspedes (guestsCount) en rango permitido,Endpoint de reservas u onboarding activo,Enviar peticiones con los valores límite válidos,"1, 2, 5, 9, 10",Procesamiento exitoso y código 201 Created,P1,Fase 1,Definido,Pasó,"201 ""Reserva creada"" con éxito",Swagger / Localhost,,,,,1 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-197,FEAT-03,US-03.2,Negativa,[API PR#117] Validación de cantidad de huéspedes (guestsCount) fuera de rango,Endpoint de reservas u onboarding activo,Enviar peticiones con valores fuera del rango permitido,"0, 11",Rechazo por validación con código 400 Bad Request,P1,Fase 1,Definido,Pasó,400 Bad Request por límite de huéspedes,Swagger / Localhost,,,,,2 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-198,FEAT-03,US-03.2,Negativa,[API PR#117] Validación de tipos de datos inválidos en huéspedes (guestsCount),Endpoint de reservas u onboarding activo,Enviar caracteres no numéricos o nulos en el campo,"letras, 五, d4, null",Rechazo por validación con código 400 Bad Request,P1,Fase 1,Definido,Pasó,400 Bad Request por formato incorrecto,Swagger / Localhost,,,,,1 pasó · 0 falló · 0 bloq. · 0 pend.,Falta fecha o navegador.
+TC-226,FEAT-03,US-03.2,Negativa,"[UI Selenium Mock] Validaciones bloqueantes de Zod en el Paso 1 (Tus datos): campos vacíos, formatos, huéspedes 1-10 y coherencia de fechas","Entorno Mock. Turista sin autenticación en /onboarding/complejo-jose, Paso 1 de 4.","1. Ingresar cada fila inválida de la tabla Gherkin @paso1 en el Paso 1.
+2. Clic en Continuar.
+3. Verificar que permanece en ""Paso 1 de 4"" y que aparece el error en el campo evaluado.","Tabla Gherkin @paso1 (13 filas). Nombre: vacío, ""M"", ""Marina 123"". Documento: vacío, ""12"". Teléfono: vacío. Email: vacío e inválido. Huéspedes: ""0"" y ""11"". Llegada en el pasado (2025-01-10). Salida igual o anterior a la llegada.","El wizard no avanza, permanece anclado en ""Paso 1 de 4"" y muestra el mensaje de error en el campo evaluado.",P1,Fase 1,Definido,Pasó,Todas las filas inválidas bloquearon el avance y mostraron el error (resultado informado por QA).,Selenium + Behave (local),2026-11-12,,,"onboarding.feature, escenario 3. Corresponde al TC-103 del borrador. Límite de huéspedes 1-10 (H-05). Pendiente definir el límite exacto del documento (5 caracteres, H-18).",,

@@ -1,135 +1,285 @@
-ID,Grupo,Campo,Historia,Caso padre,Técnica,Valor de entrada,Resultado esperado,Estado
-EL-LOGO-PESO-01,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase inválida,0 KB (archivo vacío),Se rechaza con advertencia,No ejecutado
-EL-LOGO-PESO-02,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase válida,1 KB,Se acepta,No ejecutado
-EL-LOGO-PESO-03,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase válida,1 MB,Se acepta,No ejecutado
-EL-LOGO-PESO-04,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Valor límite,"1,99 MB",Se acepta,No ejecutado
-EL-LOGO-PESO-05,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Valor límite,"2,00 MB (máximo)",Se acepta,No ejecutado
-EL-LOGO-PESO-06,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Valor límite,"2,01 MB",Se rechaza con advertencia,No ejecutado
-EL-LOGO-PESO-07,EL-LOGO-PESO,Logo: peso (máx. 2 MB),US-01.2,TC-012,Clase inválida,10 MB,Se rechaza con advertencia,No ejecutado
-EL-LOGO-FMT-01,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase válida,logo.png,Se acepta,No ejecutado
-EL-LOGO-FMT-02,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase válida,logo.jpg,Se acepta,No ejecutado
-EL-LOGO-FMT-03,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,"logo.jpeg (no listado, confirmar)",A definir: aceptar o rechazar,No ejecutado
-EL-LOGO-FMT-04,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,logo.gif,Se rechaza con advertencia,No ejecutado
-EL-LOGO-FMT-05,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,logo.svg,Se rechaza con advertencia,No ejecutado
-EL-LOGO-FMT-06,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,documento.pdf,Se rechaza con advertencia,No ejecutado
-EL-LOGO-FMT-07,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,programa.exe,Se rechaza con advertencia,No ejecutado
-EL-LOGO-FMT-08,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,programa.exe renombrado a .png (extensión falsa),Se rechaza con advertencia,No ejecutado
-EL-LOGO-FMT-09,EL-LOGO-FMT,Logo: formato (.png / .jpg),US-01.2,TC-013,Clase inválida,Sin archivo,Se rechaza con advertencia,No ejecutado
-EL-HEX-01,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase válida,#FF5733,Se acepta,No ejecutado
-EL-HEX-02,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase válida,#ff5733 (minúsculas),Se acepta,No ejecutado
-EL-HEX-03,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,"#FFF (3 dígitos, confirmar)",A definir,No ejecutado
-EL-HEX-04,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,"FF5733 (sin #, confirmar)",A definir,No ejecutado
-EL-HEX-05,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Valor límite,#12345 (5 dígitos),Se rechaza con advertencia,No ejecutado
-EL-HEX-06,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Valor límite,#1234567 (7 dígitos),Se rechaza con advertencia,No ejecutado
-EL-HEX-07,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,#GGGGGG,Se rechaza con advertencia,No ejecutado
-EL-HEX-08,EL-HEX,Color de marca (HEX) (por definir),US-01.2,TC-016,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
-EL-EMAIL-01,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase válida,ana@correo.com,Se acepta,No ejecutado
-EL-EMAIL-02,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase válida,ana.perez+tag@correo.com.ar,Se acepta,No ejecutado
-EL-EMAIL-03,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,anacorreo.com (sin @),Se rechaza con advertencia,No ejecutado
-EL-EMAIL-04,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,ana@ (sin dominio),Se rechaza con advertencia,No ejecutado
-EL-EMAIL-05,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,ana@@correo.com,Se rechaza con advertencia,No ejecutado
-EL-EMAIL-06,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,ana perez@correo.com (espacio),Se rechaza con advertencia,No ejecutado
-EL-EMAIL-07,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
-EL-EMAIL-08,EL-EMAIL,Correo electrónico,US-01.1 / US-03.2,TC-004,Clase inválida,Solo espacios,Se rechaza con advertencia,No ejecutado
-EL-NOMBRE-01,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,Ana,Se acepta,No ejecutado
-EL-NOMBRE-02,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,José María,Se acepta,No ejecutado
-EL-NOMBRE-03,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,O'Connor (apóstrofe),Se acepta,No ejecutado
-EL-NOMBRE-04,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,Pérez-Gómez (guion),Se acepta,No ejecutado
-EL-NOMBRE-05,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,Ñandú (ñ y tildes),Se acepta,No ejecutado
-EL-NOMBRE-06,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Ana 😀 (emoji),Se rechaza (regla del Manual),No ejecutado
-EL-NOMBRE-07,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
-EL-NOMBRE-08,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Solo espacios,Se rechaza con advertencia,No ejecutado
-EL-NOMBRE-09,EL-NOMBRE,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,"Ana123 (números, confirmar)",A definir,No ejecutado
-EL-DOC-01,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase válida,DNI 8 dígitos: 12345678,Se acepta,No ejecutado
-EL-DOC-02,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Valor límite,DNI 7 dígitos: 1234567,"Se acepta (DNI antiguos), confirmar",No ejecutado
-EL-DOC-03,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Valor límite,DNI 6 dígitos,Se rechaza con advertencia,No ejecutado
-EL-DOC-04,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Valor límite,DNI 9 dígitos,Se rechaza con advertencia,No ejecutado
-EL-DOC-05,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase inválida,DNI con letras: 1234ABCD,Se rechaza con advertencia,No ejecutado
-EL-DOC-06,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase válida,Pasaporte alfanumérico: AB123456,Se acepta,No ejecutado
-EL-DOC-07,EL-DOC,"DNI o Pasaporte (supuesto, confirmar formato)",US-03.2,TC-038,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
-EL-TEL-01,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase válida,+54 9 11 2345-6789,Se acepta,No ejecutado
-EL-TEL-02,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase válida,+5491123456789,Se acepta,No ejecutado
-EL-TEL-03,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,6 dígitos,Se rechaza con advertencia,No ejecutado
-EL-TEL-04,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,7 dígitos,A definir según regla,No ejecutado
-EL-TEL-05,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,15 dígitos (máx. E.164),Se acepta,No ejecutado
-EL-TEL-06,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Valor límite,16 dígitos,Se rechaza con advertencia,No ejecutado
-EL-TEL-07,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase inválida,Con letras: 11-ABCD-6789,Se rechaza con advertencia,No ejecutado
-EL-TEL-08,EL-TEL,"Teléfono (supuesto: formato internacional, confirmar)",US-03.2,TC-039,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
-EL-HUESPEDES-01,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,0,Se rechaza con advertencia,No ejecutado
-EL-HUESPEDES-02,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Valor límite,1 (mínimo),Se acepta,No ejecutado
-EL-HUESPEDES-03,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase válida,2,Se acepta,No ejecutado
-EL-HUESPEDES-04,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Valor límite,Máximo definido,Se acepta,No ejecutado
-EL-HUESPEDES-05,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Valor límite,Máximo + 1,Se rechaza con advertencia,No ejecutado
-EL-HUESPEDES-06,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
-EL-HUESPEDES-07,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,"1,5 (decimal)",Se rechaza con advertencia,No ejecutado
-EL-HUESPEDES-08,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
-EL-HUESPEDES-09,EL-HUESPEDES,Cantidad de huéspedes (máx. por definir),US-03.2 / US-02.1,TC-041,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
-EL-FECHAS-01,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase válida,Salida 1 día después de la llegada,Se acepta,No ejecutado
-EL-FECHAS-02,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Salida 1 minuto después de la llegada,Se acepta,No ejecutado
-EL-FECHAS-03,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Salida = llegada (misma fecha y hora),Se rechaza con advertencia,No ejecutado
-EL-FECHAS-04,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Salida 1 minuto antes de la llegada,Se rechaza con advertencia,No ejecutado
-EL-FECHAS-05,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Salida 1 día antes de la llegada,Se rechaza con advertencia,No ejecutado
-EL-FECHAS-06,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Llegada en el pasado (confirmar regla),A definir,No ejecutado
-EL-FECHAS-07,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Llegada hoy,Se acepta,No ejecutado
-EL-FECHAS-08,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Fecha inexistente (30/02),Se rechaza con advertencia,No ejecutado
-EL-FECHAS-09,EL-FECHAS,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Vacía,Se rechaza con advertencia,No ejecutado
-EL-TXT50-01,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Clase válida,Vacío (campo opcional),Se acepta,No ejecutado
-EL-TXT50-02,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,1 carácter,Se acepta,No ejecutado
-EL-TXT50-03,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,49 caracteres,Se acepta,No ejecutado
-EL-TXT50-04,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,50 caracteres (máximo),Se acepta,No ejecutado
-EL-TXT50-05,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Valor límite,51 caracteres,Se bloquea o avisa (no se corta en silencio),No ejecutado
-EL-TXT50-06,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Clase válida,Con tildes y ñ,Se acepta,No ejecutado
-EL-TXT50-07,EL-TXT50,Texto libre '¿Quires contarnos algo más?' (máx. 50),US-03.3,TC-047,Clase inválida,Con emoji (confirmar),A definir,No ejecutado
-EL-PAX-01,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,0,Se rechaza con advertencia,No ejecutado
-EL-PAX-02,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Valor límite,1 (mínimo),Se acepta,No ejecutado
-EL-PAX-03,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Valor límite,Máximo definido,Se acepta,No ejecutado
-EL-PAX-04,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Valor límite,Máximo + 1,Se rechaza con advertencia,No ejecutado
-EL-PAX-05,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
-EL-PAX-06,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,"2,5",Se rechaza con advertencia,No ejecutado
-EL-PAX-07,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
-EL-PAX-08,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase inválida,Vacío con casilla marcada,Se rechaza con advertencia,No ejecutado
-EL-PAX-09,EL-PAX,Cantidad de pasajeros lancha (máx. por definir),US-04.1,TC-057,Clase válida,Vacío con casilla desmarcada,Se acepta,No ejecutado
-EL-DESC45-01,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Clase inválida,Vacío (confirmar si es obligatoria),A definir,No ejecutado
-EL-DESC45-02,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,1 carácter,Se acepta,No ejecutado
-EL-DESC45-03,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,44 caracteres,Se acepta,No ejecutado
-EL-DESC45-04,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,45 caracteres (máximo),Se acepta,No ejecutado
-EL-DESC45-05,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Valor límite,46 caracteres,Se bloquea o avisa,No ejecutado
-EL-DESC45-06,EL-DESC45,Adicional: descripción (máx. 45 por definir),US-05.1,TC-067,Clase válida,Con tildes y ñ,Se acepta,No ejecutado
-EL-PRECIO-01,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,0,Se rechaza con advertencia,No ejecutado
-EL-PRECIO-02,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Valor límite,"0,01 (mínimo posible)",Se acepta,No ejecutado
-EL-PRECIO-03,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase válida,1,Se acepta,No ejecutado
-EL-PRECIO-04,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase válida,"1500,50 (2 decimales)",Se acepta,No ejecutado
-EL-PRECIO-05,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,"1500,555 (3 decimales, confirmar)",A definir,No ejecutado
-EL-PRECIO-06,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
-EL-PRECIO-07,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
-EL-PRECIO-08,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Clase inválida,Vacío,Se rechaza con advertencia,No ejecutado
-EL-PRECIO-09,EL-PRECIO,Adicional: precio (decimales - uso de la coma - por definir),US-05.1,TC-068,Valor límite,Precio máximo (por definir),A definir,No ejecutado
-EL-QTY-01,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase válida,0 (equivale a no seleccionar),Se trata como no seleccionado,No ejecutado
-EL-QTY-02,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Valor límite,1,Se acepta,No ejecutado
-EL-QTY-03,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase válida,2,Se acepta,No ejecutado
-EL-QTY-04,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Valor límite,Máximo definido,Se acepta,No ejecutado
-EL-QTY-05,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Valor límite,Máximo + 1,Se rechaza con advertencia,No ejecutado
-EL-QTY-06,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase inválida,-1,Se rechaza con advertencia,No ejecutado
-EL-QTY-07,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase inválida,"1,5",Se rechaza con advertencia,No ejecutado
-EL-QTY-08,EL-QTY,Cantidad de cada adicional (máx. por definir),US-05.2,TC-075,Clase inválida,abc,Se rechaza con advertencia,No ejecutado
-EL-CBU-01,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase válida,22 dígitos numéricos,Se acepta,No ejecutado
-EL-CBU-02,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Valor límite,21 dígitos,Se rechaza con advertencia,No ejecutado
-EL-CBU-03,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Valor límite,23 dígitos,Se rechaza con advertencia,No ejecutado
-EL-CBU-04,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase inválida,22 caracteres con letras,Se rechaza con advertencia,No ejecutado
-EL-CBU-05,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase inválida,22 dígitos con espacios (confirmar),A definir,No ejecutado
-EL-CBU-06,EL-CBU,CBU (22 dígitos) (por definir),US-05.2,TC-080,Clase inválida,Vacío,Se rechaza si no hay Alias,No ejecutado
-EL-ALIAS-01,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Clase válida,mi.cabana.delta,Se acepta,No ejecutado
-EL-ALIAS-02,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,6 caracteres,Se acepta,No ejecutado
-EL-ALIAS-03,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,5 caracteres,Se rechaza con advertencia,No ejecutado
-EL-ALIAS-04,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,20 caracteres,Se acepta,No ejecutado
-EL-ALIAS-05,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Valor límite,21 caracteres,Se rechaza con advertencia,No ejecutado
-EL-ALIAS-06,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Clase inválida,Con espacios o @,Se rechaza con advertencia,No ejecutado
-EL-ALIAS-07,EL-ALIAS,"Alias bancario (supuesto: 6 a 20 caracteres, confirmar)",US-05.2,TC-080,Clase inválida,Vacío,Se rechaza si no hay CBU,No ejecutado
-EL-ADIC-N-01,EL-ADIC-N,Cantidad de adicionales creados (límite 1 - por confirmar),US-05.1,TC-066,Clase válida,0 adicionales,Se acepta,No ejecutado
-EL-ADIC-N-02,EL-ADIC-N,Cantidad de adicionales creados (límite 1 - por confirmar),US-05.1,TC-066,Valor límite,1 adicional (máximo),Se acepta,No ejecutado
-EL-ADIC-N-03,EL-ADIC-N,Cantidad de adicionales creados (límite 1 - por confirmar),US-05.1,TC-066,Valor límite,Intentar crear el 2.º,Se rechaza con advertencia,No ejecutado
-EL-PWD-01,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Clase inválida,Vacía,Se rechaza con advertencia,No ejecutado
-EL-PWD-02,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Clase inválida,Solo espacios,Se rechaza con advertencia,No ejecutado
-EL-PWD-03,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Valor límite,Longitud mínima definida,A definir,No ejecutado
-EL-PWD-04,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Valor límite,Longitud mínima - 1,A definir,No ejecutado
-EL-PWD-05,EL-PWD,Contraseña (reglas por definir),US-01.1,TC-002,Clase válida,"Con tildes, ñ y símbolos",Se acepta,No ejecutado
+ID,Campo,User Story,Caso padre,Técnica,Clase de equivalencia,Límite / regla,Valores dentro de la clase (uno por línea),Valores en el límite (uno por línea),Resultado esperado,Estado,Resultado obtenido (si falla: qué valor y qué pasó),Dispositivo / Navegador,Fecha ejecución,Bug (ID / GitHub),Explicación / Notas,Segunda revisión Estado
+EL-PWD-01,Contraseña / Dueño,US-01.1,TC-002,Clase inválida,Contraseña con caracteres especiales / logitud valida,,Abc123!@#,,A definir (ver Hallazgos),N/A,No sale error / zona gris por definir,Chrome,2026-10-25,,Caracteres No válidos / Por definir Ver H-14.,N/A
+EL-PWD-02,Contraseña / Dueño,US-01.1,TC-002,Clase válida,Contraseña con números / logitud valida,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres No válidos / Ya está cubierto La explicación original decía 'Caracteres No válidos' pero la clase se aprobó: probable errata.,Pasó
+EL-PWD-03,Contraseña / Dueño,US-01.1,TC-002,Clase inválida,Contraseña con Acentos o caracteres no latinos / logitud valida,,ปัญญาปัญญา/Contráseña1,,Se rechaza con advertencia,Falló,En la segunda revision con la correciones mencionadas en el BUG paso la prueba ,Chrome,2026-10-25,BUG-004,Caracteres No válidos,Pasó
+EL-PWD-04,Contraseña / Dueño,US-01.1,TC-002,Clase válida,Contraseña con caracteres del alfabeto latino / logitud valida,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos / Ya está cubierto,Pasó
+EL-PWD-05,Contraseña / Dueño,US-01.1,TC-002,Clase inválida,Contraseña con un espacio dentro / logitud valida,,m1 cl4v3,,Se rechaza con advertencia,Falló,En la segunda revision con la correciones mencionadas en el BUG paso la prueba ,Chrome,2026-10-25,BUG-004,Caracteres inválidos / Ya está cubierto Ver H-14.,Pasó
+EL-PWD-06,Contraseña / Dueño,US-01.1,TC-002,Clase inválida,Contraseña con un espacio antes/después con logitud valida,,""" m1cl4v """,,Se rechaza con advertencia,Falló,En la segunda revision con la correciones mencionadas en el BUG paso la prueba ,Chrome,2026-10-25,BUG-004,Formato inválido / No se especifica en los requerimientos Ver H-14.,Pasó
+EL-PWD-07,Contraseña / Dueño,US-01.1,TC-002,Clase válida,Contraseña con guión /logitud valida,,m1-cl4v3,,A definir (ver Hallazgos),Falló,En la segunda revision con la correciones mencionadas en el BUG paso la prueba ,Chrome,2026-10-25,,Caracteres válidos / Ya está cubierto / por fedinir Ver H-14.,Pasó
+EL-PWD-08,Contraseña / Dueño,US-01.1,TC-002,Valor límite,Longitud de la contraseña es minimo 8 caracteres,mín. 8,"8 caracteres ""m10cl4v3""",,Se acepta,Pasó,,Chrome,2026-10-25,,Longitud válida y Longitud dentro del rango,Pasó
+EL-PWD-09,Contraseña / Dueño,US-01.1,TC-002,Valor límite,La longitud del contraseña es de 9 caracteres y más,mín. 8,"9 caracteres - ""m1scl4v3s"" / 12 caracteres - ""m1s0cl4v3s01"" / 63 caracteres ""m1s0cl4v3s01m1s0cl4v3s01m1s0cl4v3s01m1s0cl4v3s01m1s0cl4v3s01111""",,A definir (ver Hallazgos),N/A,No sale error / zona gris por definir limites,Chrome,2026-10-25,,Longitud válida y Longitud dentro del rango / por definir Ver H-14.,N/A
+EL-PWD-10,Contraseña / Dueño,US-01.1,TC-002,Valor límite,Longitud del contraseña es de 7 y menos,mín. 8,"7 caracteres -  ""m1cl4v3"" / 2 caracteres - ""m1""",,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,Longitud inválida,Pasó
+EL-PWD-11,Contraseña / Dueño,US-01.1,TC-002,Clase inválida,Campo vacío,,0 - string vacío,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,Campo obligatorio,Pasó
+EL-PWD-12,Contraseña / Dueño,US-01.1,TC-002,Mensaje de error,Mensaje de error visible en campo inválido,,,,"Si las entradas no son válidas, se resalta en rojo y aparece el mensaje de error.",Falló,En la segunda revision con la correciones mencionadas en el BUG paso la prueba ,Chrome,2026-10-25,BUG-004,,Pasó
+EL-PWD-13,Contraseña / Dueño,US-01.1,TC-002,Mensaje de error,Mensaje de error visible en campo inválido,,,,"Si las entradas de logitud no son válidas, se resalta en rojo y aparece el mensaje de error con el texto ""La contraseña debe tener al menos 8 caracteres.""",Pasó,,Chrome,2026-10-25,,,Pasó
+EL-EMAIL-D-01,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email con caracteres especiales,,matilda!#$%@gmail.com,,Se rechaza con advertencia,Falló,,Chrome,2026-10-25,BUG-003,Caracteres No válidos,
+EL-EMAIL-D-02,Correo electrónico login / Dueño,US-01.1,TC-004,Clase válida,email con números,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos,
+EL-EMAIL-D-03,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email con Acentos o caracteres no latinos,,北京朝阳大望@gmail.com,,Se rechaza con advertencia,Falló,,Chrome,2026-10-25,BUG-003,Caracteres No válidos,
+EL-EMAIL-D-04,Correo electrónico login / Dueño,US-01.1,TC-004,Clase válida,email con caracteres del alfabeto latino,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos / Ya está cubierta,
+EL-EMAIL-D-05,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email con un espacio dentro,,ana perez@gmail.com,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,No válidos,
+EL-EMAIL-D-06,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email con un espacio antes,,""" pilar@gmailcom""",,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,"No válidos Atención: el valor de prueba no tiene punto en el dominio ('gmailcom'), así que viola dos reglas a la vez. Repetir con un valor que solo tenga el espacio.",
+EL-EMAIL-D-07,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email con un espacio después,,"""pilar@gmailcom """,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,"No válidos Atención: el valor de prueba no tiene punto en el dominio ('gmailcom'), así que viola dos reglas a la vez. Repetir con un valor que solo tenga el espacio.",
+EL-EMAIL-D-08,Correo electrónico login / Dueño,US-01.1,TC-004,Clase válida,email con guión,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos / Ya está cubierta,
+EL-EMAIL-D-09,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email sin @,,anagmail.com,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,No válidos,
+EL-EMAIL-D-10,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email sin dominio,,ana@,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,No válidos,
+EL-EMAIL-D-11,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,email con @ doble,,ana@@gmail.com,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,No válidos,
+EL-EMAIL-D-12,Correo electrónico login / Dueño,US-01.1,TC-004,Clase válida,email con diferente dominio,,anaperez@correo.com,,Se acepta,Pasó,,Chrome,2026-10-25,,"Caracteres válidos Referencia previa: Bug-001 (antes EL-EMAIL-01), descartado: no es un bug, la app está en desarrollo (mensaje 'La API no está configurada').",
+EL-EMAIL-D-13,Correo electrónico login / Dueño,US-01.1,TC-004,Clase válida,email con +tag,,anaperez+tag@gmail.com,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos,
+EL-EMAIL-D-14,Correo electrónico login / Dueño,US-01.1,TC-004,Clase válida,email con sub dominio,,anaperez@gmail.com.cl,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos,
+EL-EMAIL-D-15,Correo electrónico login / Dueño,US-01.1,TC-004,Clase válida,email con punto,,ana2.perez_1-a@dominio.com,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos,
+EL-EMAIL-D-16,Correo electrónico login / Dueño,US-01.1,TC-004,Clase inválida,Campo vacío,,0 - string vacío,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,Campo obligatorio,
+EL-EMAIL-D-17,Correo electrónico login / Dueño,US-01.1,TC-004,Mensaje de error,Mensaje de error visible en campo inválido,,,,"Si las entrada no son válidas, se resalta en rojo y aparece el mensaje de error con el texto ""Introduce una dirección válida"".",Pasó,,Chrome,2026-10-25,,,
+EL-LOGO-PESO-01,Logo: peso,US-01.2,TC-012,Clase inválida,Valores inválidos (se rechazan),máx. 2 MB,"0 KB (archivo vacío)
+10 MB",,Se rechaza con advertencia,Pasó,,,2026-10-25,,,
+EL-LOGO-PESO-02,Logo: peso,US-01.2,TC-012,Clase válida,Valores válidos (se aceptan),máx. 2 MB,"1 KB
+1 MB",,Se acepta,Pasó,,,2026-10-25,,,
+EL-LOGO-PESO-03,Logo: peso,US-01.2,TC-012,Valor límite,Límites dentro del rango (se aceptan),máx. 2 MB,,"1,99 MB
+2,00 MB (máximo)",Se acepta,Pasó,,,2026-10-25,,,
+EL-LOGO-PESO-04,Logo: peso,US-01.2,TC-012,Valor límite,Límites fuera del rango (se rechazan),máx. 2 MB,,"2,01 MB",Se rechaza con advertencia,Pasó,,,2026-10-25,,,
+EL-LOGO-FMT-01,Logo: formato,US-01.2,TC-013,Clase válida,Valores válidos (se aceptan),.png / .jpg,"logo.png
+logo.jpg",,Se acepta,Pasó,,,2026-10-25,,,
+EL-LOGO-FMT-02,Logo: formato,US-01.2,TC-013,Clase inválida,Formatos no permitidos explícitos,.png / .jpg,"logo.pdf, logo.svg, logo.webp, logo.exe",,Rechazado en el cliente con advertencia explícita,Pasó,,,2026-10-25,,,
+EL-LOGO-FMT-03,Logo: formato,US-01.2,TC-013,Clase inválida,Valores inválidos (se rechazan),.png / .jpg,"logo.gif
+logo.svg
+documento.pdf
+programa.exe
+programa.exe renombrado a .png (extensión falsa)
+Sin archivo",,Se rechaza con advertencia,Pasó,,,2026-10-25,,,
+EL-HEX-01,Color de marca (HEX),US-01.2,TC-016,Clase válida,Valores válidos (se aceptan),7 chars (#RRGGBB),"#FF5733
+#ff5733 (minúsculas)",,Se acepta,Pasó,,,,,,
+EL-HEX-02,Color de marca (HEX),US-01.2,TC-016,Clase inválida,"Valores inválidos: formato corto (#FFF), sin #, nombre de color o rgb()",7 chars (#RRGGBB),"#FFF (3 dígitos)
+FF5733 (sin #)
+verde (nombre en texto)
+rgb(255,0,0)",,Se rechaza con advertencia (Matriz v3.0 exige 7 chars #RRGGBB),Pasó,,,,,,
+EL-HEX-03,Color de marca (HEX),US-01.2,TC-016,Valor límite,Límites fuera del rango (se rechazan),7 chars (#RRGGBB),,"#12345 (5 dígitos)
+#1234567 (7 dígitos)",Se rechaza con advertencia,Pasó,,,,,,
+EL-HEX-04,Color de marca (HEX),US-01.2,TC-016,Clase inválida,Valores inválidos (se rechazan),7 chars (#RRGGBB),"#GGGGGG
+Vacío",,Se rechaza con advertencia,Pasó,,,,,,
+EL-NOMBRE-T-01,Nombre y apellido (turista),US-03.2,TC-037,Clase válida,Valores válidos (se aceptan),mín. 2 chars (latino),"Ana
+José María
+O'Connor (apóstrofe)
+Pérez-Gómez (guion)
+Ñandú (ñ y tildes)",,Se acepta,Pasó,,,2026-11-12,,,
+EL-NOMBRE-T-02,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Valores inválidos (se rechazan) — Se rechaza (regla del Manual),mín. 2 chars (latino),Ana 😀 (emoji),,Se rechaza (regla del Manual),Pasó,,,2026-11-12,,,
+EL-NOMBRE-T-03,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,Valores inválidos (se rechazan) — Se rechaza con advertencia,mín. 2 chars (latino),"Vacío
+Solo espacios",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-NOMBRE-T-04,Nombre y apellido (turista),US-03.2,TC-037,Clase inválida,"Valores inválidos: números, símbolos, 1 solo carácter, no latinos o espacios extremos",mín. 2 chars (latino),"Ana123 (números)
+K@mil* (símbolos)
+T (1 carácter)
+ปัญญา (no latino)
+"" Ana "" (espacios inicio/fin)",,Se rechaza con advertencia (regla del Manual v3.0 y H-13),Pasó,,,2026-11-12,,,
+EL-DOC-01,DNI o Pasaporte,US-03.2,TC-038,Clase válida,Valores válidos (se aceptan),DNI 7-8 díg. / Pasaporte 5-12 alfanum.,"DNI 8 dígitos: 12345678
+Pasaporte alfanumérico: AB123456",,Se acepta,Pasó,,,2026-11-12,,,
+EL-DOC-02,DNI o Pasaporte,US-03.2,TC-038,Valor límite,Límites dentro del rango (se aceptan),DNI 7-8 díg. / Pasaporte 5-12 alfanum.,,"DNI 7 dígitos: 1234567
+DNI 8 dígitos: 12345678
+Pasaporte 5 chars: AB123
+Pasaporte 9-12 chars: AB1234567",Se acepta (rango válido en Matriz v3.0),Pasó,,,2026-11-12,,,
+EL-DOC-03,DNI o Pasaporte,US-03.2,TC-038,Valor límite,Límites fuera del rango (se rechazan),DNI 7-8 díg. / Pasaporte 5-12 alfanum.,,"5 caracteres o menos (12345)
+15 caracteres o más (AB1234567890123)
+DNI de 6 o 9 dígitos",Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-DOC-04,DNI o Pasaporte,US-03.2,TC-038,Clase inválida,Valores inválidos (se rechazan),DNI 7-8 díg. / Pasaporte 5-12 alfanum.,"DNI con letras: 1234ABCD
+Con símbolos: 12.345.678 / AB-123/45
+Con espacios: AB 123456
+Vacío",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-TEL-01,Teléfono,US-03.2,TC-039,Clase válida,Valores válidos (se aceptan),8 a 15 dígitos (+ opcional),"+54 9 11 2345-6789
++5491123456789",,Se acepta,Pasó,,,2026-11-12,,,
+EL-TEL-02,Teléfono,US-03.2,TC-039,Valor límite,Límites fuera del rango (se rechazan),8 a 15 dígitos (+ opcional),,"6 dígitos (menos de 7)
+16 dígitos
+17 dígitos (más de 16)",Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-TEL-03,Teléfono,US-03.2,TC-039,Valor límite,Límite inferior inválido (debajo del mínimo de 8 dígitos),8 a 15 dígitos (+ opcional),,7 dígitos (mínimo es 8 según Matriz v3.0),Se rechaza con advertencia (Matriz v3.0 exige mín. 8 dígitos),Pasó,,,2026-11-12,,,
+EL-TEL-04,Teléfono,US-03.2,TC-039,Valor límite,Límites dentro del rango (se aceptan),8 a 15 dígitos (+ opcional),,"8 dígitos (mínimo válido)
+15 dígitos (máximo válido E.164)",Se acepta,Pasó,,,2026-11-12,,,
+EL-TEL-05,Teléfono,US-03.2,TC-039,Clase inválida,Valores inválidos (se rechazan),8 a 15 dígitos (+ opcional),"Con letras: 11-ABCD-6789
+Con símbolos especiales: #11234567*
+Vacío",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-HUESPEDES-01,Cantidad de huéspedes,US-03.2 / US-02.1,TC-041,Clase inválida,Valores inválidos (se rechazan),máx. por definir,"0
+-1
+1,5 (decimal)
+abc
+Vacío",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-HUESPEDES-02,Cantidad de huéspedes,US-03.2 / US-02.1,TC-041,Valor límite,Límites dentro del rango (se aceptan),máx. por definir,,"1 (mínimo)
+Máximo definido",Se acepta,Pasó,,,2026-11-12,,,
+EL-HUESPEDES-03,Cantidad de huéspedes,US-03.2 / US-02.1,TC-041,Clase válida,Valores válidos (se aceptan),máx. por definir,2,,Se acepta,Pasó,,,2026-11-12,,,
+EL-HUESPEDES-04,Cantidad de huéspedes,US-03.2 / US-02.1,TC-041,Valor límite,Límites fuera del rango (se rechazan),máx. por definir,,Máximo + 1,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-FECHAS-01,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase válida,Valores válidos (se aceptan),,Salida 1 día después de la llegada,,Se acepta,Pasó,,,2026-11-12,,,
+EL-FECHAS-02,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Límites dentro del rango (se aceptan),,,"Salida 1 minuto después de la llegada
+Llegada hoy",Se acepta,Pasó,,,2026-11-12,,,
+EL-FECHAS-03,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Valor límite,Límites fuera del rango (se rechazan),,,"Salida = llegada (misma fecha y hora)
+Salida 1 minuto antes de la llegada",Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-FECHAS-04,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Valores inválidos (se rechazan),,"Salida 1 día antes de la llegada
+Fecha inexistente (30/02)
+Vacía",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-FECHAS-05,Fecha/hora de llegada y salida,US-03.2 / US-02.2,TC-042,Clase inválida,Zona gris (por definir),,Llegada en el pasado (confirmar regla),,A definir,Pasó,,,2026-11-12,,,
+EL-TXT50-01,Texto libre '¿Querés contarnos algo más?',US-03.3,TC-047,Clase válida,Valores válidos (se aceptan),0 o 3 a 1000,"Vacío (campo opcional)
+Con tildes y ñ",,Se acepta,Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-TXT50-02,Texto libre '¿Querés contarnos algo más?',US-03.3,TC-047,Valor límite,Límites dentro del rango (se aceptan),0 o 3 a 1000,,"3 caracteres (mínimo)
+999 caracteres
+1000 caracteres (máximo)",Se acepta,Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-TXT50-03,Texto libre '¿Querés contarnos algo más?',US-03.3,TC-047,Valor límite,Límites fuera del rango (se rechazan),0 o 3 a 1000,,"1 carácter
+2 caracteres
+1001 caracteres",Se bloquea o avisa (no se corta en silencio),Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-TXT50-04,Texto libre '¿Querés contarnos algo más?',US-03.3,TC-047,Clase inválida,Valores inválidos: texto con emojis (Matriz v3.0),0 o 3 a 1000,Llegamos temprano 😊,,Se rechaza con advertencia (Matriz v3.0: texto opcional sin emojis),Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-PAX-01,Cantidad de pasajeros lancha,US-04.1,TC-057,Clase inválida,Valores inválidos (se rechazan),máx. = huéspedes de la reserva (H-05),"0
+-1
+2,5
+abc
+Vacío con casilla marcada",,Se rechaza con advertencia,Pasó,,,2026-11-12,,v3.3: límite según H-05 (1 hasta la cantidad de huéspedes).,
+EL-PAX-02,Cantidad de pasajeros lancha,US-04.1,TC-057,Valor límite,Límites dentro del rango (se aceptan),máx. = huéspedes de la reserva (H-05),,"2 (mínimo)
+No mayor al numero de huespedes en la reserva",Se acepta,Pasó,,,2026-11-12,,"v3.3: límite según H-05 (1 hasta la cantidad de huéspedes). EL-PAX-02 indica 2 como mínimo, mientras la Matriz dice 1: confirmar.",
+EL-PAX-03,Cantidad de pasajeros lancha,US-04.1,TC-057,Valor límite,Límites fuera del rango (se rechazan),máx. = huéspedes de la reserva (H-05),,Máximo + 1,Se rechaza con advertencia,Pasó,,,2026-11-12,,v3.3: límite según H-05 (1 hasta la cantidad de huéspedes).,
+EL-PAX-04,Cantidad de pasajeros lancha,US-04.1,TC-057,Clase válida,Valores válidos (se aceptan),máx. = huéspedes de la reserva (H-05),Vacío con casilla desmarcada,,Se acepta,Pasó,,,2026-11-12,,v3.3: límite según H-05 (1 hasta la cantidad de huéspedes).,
+EL-ADIC-N-01,Cantidad de adicionales creados,US-05.1,TC-066,Clase válida,Valores válidos (se aceptan),límite 0,0 adicionales,,Se acepta,Pasó,,,2026-11-12,,v3.3: el límite de 1 adicional por complejo ya no aplica (H-02: son varios); el 2.º adicional se acepta. Revisar el nombre de la clase y el límite.,
+EL-ADIC-N-02,Cantidad de adicionales creados,US-05.1,TC-066,Valor límite,Límites dentro del rango (se aceptan),límite 0,,1 adicional (máximo),Se acepta,Pasó,,,2026-11-12,,v3.3: el límite de 1 adicional por complejo ya no aplica (H-02: son varios); el 2.º adicional se acepta. Revisar el nombre de la clase y el límite.,
+EL-ADIC-N-03,Cantidad de adicionales creados,US-05.1,TC-066,Valor límite,Límites fuera del rango (se rechazan),límite 0,,Intentar crear el 2.º,Se acepta,Pasó,,,2026-11-12,,v3.3: el límite de 1 adicional por complejo ya no aplica (H-02: son varios); el 2.º adicional se acepta. Revisar el nombre de la clase y el límite.,
+EL-DESC45-01,Adicional: descripción,US-05.1,TC-067,Clase válida,Valores válidos: campo vacío (la descripción es opcional),"opcional, máx. 250","Vacío ("""")",,Se acepta,Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-DESC45-02,Adicional: descripción,US-05.1,TC-067,Valor límite,Límites dentro del rango (se aceptan),"opcional, máx. 250",,"1 carácter
+249 caracteres
+250 caracteres (máximo)",Se acepta,Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-DESC45-03,Adicional: descripción,US-05.1,TC-067,Valor límite,Límites fuera del rango (se rechazan),"opcional, máx. 250",,251 caracteres,Se bloquea o avisa,Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-DESC45-04,Adicional: descripción,US-05.1,TC-067,Clase válida,Valores válidos (se aceptan),"opcional, máx. 250",Con tildes y ñ,,Se acepta,Pasó,,,2026-11-12,,v3.2: límite actualizado por QA (ID histórico conservado). Ver H-12.,
+EL-PRECIO-01,Adicional: precio,US-05.1,TC-068,Clase inválida,Valores inválidos (se rechazan),"> 0 (BigDecimal, máx. 2 dec.)","0
+-1
+-100
+abc
+$1500 (símbolo manual)
+Vacío",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-PRECIO-02,Adicional: precio,US-05.1,TC-068,Valor límite,Límites dentro del rango (se aceptan),"> 0 (BigDecimal, máx. 2 dec.)",,"0,01 (mínimo posible)",Se acepta,Pasó,,,2026-11-12,,,
+EL-PRECIO-03,Adicional: precio,US-05.1,TC-068,Clase válida,Valores válidos (se aceptan),"> 0 (BigDecimal, máx. 2 dec.)","1
+1500,50 (2 decimales)",,Se acepta,Pasó,,,2026-11-12,,,
+EL-PRECIO-04,Adicional: precio,US-05.1,TC-068,Clase inválida,Valores inválidos: más de 2 decimales (API admite hasta 2 decimales),"> 0 (BigDecimal, máx. 2 dec.)","1500,555 (3 decimales)",,Se rechaza o redondea según validación BigDecimal (máx. 2 decimales en Manual v3.0),Pasó,,,2026-11-12,,,
+EL-PRECIO-05,Adicional: precio,US-05.1,TC-068,Valor límite,Límites por definir,"> 0 (BigDecimal, máx. 2 dec.)",,Precio máximo (por definir),A definir,Pasó,,,2026-11-12,,,
+EL-QTY-01,Cantidad de cada adicional,US-05.2,TC-075,Clase válida,Valores válidos (se aceptan) — Se trata como no seleccionado,máx. por definir,0 (equivale a no seleccionar),,Se trata como no seleccionado,Pasó,,,2026-11-12,,,
+EL-QTY-02,Cantidad de cada adicional,US-05.2,TC-075,Valor límite,Límites dentro del rango (se aceptan),máx. por definir,,"1
+Máximo definido",Se acepta,Pasó,,,2026-11-12,,,
+EL-QTY-03,Cantidad de cada adicional,US-05.2,TC-075,Clase válida,Valores válidos (se aceptan) — Se acepta,máx. por definir,2,,Se acepta,Pasó,,,2026-11-12,,,
+EL-QTY-04,Cantidad de cada adicional,US-05.2,TC-075,Valor límite,Límites fuera del rango (se rechazan),máx. por definir,,Máximo + 1,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-QTY-05,Cantidad de cada adicional,US-05.2,TC-075,Clase inválida,Valores inválidos (se rechazan),máx. por definir,"-1
+1,5
+abc",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-CBU-01,CBU,US-05.2,TC-080,Clase válida,Valores válidos (se aceptan),22 dígitos,22 dígitos numéricos,,Se acepta,Pasó,,,2026-11-12,,,
+EL-CBU-02,CBU,US-05.2,TC-080,Valor límite,Límites fuera del rango (se rechazan),22 dígitos,,"21 dígitos
+23 dígitos",Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-CBU-03,CBU,US-05.2,TC-080,Clase inválida,Valores inválidos (se rechazan) — Se rechaza con advertencia,22 dígitos,22 caracteres con letras,,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-CBU-04,CBU,US-05.2,TC-080,Clase inválida,Zona gris (por definir),22 dígitos,22 dígitos con espacios (confirmar),,A definir,Pasó,,,2026-11-12,,,
+EL-CBU-05,CBU,US-05.2,TC-080,Clase inválida,Valores inválidos (se rechazan) — Se rechaza si no hay Alias,22 dígitos,Vacío,,Se rechaza si no hay Alias,Pasó,,,2026-11-12,,,
+EL-ALIAS-01,Alias bancario,US-05.2,TC-080,Clase válida,Valores válidos (se aceptan),"6 a 20 chars (a-z, 0-9, ., -)",mi.cabana.delta,,Se acepta,Pasó,,,2026-11-12,,,
+EL-ALIAS-02,Alias bancario,US-05.2,TC-080,Valor límite,Límites dentro del rango (se aceptan),"6 a 20 chars (a-z, 0-9, ., -)",,"6 caracteres
+20 caracteres",Se acepta,Pasó,,,2026-11-12,,,
+EL-ALIAS-03,Alias bancario,US-05.2,TC-080,Valor límite,Límites fuera del rango (se rechazan),"6 a 20 chars (a-z, 0-9, ., -)",,"5 caracteres
+21 caracteres",Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-ALIAS-04,Alias bancario,US-05.2,TC-080,Clase inválida,Valores inválidos (se rechazan) — Se rechaza con advertencia,"6 a 20 chars (a-z, 0-9, ., -)",Con espacios o @,,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-ALIAS-05,Alias bancario,US-05.2,TC-080,Clase inválida,Valores inválidos (se rechazan) — Se rechaza si no hay CBU,"6 a 20 chars (a-z, 0-9, ., -)",Vacío,,Se rechaza si no hay CBU,Pasó,,,2026-11-12,,,
+EL-EMAIL-C-01,Correo electrónico login / Cliente,US-03.2,TC-104,Clase válida,Valores válidos (se aceptan),,"ana@correo.com
+ana.perez+tag@correo.com.ar",,Se acepta,Pasó,,,2026-11-12,,,
+EL-EMAIL-C-02,Correo electrónico login / Cliente,US-03.2,TC-104,Clase inválida,Valores inválidos (se rechazan),,"anacorreo.com (sin @)
+ana@ (sin dominio)
+ana@@correo.com
+ana perez@correo.com (espacio)
+Vacío
+Solo espacios",,Se rechaza con advertencia,Pasó,,,2026-11-12,,,
+EL-NOMBRE-D-01,Nombre y apellido (Dueño),US-01.1,TC-105,Clase inválida,Nombre con caracteres especiales,,K@mil*,,Se rechaza con advertencia,Falló,,Chrome,2026-10-25,BUG-001,Caracteres No válidos Ver H-13.,
+EL-NOMBRE-D-02,Nombre y apellido (Dueño),US-01.1,TC-105,Clase inválida,Nombre con números,,K4m1l4,,Se rechaza con advertencia,Falló,,Chrome,2026-10-25,BUG-001,Caracteres No válidos Ver H-13.,
+EL-NOMBRE-D-03,Nombre y apellido (Dueño),US-01.1,TC-105,Clase inválida,Acentos o caracteres no latinos,,Rubén / ปัญญา,,Se rechaza con advertencia,Falló,,Chrome,2026-10-25,BUG-001,Caracteres No válidos Mezcla dos particiones (acento latino vs. alfabeto no latino); conviene separarlas. Ver H-13.,
+EL-NOMBRE-D-04,Nombre y apellido (Dueño),US-01.1,TC-105,Clase válida,Nombre con caracteres del alfabeto latino,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos / Ya está cubierto,
+EL-NOMBRE-D-05,Nombre y apellido (Dueño),US-01.1,TC-105,Clase válida,Nombre con un espacio dentro,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos / Ya está cubierto,
+EL-NOMBRE-D-06,Nombre y apellido (Dueño),US-01.1,TC-105,Clase inválida,Nombre con un espacio antes/después,,""" Paolo """,,Se rechaza con advertencia,Falló,,Chrome,2026-10-25,BUG-002,Formato inválido / No se especifica en los requerimientos Ver H-14.,
+EL-NOMBRE-D-07,Nombre y apellido (Dueño),US-01.1,TC-105,Clase válida,Nombre con guión,,,,Se acepta,Pasó,,Chrome,2026-10-25,,Caracteres válidos / Ya está cubierto,
+EL-NOMBRE-D-08,Nombre y apellido (Dueño),US-01.1,TC-105,Valor límite,Longitud del texto es de 2 a 15 caracteres,,"3 caracteres - ""Pia""
+14 caracteres - ""Valeshka-Tamal""","2 — Ro
+15 — Jhonnatan Jesus",Se acepta,Pasó,,Chrome,2026-10-25,,Longitud válida y Longitud dentro del rango / por definir Rango de longitud pendiente: ver H-05.,
+EL-NOMBRE-D-09,Nombre y apellido (Dueño),US-01.1,TC-105,Clase inválida,La longitud del texto es de 16 caracteres y más,,"16 caracteres - ""Katherine Camila""",,A definir (ver Hallazgos),Bloqueado,,Chrome,2026-10-25,,Longitud inválida / por definir Rango de longitud pendiente: ver H-05.,
+EL-NOMBRE-D-10,Nombre y apellido (Dueño),US-01.1,TC-105,Clase inválida,Longitud del texto es de 1 carácter,,1 caracteres -  T,,Se rechaza con advertencia,Falló,,Chrome,2026-10-25,BUG-002,Longitud inválida / por definir,
+EL-NOMBRE-D-11,Nombre y apellido (Dueño),US-01.1,TC-105,Clase inválida,Campo vacío,,0 - string vacío,,Se rechaza con advertencia,Pasó,,Chrome,2026-10-25,,Campo obligatorio,
+EL-NOMBRE-D-12,Nombre y apellido (Dueño),US-01.1,TC-105,Mensaje de error,Mensaje de error visible en campo inválido,,,,"Si las entradas no son válidas, se resalta en rojo y aparece el mensaje de error con el texto ""Introduce un nombre"".",Bloqueado,,Chrome,2026-10-25,,,
+EL-CBU-01 (Nuevo),CBU,US-01.2,TC-155,Clase válida,Exactamente 22 dígitos numéricos (o campo vacío por ser opcional),22 dígitos (opcional en alta),"0170204640000000876543
+
+(vacío)",,Aceptado (201 Created),Pasó,,,,,,
+EL-CBU-02 (Nuevo),CBU,US-01.2,TC-155,Clase inválida,21 dígitos (longitud - 1),22 dígitos (opcional en alta),017020464000000087654,,Rechazado (400 Bad Request / Error en UI),Pasó,,,,,,
+EL-CBU-03 (Nuevo),CBU,US-01.2,TC-155,Clase inválida,23 dígitos (longitud + 1),22 dígitos (opcional en alta),01702046400000008765439,,Rechazado (400 Bad Request / Error en UI),Pasó,,,,,,
+EL-CBU-04 (Nuevo),CBU,US-01.2,TC-155,Clase inválida,22 caracteres incluyendo letras o símbolos,22 dígitos (opcional en alta),"017020464000000087654A
+
+0170-04640000000876543",,Rechazado (400 Bad Request / Error en UI),Pasó,,,,,,
+EL-ALIAS-01 (Nuevo),Alias Bancario,US-01.2,TC-155,Clase válida,"Entre 6 y 20 caracteres permitidos (letras, números, . y -) o vacío",6 a 20 chars (opcional en alta),"mi.sol (6 chars)
+
+complejo-delta.123 (18 chars)
+
+cabanas.del.rio.2026 (20 chars)
+
+(vacío)",,Aceptado (201 Created),Pasó,,,,,,
+EL-ALIAS-02 (Nuevo),Alias Bancario,US-01.2,TC-155,Clase inválida,5 caracteres (mínimo - 1),6 a 20 chars (opcional en alta),sol.1,,Rechazado (400 Bad Request / Error en UI),Pasó,,,,,,
+EL-ALIAS-03 (Nuevo),Alias Bancario,US-01.2,TC-155,Clase inválida,21 caracteres (máximo + 1),6 a 20 chars (opcional en alta),cabanas.del.rio.delta,,Rechazado (400 Bad Request / Error en UI),Pasó,,,,,,
+EL-ALIAS-04 (Nuevo),Alias Bancario,US-01.2,TC-155,Clase inválida,"Símbolos no permitidos (espacios, @, _, $)",6 a 20 chars (opcional en alta),"cabanas_rio
+
+cabanas rio
+
+cabanas@rio",,Rechazado (400 Bad Request / Error en UI),Pasó,,,,,,
+EL-CAPMIN-01,Capacidad mínima,US-01.2,TC-171,Clase válida,Entero positivo (>= 1),Entero >= 1,"1
+5",,Aceptado sin errores por Zod,Pasó,,,2026-11-12,,,
+EL-CAPMIN-02,Capacidad mínima,US-01.2,TC-171,Valor límite,Cero o negativo (<= 0),Entero >= 1,"0
+-1",,Rechazado (Zod muestra error de valor mínimo),Pasó,,,2026-11-12,,,
+EL-CAPMIN-03,Capacidad mínima,US-01.2,TC-171,Clase inválida,Decimales o texto,Entero >= 1,"1.5
+dos",,Rechazado (Zod exige número entero),Pasó,,,2026-11-12,,,
+EL-CAPMAX-01,Capacidad máxima,US-01.2,TC-171,Clase válida,Entero positivo mayor o igual a la mínima,Entero >= Capacidad mínima,"2 (con mínima 2)
+10 (con mínima 2)",,Aceptado sin errores por Zod,Pasó,,,2026-11-12,,,
+EL-CAPMAX-02,Capacidad máxima,US-01.2,TC-171,Valor límite,Menor a la capacidad mínima,Entero >= Capacidad mínima,"4 (con mínima 5)
+1 (con mínima 5)",,"Rechazado (Zod muestra error: ""Máxima debe ser mayor o igual a mínima"")",Pasó,,,2026-11-12,,,
+EL-MAXRES-01,Máximo de reservas,US-01.2,TC-171,Clase válida,Entero positivo (>= 1),Entero >= 1,"1
+20",,Aceptado sin errores por Zod,Pasó,,,2026-11-12,,,
+EL-MAXRES-02,Máximo de reservas,US-01.2,TC-171,Clase inválida,"Negativos, cero o texto",Entero >= 1,"0
+-5
+abc",,Rechazado (Zod muestra error de validación),Pasó,,,2026-11-12,,,
+EL-SLUG-01,Slug,US-01.2,TC-172,Clase válida,"Minúsculas, números y guiones medios","a-z, 0-9 y guiones","mi-complejo
+cabanas-delta-123",,Aceptado sin errores,Pasó,,Chrome,2026-11-04,,v3.2: respaldo en la hoja de pruebas US-01.2 (slug con números y con guion medio: APROBADO). Fecha tomada de BUG-12 (TC-172).,
+EL-SLUG-02,Slug,US-01.2,TC-172,Clase inválida,"Espacios, mayúsculas, tildes o caracteres especiales","a-z, 0-9 y guiones","Mi Complejo
+cabañas@rio
+complejo@turistico#
+1 carácter
+Vacío",,Rechazado (Zod marca error de formato o limpia automáticamente los caracteres inválidos),Falló,"Slug con caracteres especiales (""complejo@turistico#"", ""delta!tigre*"") NO APROBADO: se acepta. Espacios internos, no latinos y espacio antes/después: APROBADO (se rechazan). Ver BUG-12.",Chrome,2026-11-04,BUG-12,v3.2: respaldo en la hoja de pruebas US-01.2. Fecha tomada de BUG-12 (TC-172).,
+EL-NOMBRE-01,Nombre del complejo,US-01.2,TC-173,Clase válida,Texto alfanumérico con espacios y tildes (Longitud normal),Texto válido (mín. 2 chars),Cabañas del Sol,,Aceptado sin errores por Zod,Pasó,,,,,Se detectó BUG-11 con caracteres especiales/no latinos y espacios extremos.,
+EL-NOMBRE-02,Nombre del complejo,US-01.2,TC-173,Valor límite,Vacío o solo espacios en blanco,Texto válido (mín. 2 chars),"Vacío ("""")
+""    "" (solo espacios)",,Rechazado (Zod indica que el nombre es obligatorio),Pasó,,,,,,
+EL-NOMBRE-03,Nombre del complejo,US-01.2,TC-173,Valor límite,"Excede el máximo de caracteres (ej. más de 50 o 100 caracteres, según BD)",Máx. caracteres BD,Texto de 150 caracteres,,Rechazado (Zod indica que excede el límite de caracteres permitidos),Pasó,,,,,,
+EL-DIR-01,Dirección,US-01.2,TC-173,Clase válida,"Texto alfanumérico con símbolos comunes (N°, #, ,)",Dirección válida,"Av. Siempre Viva 742, Depto #2",,Aceptado sin errores por Zod,Pasó,,,,,Se detectó BUG-11 con caracteres no permitidos y espacios extremos en dirección.,
+EL-DIR-02,Dirección,US-01.2,TC-173,Valor límite,Vacío o texto extremadamente corto (ej. 1 o 2 letras),Dirección obligatoria,"Vacío ("""")
+""A"" (1 carácter)",,Rechazado (Zod exige un mínimo de caracteres o campo obligatorio),Pasó,,,,,,
+EL-DIR-03,Dirección,US-01.2,TC-173,Valor límite,Excede el máximo de caracteres permitidos,Máx. caracteres BD,Texto de 200 caracteres,,Rechazado (Zod indica límite excedido para dirección),Pasó,,,,,,
+EL-PUT-ID-01,ID Complejo (URL API),US-01.4,TC-179,Clase válida,ID existente y perteneciente al dueño autenticado,UUID propio,ID válido (ej. 123),,Aceptado (HTTP 200 OK),Pasó,,Swagger / Localhost,,,,
+EL-PUT-ID-02,ID Complejo (URL API),US-01.4,TC-179,Clase inválida,ID existente pero que pertenece a OTRO dueño (protección contra enumeración),UUID ajeno,ID de complejo ajeno,,"Rechazado (HTTP 404 Not Found ""Complejo no encontrado"")",Pasó,,Swagger / Localhost,,,,
+EL-PUT-ID-03,ID Complejo (URL API),US-01.4,TC-179,Clase inválida,ID que no existe en la base de datos,UUID inexistente,00000000-0000-0000-0000-000000000000,,"Rechazado (HTTP 404 Not Found ""Complejo no encontrado"")",Pasó,,Swagger / Localhost,,,,
+EL-PUT-PAYLOAD-01,Payload (Inmutabilidad),US-01.4,TC-178,Clase inválida,"Intentar alterar slug, logo o datos bancarios en el JSON del PUT",Inmutabilidad PUT,"{""slug"": ""hack-slug"", ""cbu"": ""1111111111111111111111""}",,"El backend responde 200 OK (actualiza lo permitido) pero IGNORA los campos protegidos, manteniendo los originales en BD intactos.",Pasó,"Pero esta bien?, que pasaria si el dusño migro de banco?",Swagger / Localhost,,,Confirmado en Manual v3.0 (US-01.4 Escenario 1): datos bancarios y logo se actualizarán mediante un endpoint PATCH independiente.,
+EL-PUT-HEX-01,Color de marca (PUT API),US-01.4,TC-189,Clase válida,Código hexadecimal exacto de 7 caracteres (#RRGGBB),7 chars (#RRGGBB),"#000000
+#FF5733
+#1a2b3c",,Aceptado (HTTP 200 OK),Pasó,,Swagger / Localhost,,,Manual v3.0 (US-01.4 Escenario 3).,
+EL-PUT-HEX-02,Color de marca (PUT API),US-01.4,TC-189,Clase inválida,"Color fuera del estándar #RRGGBB (sin #, != 7 chars o texto)",7 chars (#RRGGBB),"FF5733 (sin #)
+#FFF (4 chars)
+#1234567 (8 chars)
+#GGGGGG
+""verde""",,Rechazado con HTTP 400 Bad Request y mensaje de validación en español,Pasó,,Swagger / Localhost,,,Manual v3.0 (US-01.4 Escenario 3).,
+EL-PUT-NAME-01,Nombre del complejo (PUT API),US-01.4,TC-189,Clase inválida,"Campo name vacío, solo espacios o JSON mal formado en edición PUT",Obligatorio,"{""name"": """", ""address"": ""Dir 1"", ""brandColor"": ""#000000""}
+{""name"": ""   "", ""address"": ""Dir 1"", ""brandColor"": ""#000000""}",,Rechazado con HTTP 400 Bad Request y mensaje de validación en español,Pasó,,Swagger / Localhost,,,Manual v3.0 (US-01.4 Escenario 3).,
+EL-ADDON-NAME-01,Adicional: nombre (POST/PUT API),US-05.1,TC-068,Clase válida,Nombre de servicio adicional válido (alfabeto latino con espacios),Obligatorio (mín. 2 chars),"Desayuno Isleño
+Kayak Doble",,Aceptado (HTTP 201 Created en POST / 200 OK en PUT),Pasó,,Swagger / Localhost,,,Manual v3.0 (US-05.1 API Addons).,
+EL-ADDON-NAME-02,Adicional: nombre (POST/PUT API),US-05.1,TC-068,Clase inválida,"Nombre vacío, 1 carácter, caracteres especiales, otro idioma o > límite",Obligatorio (alfabeto latino),"Vacío ("""")
+1 carácter (""A"")
+Caracteres especiales (""@#!"")
+Otro idioma (""リゾート"")
+85 caracteres",,Rechazado con HTTP 400 Bad Request,Falló,"En POST /api/v1/complexes/{complexId}/addons aceptó 1 carácter, 85 caracteres, símbolos y otro idioma devolviendo 201 Created (BUG-13).",Swagger / Localhost,2026-11-05,BUG-13,Vinculado a BUG-13 reportado el 05/11/2026.,
+EL-ADDON-STATUS-01,Adicional: estado (PATCH API),US-05.1,TC-196,Clase válida,Payload booleano válido en UpdateAddonStatusRequest,"{""active"": true|false}","{""active"": false}
+{""active"": true}",,Aceptado (HTTP 200 OK) cambiando exclusivamente el estado sin borrado físico,Pasó,,Swagger / Localhost,,,Manual v3.0 (US-05.1 API PATCH Status).,
+EL-ADDON-STATUS-02,Adicional: estado (PATCH API),US-05.1,TC-197,Clase inválida,Body vacío {} o propiedad active ausente/nula en PATCH status,"{""active"": true|false}","{}
+{""active"": null}",,Rechazado con HTTP 400 Bad Request,Pasó,,Swagger / Localhost,,,Manual v3.0 (US-05.1 API PATCH Status).,
+EL-GUESTS-01,,,TC-196 / TC-197 / TC-198,,"1, 2, 5, 9, 10",,,,Aceptado (201 Created),Pasó,Procesados correctamente,,,,guestsCount,
+EL-GUESTS-02,,,TC-197,,"0, 11",,,,Rechazado (400 Bad Request),Pasó,Error de validación por límites,,,,guestsCount,
+EL-GUESTS-03,,,TC-198,,"letras, 五, d4, null",,,,Rechazado (400 Bad Request),Pasó,Error de validación por tipo de dato,,,,guestsCount,
+EL-PICKUP-01,,,TC-201,,"[Omitido / null],1,2,100,199,200",,,,Aceptado (201 Created),Pasó,Campo opcional y de longitud permitida,,,,pickup_point,
+EL-PICKUP-02,,,TC-201,,[Texto exacto de 201 caracteres],,,,Rechazado (400 Bad Request),Pasó,Error de validación por superar los 200 chars,,,,pickup_point,
+EL-LOGO-01,logoUrl,US-01.2,TC-205,Clase válida,Valores válidos (se aceptan),,[https://res.cloudinary.com/demo/image/upload/sample.jpg](https://res.cloudinary.com/demo/image/upload/sample.jpg),,Aceptado (201 Created / 200 OK),Pasó,URL HTTPS de Cloudinary validada correctamente,,,,"v3.3: fila ordenada en las columnas de la hoja (Campo, US, Técnica, Clase y Valores).",
+EL-LOGO-02,logoUrl,US-01.2,TC-206,Clase inválida,Valores inválidos (se rechazan),,"[http://res.cloudinary.com/sample.jpg](http://res.cloudinary.com/sample.jpg)
+
+[https://mi-sitio-malicioso.com/logo.jpg](https://mi-sitio-malicioso.com/logo.jpg)",,Rechazado (400 Bad Request),Pasó,Bloqueado por seguridad y dominio no permitido,,,,"v3.3: fila ordenada en las columnas de la hoja (Campo, US, Técnica, Clase y Valores).",
+EL-LOGO-03,logoUrl,US-01.4,TC-207,Clase válida,Valores válidos (se aceptan),,[Omitido / null],,Aceptado (201 Created / 200 OK),Pasó,Campo opcional procesado de forma correcta,,,,"v3.3: fila ordenada en las columnas de la hoja (Campo, US, Técnica, Clase y Valores).",
+EL-ADDON-IMG-01,imageUrl,US-05.1,TC-208,Clase válida,Valores válidos (se aceptan),,[https://res.cloudinary.com/demo/image/upload/sample.jpg](https://res.cloudinary.com/demo/image/upload/sample.jpg),,Aceptado (201 Created / 200 OK),Pasó,URL HTTPS de Cloudinary validada con éxito,,,,"v3.3: fila ordenada en las columnas de la hoja (Campo, US, Técnica, Clase y Valores).",
+EL-ADDON-IMG-02,imageUrl,US-05.1,TC-209,Clase inválida,Valores inválidos (se rechazan),,"[https://mi-sitio-externo.com/imagen.jpg](https://mi-sitio-externo.com/imagen.jpg)
+
+[URL de más de 500 caracteres]",,Rechazado (400 Bad Request),Pasó,Bloqueado por seguridad o límite de longitud,,,,"v3.3: fila ordenada en las columnas de la hoja (Campo, US, Técnica, Clase y Valores).",
+EL-ADDON-IMG-03,imageUrl,US-05.1,TC-210,Clase válida,Valores válidos (se aceptan),,[Omitido / null],,Aceptado (201 Created / 200 OK),Pasó,Campo opcional procesado correctamente,,,,"v3.3: fila ordenada en las columnas de la hoja (Campo, US, Técnica, Clase y Valores).",

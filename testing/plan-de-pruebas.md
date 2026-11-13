@@ -1,5 +1,7 @@
 # Plan de pruebas · HostFlow
 
+Última actualización: 13/11/2026 (libro de pruebas v3.3).
+
 ## 1. Objetivo
 
 Verificar que el MVP de HostFlow cumple los requisitos del Manual de Requisitos y Especificaciones del Sistema: dashboard del dueño, ficha de onboarding white-label para el turista, mini-ecommerce con pago por transferencia, trigger de lancha remis y notificaciones por email.
@@ -33,15 +35,23 @@ Verificar que el MVP de HostFlow cumple los requisitos del Manual de Requisitos 
 | Valores límite | Mínimos y máximos definidos en el Manual |
 | Negativas | Campos vacíos, formatos inválidos, accesos indebidos |
 | Negativas de acceso y datos | Acceso sin sesión, botón Atrás tras cerrar sesión, ID cambiado en la URL, texto con símbolos, HTTPS visible |
-| UI / Mobile-first | 320, 360, 375, 390 y 414 px; sin scroll horizontal; teclados correctos |
-| Integración | Webhook, emails, ficha ↔ dashboard |
+| API | Códigos de respuesta, validaciones y permisos por rol, probados desde Swagger |
+| UI manual / Mobile-first | 320, 360, 375, 390 y 414 px; sin scroll horizontal; teclados correctos |
+| UI automatizada | Selenium + Behave sobre Datos de pago, adicionales y onboarding, en modo Mock (sin integración con la API) |
+| Integración | Webhook de lancha (estados SENT / FAILED / PENDING), emails verificados en Mailpit, ficha ↔ dashboard |
 | Extremo a extremo | Flujos completos con uno y varios complejos |
+
+Cada caso indica su capa en el título: `[API]`, `[UI]` o mixto. La cobertura se mide por capa, porque la API y la interfaz se probaron en momentos distintos.
 
 ## 4. Entorno
 
 | Elemento | Detalle |
 |---|---|
 | Rama probada | `dev` (confirmar con el equipo cuándo hay un despliegue estable) |
+| API | Swagger en localhost |
+| Correos | Mailpit (`http://localhost:8025`) |
+| Webhook de lancha | Configurado con `BOAT_WEBHOOK_URL` |
+| Automatización | Selenium + Behave, modo Mock |
 | Navegadores | Chrome, Firefox, Safari y Edge (últimas versiones) |
 | Móviles | Chrome en Android y Safari en iOS; emulación con DevTools como apoyo |
 | Datos de prueba | Datos ficticios; no usar datos personales reales |
@@ -55,6 +65,14 @@ Verificar que el MVP de HostFlow cumple los requisitos del Manual de Requisitos 
 - Sin bugs críticos ni altos abiertos
 - Hallazgos que bloquean pruebas respondidos o documentados como riesgo
 
+**Estado frente a los criterios de salida (13/11/2026):**
+
+| Criterio | Estado |
+|---|---|
+| Casos P1 ejecutados | No cumplido: 77 de 184 siguen sin ejecutar o bloqueados |
+| Sin bugs altos abiertos | No cumplido: BUG-017 (Alta) abierto, junto con BUG-018 y BUG-019 |
+| Hallazgos respondidos o documentados | Parcial: 17 de 18 respondidos o descartados; H-16 y H-17 sin respuesta escrita |
+
 ## 6. Priorización
 
 - **P1:** crítico para el MVP. **P2:** importante. **P3:** deseable.
@@ -63,10 +81,11 @@ Verificar que el MVP de HostFlow cumple los requisitos del Manual de Requisitos 
 
 ## 7. Entregables
 
-- Casos de prueba por Feature (Markdown) y libro de pruebas en Google Sheets
-- Reporte de pruebas por sprint
+- Libro de pruebas (Google Sheets y copia `.xlsx` v3.3) y casos por Feature en CSV (`casos-de-prueba-csv/`)
+- Reporte de pruebas por sprint (`reportes/`)
 - Issues de bug con evidencia
-- Registro de hallazgos y dudas de requisitos
+- Registro de hallazgos y dudas de requisitos (`hallazgos.md`)
+- Código de automatización (Selenium + Behave) y sus evidencias
 
 ## 8. Cronograma propuesto (ajustar con el equipo)
 
@@ -77,12 +96,16 @@ Verificar que el MVP de HostFlow cumple los requisitos del Manual de Requisitos 
 | Sprint 3 | Re-pruebas, casos de la Fase 2, pruebas móviles reales |
 | Sprint 4 | Regresión, flujos de extremo a extremo, reporte final |
 
+Al 13/11/2026 la API está probada en su mayor parte; la interfaz integrada con la API queda como prioridad de la siguiente ronda.
+
 ## 9. Riesgos
 
 | Riesgo | Mitigación |
 |---|---|
 | Requisitos ambiguos o "Por definir" | Registrar en `hallazgos.md` y abrir issue de duda |
-| Webhook y módulo de lancha aún no existen | Probar el JSON generado y el estado "Pendiente de reenvío" |
+| Baja cobertura de la interfaz integrada con la API (alrededor de 35 %) | Recorrido de punta a punta con la API real y repetir la automatización sin Mock |
+| La automatización corre solo en modo Mock | No se toma como validación de integración; repetirla contra la API |
+| Funciones de lancha por API pendientes (respuestas 501 o 500 en algunos casos) | Mantener los casos en *Bloqueado* con su motivo y reprobar al habilitarse; probar el estado "Pendiente de reenvío" |
 | Pocos dispositivos móviles reales | Combinar emulación con al menos un Android y un iPhone |
 | Cambios de alcance durante el sprint | Revisar el plan al inicio de cada sprint |
 | Datos personales y alergias en las pruebas | Usar solo datos ficticios |
