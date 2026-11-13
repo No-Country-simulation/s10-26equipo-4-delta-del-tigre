@@ -6,10 +6,29 @@ import { CreditCardIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { guardarDatosPago } from "@/app/(admin)/datos-pago/actions";
 
-export function DatosPagoForm() {
+type Props = {
+    complexId: string;
+    banco: string | null;
+    aliasCbu: string | null;
+    titularCuenta: string | null;
+};
+
+export function DatosPagoForm({
+    complexId,
+    banco,
+    aliasCbu,
+    titularCuenta,
+}: Props) {
     return (
-        <form id="datos-pago-form">
+        <form id="datos-pago-form" action={guardarDatosPago}>
+            <input
+                type="hidden"
+                name="complexId"
+                value={complexId}
+            />
+
             <Card className="rounded-3xl border border-[#dce5e0] bg-white py-0 shadow-none ring-0">
                 <div className="flex items-center gap-4 border-b border-[#dce5e0] p-6 md:p-8">
                     <div className="flex size-13 shrink-0 items-center justify-center rounded-2xl bg-[#e4eff3] text-[#1f6178]">
@@ -28,28 +47,28 @@ export function DatosPagoForm() {
 
                 <div className="space-y-6 p-6 md:p-8">
                     <Campo
-                        id="banco"
+                        id="bank"
                         label="Banco"
-                        defaultValue=""
+                        defaultValue={banco ?? ""}
                         placeholder="Ej: Mercado Pago, Galicia, Santander"
                     />
 
                     <Campo
                         id="aliasCbu"
                         label="Alias o CBU"
-                        defaultValue=""
+                        defaultValue={aliasCbu ?? ""}
                         placeholder="Ej: ISLASAUCE.MP"
                     />
 
                     <Campo
-                        id="titular"
+                        id="accountHolder"
                         label="Titular de la cuenta"
-                        defaultValue=""
+                        defaultValue={titularCuenta ?? ""}
                         placeholder="Nombre y apellido o razón social"
                     />
 
                     <p className="rounded-xl bg-[#e4eff3] px-4 py-4 text-sm leading-relaxed text-[#1f6178]">
-                        DeltaFlow no procesa pagos ni solicita datos de tarjetas.
+                        HostFlow no procesa pagos ni solicita datos de tarjetas.
                         El huésped coordina la transferencia directamente con vos.
                     </p>
                 </div>
@@ -68,7 +87,10 @@ function Campo({
 }) {
     return (
         <div className="max-w-2xl space-y-2">
-            <Label htmlFor={id} className="text-sm font-semibold text-[#3d4a46]">
+            <Label
+                htmlFor={id}
+                className="text-sm font-semibold text-[#3d4a46]"
+            >
                 {label}
             </Label>
 

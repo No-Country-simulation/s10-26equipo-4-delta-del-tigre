@@ -33,4 +33,11 @@ public record CreateComplexRequest(
 
         @Schema(example = "Banco Nación")
         @Size(max = 100, message = "El nombre del banco es demasiado largo")
-        String bank) {}
+        String bank,
+
+        @Schema(example = "https://res.cloudinary.com/demo/image/upload/v1/logo.png",
+                description = "Opcional. URL del logo subido a Cloudinary (https://res.cloudinary.com/...), máximo 500 caracteres. Omitir o enviar null si no hay logo; no enviar \"\"")
+        @Size(max = ImageUrlValidation.MAX_URL_LENGTH, message = "La URL del logo no puede superar los 500 caracteres")
+        @Pattern(regexp = ImageUrlValidation.CLOUDINARY_REGEX,
+                message = "El logo debe ser una URL de Cloudinary (https://res.cloudinary.com/...)")
+        String logoUrl) {}

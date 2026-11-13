@@ -16,6 +16,9 @@ desktop.ini
 .idea/
 .vscode/
 
+# ---- Documentación local ----
+memory.md
+
 # ---- Dependencias y builds ----
 node_modules/
 .next/

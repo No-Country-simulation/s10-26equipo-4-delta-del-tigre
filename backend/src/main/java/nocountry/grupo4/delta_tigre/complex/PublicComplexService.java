@@ -27,7 +27,7 @@ public class PublicComplexService {
         List<PublicComplexResponse.PublicAddonResponse> addons = addonRepository
                 .findByComplexIdAndActiveTrue(complex.getId()).stream()
                 .map(a -> new PublicComplexResponse.PublicAddonResponse(
-                        a.getId(), a.getName(), a.getDescription(), a.getPrice()))
+                        a.getId(), a.getName(), a.getDescription(), a.getPrice(), a.getImageUrl()))
                 .toList();
 
         return new PublicComplexResponse(complex.getId(), complex.getName(), complex.getSlug(),
