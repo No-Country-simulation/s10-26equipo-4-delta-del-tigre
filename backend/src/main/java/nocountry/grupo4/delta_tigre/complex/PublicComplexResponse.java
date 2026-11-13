@@ -14,5 +14,5 @@ public record PublicComplexResponse(
         List<PublicAddonResponse> addons,
         Boolean open
 ) {
-    public record PublicAddonResponse(UUID id, String name, String description, BigDecimal price) {}
+    public record PublicAddonResponse(UUID id, String name, String description, BigDecimal price, String imageUrl) {}
 }

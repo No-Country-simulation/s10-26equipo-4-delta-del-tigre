@@ -80,7 +80,7 @@ class OnboardingBookingIntegrationTest {
     }
 
     private void setComplexOpen(String token, String complexId, boolean open) throws Exception {
-        mvc.perform(patch("/api/v1/complexes/" + complexId + "/status")
+        mvc.perform(patch("/api/complexes/" + complexId + "/status")
                         .header("Authorization", "Bearer " + token)
                         .contentType(APPLICATION_JSON).content("{\"open\":" + open + "}"))
                 .andExpect(status().isOk());
