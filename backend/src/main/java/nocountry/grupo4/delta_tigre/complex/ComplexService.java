@@ -1,6 +1,8 @@
 package nocountry.grupo4.delta_tigre.complex;
 
 import lombok.RequiredArgsConstructor;
+import nocountry.grupo4.delta_tigre.addon.AddonRepository;
+import nocountry.grupo4.delta_tigre.booking.BookingRepository;
 import nocountry.grupo4.delta_tigre.owner.Owner;
 import nocountry.grupo4.delta_tigre.owner.OwnerRepository;
 import nocountry.grupo4.delta_tigre.security.SecurityUtils;
@@ -18,6 +20,8 @@ public class ComplexService {
 
     private final ComplexRepository complexRepository;
     private final OwnerRepository ownerRepository;
+    private final AddonRepository addonRepository;
+    private final BookingRepository bookingRepository;
 
     @Transactional
     public ComplexResponse create(CreateComplexRequest r) {
@@ -88,5 +92,16 @@ public class ComplexService {
         Complex complex = findOwned(complexId);
         complex.setOpen(request.open());
         return ComplexResponse.from(complexRepository.save(complex));
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        Complex complex = findOwned(id);
+        if (bookingRepository.existsByComplexId(id)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "El complejo tiene reservas y no se puede eliminar. Cerralo (open=false) para que no reciba nuevas reservas");
+        }
+        addonRepository.deleteAll(addonRepository.findByComplexIdOrderByNameAsc(id));
+        complexRepository.delete(complex);
     }
 }

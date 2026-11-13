@@ -11,4 +11,6 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     List<Booking> findByComplexIdAndStatusOrderByCheckInAscCreatedAtAsc(UUID complexId, BookingStatus status);
     Optional<Booking> findByIdAndComplexOwnerId(UUID id, UUID ownerId);
+
+    boolean existsByComplexId(UUID complexId);
 }

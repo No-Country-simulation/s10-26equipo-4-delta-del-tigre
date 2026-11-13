@@ -1,5 +1,6 @@
 package nocountry.grupo4.delta_tigre.addon;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -44,5 +45,18 @@ public class AddonController {
     public ResponseEntity<Object> updateStatus(@PathVariable UUID id,
                                                @Valid @RequestBody UpdateAddonStatusRequest request) {
         return Response.ok(service.updateStatus(id, request));
+    }
+
+    @DeleteMapping("/addons/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Eliminar un adicional",
+            description = "Si el adicional nunca se usó en una reserva se borra (deleted=true). "
+                    + "Si ya está en alguna reserva se desactiva en lugar de borrarse (deleted=false) para conservar el historial.")
+    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+        DeleteAddonResponse result = service.delete(id);
+        String message = result.deleted()
+                ? "Adicional eliminado"
+                : "El adicional ya se usó en reservas: se desactivó en lugar de eliminarse";
+        return Response.ok(result, message);
     }
 }

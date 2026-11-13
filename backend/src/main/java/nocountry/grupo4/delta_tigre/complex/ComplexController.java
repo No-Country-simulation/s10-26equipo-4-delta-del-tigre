@@ -1,5 +1,6 @@
 package nocountry.grupo4.delta_tigre.complex;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -58,5 +59,15 @@ public class ComplexController {
     public ResponseEntity<Object> updateStatus(@PathVariable UUID id,
                                                @Valid @RequestBody UpdateComplexStatusRequest request) {
         return Response.ok(service.updateStatus(id, request), "Estado actualizado");
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Eliminar un complejo",
+            description = "Borra el complejo y sus adicionales. Si el complejo tiene reservas responde 409: "
+                    + "en ese caso hay que cerrarlo con PATCH /{id}/status (open=false).")
+    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return Response.ok(null, "Complejo eliminado");
     }
 }
