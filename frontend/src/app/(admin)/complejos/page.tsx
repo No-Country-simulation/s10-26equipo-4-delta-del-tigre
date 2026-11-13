@@ -33,7 +33,6 @@ const ESTADO_BADGE_STYLES: Record<EstadoComplejo, string> = {
     "sin-configurar": "border-[#dce5e0] bg-[#f5f8f6] text-[#526963]",
     "faltan-datos": "border-[#eed9ab] bg-[#fbf2dd] text-[#805d1e]",
     completado: "border-[#cfe3d8] bg-[#e8f1ec] text-[#174f40]",
-    "sin-publicar": "border-[#eed9ab] bg-[#fbf2dd] text-[#805d1e]",
     abierto: "border-[#cfe3d8] bg-[#e8f1ec] text-[#174f40]",
     cerrado: "border-[#dce5e0] bg-[#eef1ef] text-[#526963]",
 };
@@ -147,8 +146,6 @@ export default async function ComplejosPage({
                                 <tr className="border-b border-[#dce5e0]">
                                     <th className="h-12 px-6" scope="col">Complejo</th>
                                     <th className="h-12 px-4" scope="col">Dirección</th>
-                                    <th className="h-12 px-4" scope="col">Capacidad máxima</th>
-                                    <th className="h-12 px-4" scope="col">Capacidad mínima</th>
                                     <th className="h-12 px-4" scope="col">Estado</th>
                                     <th className="h-12 px-4" scope="col">Slug</th>
                                     <th className="w-16 px-4" scope="col"><span className="sr-only">Acciones</span></th>
@@ -179,21 +176,7 @@ export default async function ComplejosPage({
                                                 <span className="text-[#172c28] hover:underline">{complejo.nombre}</span>
                                             </Link>
                                         </th>
-                                        <td className="px-4 py-4 text-[#4f5f59]">{complejo.direccion}</td>
-                                        <td className="px-4 py-4">
-                                            <Badge variant="outline" className="border-[#dce5e0] bg-[#f5f8f6] text-[#526963]">
-                                                {complejo.maxPersonas == null
-                                                    ? "Sin definir"
-                                                    : `${complejo.maxPersonas} ${complejo.maxPersonas === 1 ? "persona" : "personas"}`}
-                                            </Badge>
-                                        </td>
-                                        <td className="px-4 py-4">
-                                            <Badge variant="outline" className="border-[#dce5e0] bg-[#f5f8f6] text-[#526963]">
-                                                {complejo.minPersonas == null
-                                                    ? "Sin definir"
-                                                    : `${complejo.minPersonas} ${complejo.minPersonas === 1 ? "persona" : "personas"}`}
-                                            </Badge>
-                                        </td>
+                                        <td className="px-4 py-4 text-[#4f5f59]">{complejo.direccion || <span className="text-[#a7b3ae]">—</span>}</td>
                                         <td className="px-4 py-4">
                                             <EstadoBadge complejo={complejo} />
                                         </td>

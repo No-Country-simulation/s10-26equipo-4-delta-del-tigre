@@ -1,11 +1,12 @@
+import { ApiError } from "@/lib/api";
+import { getSessionToken } from "@/services/auth/session";
 import {
-    actualizarAdicionalApi,
-    actualizarEstadoAdicionalApi,
-    crearAdicionalApi,
-    eliminarAdicionalApi,
-    obtenerAdicionalesApi,
-    type AdicionalPayload,
+    fetchAddons,
+    createAddon,
+    updateAddon,
+    updateAddonStatus,
 } from "@/services/adicionales/adicionales.service";
+import type { AddonInput } from "@/types/addons.type";
 
 export type Adicional = {
     id: string;
@@ -17,8 +18,30 @@ export type Adicional = {
     imagen: string | null;
 };
 
+export type AdicionalPayload = {
+    nombre: string;
+    descripcion: string | null;
+    precio: number;
+    imagen?: string | null;
+};
+
+async function requireSessionToken(): Promise<string> {
+    const token = await getSessionToken();
+
+    if (!token) {
+        throw new ApiError(
+            "Tu sesión expiró. Iniciá sesión nuevamente.",
+            401,
+        );
+    }
+
+    return token;
+}
+
 function valorTexto(valor: unknown): string | null {
-    return typeof valor === "string" && valor.trim() !== "" ? valor.trim() : null;
+    return typeof valor === "string" && valor.trim() !== ""
+        ? valor.trim()
+        : null;
 }
 
 function valorNumero(valor: unknown): number {
@@ -49,12 +72,21 @@ export function normalizarAdicional(valor: unknown): Adicional {
         precio: valorNumero(data.price ?? data.precio),
         activo: valorBooleano(data.active ?? data.activo),
         imagen: valorTexto(
-            data.image
+            data.imageUrl
+            ?? data.image
             ?? data.imagen
-            ?? data.imageUrl
             ?? data.imagenUrl
             ?? data.url_imagen,
         ),
+    };
+}
+
+function mapearPayload(payload: AdicionalPayload): AddonInput {
+    return {
+        name: payload.nombre,
+        description: payload.descripcion ?? undefined,
+        price: payload.precio,
+        imageUrl: payload.imagen ?? undefined,
     };
 }
 
@@ -67,142 +99,83 @@ export function formatearPrecio(precio: number) {
     }).format(precio);
 }
 
-const MOCK_INICIALES: Adicional[] = [
-    {
-        id: "addon-001",
-        complejoId: "123",
-        nombre: "Desayuno isleño",
-        descripcion: "Pan de campo, frutas, infusiones y jugo natural.",
-        precio: 18500,
-        activo: true,
-        imagen: "https://picsum.photos/seed/desayuno-isleno/800/450",
-    },
-    {
-        id: "addon-002",
-        complejoId: "123",
-        nombre: "Paseo en kayak",
-        descripcion: "Kayak doble por arroyos tranquilos. Duración: 2 h.",
-        precio: 24000,
-        activo: true,
-        imagen: "https://picsum.photos/seed/kayak-delta/800/450",
-    },
-    {
-        id: "addon-003",
-        complejoId: "123",
-        nombre: "Cena de bienvenida",
-        descripcion: "Menú casero de tres pasos para dos personas.",
-        precio: 32000,
-        activo: false,
-        imagen: "https://picsum.photos/seed/cena-delta/800/450",
-    },
-    {
-        id: "addon-004",
-        complejoId: "456",
-        nombre: "Traslado en lancha",
-        descripcion: "Traslado desde el muelle hasta el complejo.",
-        precio: 40000,
-        activo: true,
-        imagen: "https://picsum.photos/seed/lancha-delta/800/450",
-    },
-];
-
-const globalForAdicionales = globalThis as unknown as {
-    __hostflowAdicionales?: Adicional[];
-};
-const MOCK_ADICIONALES = globalForAdicionales.__hostflowAdicionales
-    ?? MOCK_INICIALES;
-globalForAdicionales.__hostflowAdicionales = MOCK_ADICIONALES;
-
 function ordenarAdicionales(adicionales: Adicional[]) {
-    return [...adicionales].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
-}
-
-function toPayload({ nombre, descripcion, precio, imagen }: AdicionalPayload): AdicionalPayload {
-    return { nombre, descripcion, precio, imagen };
-}
-
-export async function listarAdicionales(complexId: string): Promise<Adicional[]> {
-    const apiAdicionales = await obtenerAdicionalesApi(complexId);
-    if (apiAdicionales !== undefined) {
-        return ordenarAdicionales(apiAdicionales.map(normalizarAdicional));
-    }
-
-    return ordenarAdicionales(
-        MOCK_ADICIONALES.filter((adicional) => adicional.complejoId === complexId),
+    return [...adicionales].sort((a, b) =>
+        a.nombre.localeCompare(b.nombre, "es"),
     );
 }
 
+// Obtener todos los adicionales de un complejo
+export async function listarAdicionales(
+    complexId: string,
+): Promise<Adicional[]> {
+    const token = await requireSessionToken();
+    const adicionales = await fetchAddons(token, complexId);
+
+    return ordenarAdicionales(
+        adicionales.map(normalizarAdicional),
+    );
+}
+
+// Obtener un adicional específico
 export async function obtenerAdicional(
     complexId: string,
     id: string,
 ): Promise<Adicional | undefined> {
     const adicionales = await listarAdicionales(complexId);
+
     return adicionales.find((adicional) => adicional.id === id);
 }
 
+// Crear un adicional
 export async function crearAdicional(
     complexId: string,
     payload: AdicionalPayload,
 ): Promise<Adicional> {
-    const apiAdicional = await crearAdicionalApi(complexId, toPayload(payload));
-    if (apiAdicional !== undefined) {
-        const adicional = normalizarAdicional(apiAdicional);
-        return { ...adicional, complejoId: adicional.complejoId || complexId };
-    }
+    const token = await requireSessionToken();
 
-    const adicional: Adicional = {
-        id: crypto.randomUUID(),
-        complejoId: complexId,
-        nombre: payload.nombre,
-        descripcion: payload.descripcion,
-        precio: payload.precio,
-        activo: true,
-        imagen: payload.imagen ?? null,
+    const adicional = await createAddon(
+        token,
+        complexId,
+        mapearPayload(payload),
+    );
+
+    const normalizado = normalizarAdicional(adicional);
+
+    return {
+        ...normalizado,
+        complejoId: normalizado.complejoId || complexId,
     };
-    MOCK_ADICIONALES.push(adicional);
-    return adicional;
 }
 
+// Actualizar un adicional
 export async function actualizarAdicional(
     id: string,
     payload: AdicionalPayload,
 ): Promise<Adicional> {
-    const apiAdicional = await actualizarAdicionalApi(id, toPayload(payload));
-    if (apiAdicional !== undefined) {
-        return normalizarAdicional(apiAdicional);
-    }
+    const token = await requireSessionToken();
 
-    const adicional = MOCK_ADICIONALES.find((item) => item.id === id);
-    if (!adicional) throw new Error("El adicional no existe.");
+    const adicional = await updateAddon(
+        token,
+        id,
+        mapearPayload(payload),
+    );
 
-    adicional.nombre = payload.nombre;
-    adicional.descripcion = payload.descripcion;
-    adicional.precio = payload.precio;
-    if (payload.imagen !== undefined) adicional.imagen = payload.imagen;
-    return adicional;
+    return normalizarAdicional(adicional);
 }
 
+// Activar o desactivar un adicional
 export async function cambiarEstadoAdicional(
     id: string,
     activo: boolean,
 ): Promise<Adicional> {
-    const apiAdicional = await actualizarEstadoAdicionalApi(id, activo);
-    if (apiAdicional !== undefined) {
-        return normalizarAdicional(apiAdicional);
-    }
+    const token = await requireSessionToken();
 
-    const adicional = MOCK_ADICIONALES.find((item) => item.id === id);
-    if (!adicional) throw new Error("El adicional no existe.");
+    const adicional = await updateAddonStatus(
+        token,
+        id,
+        { active: activo },
+    );
 
-    adicional.activo = activo;
-    return adicional;
-}
-
-export async function eliminarAdicional(id: string): Promise<void> {
-    const apiResultado = await eliminarAdicionalApi(id);
-    if (apiResultado !== undefined) return;
-
-    const index = MOCK_ADICIONALES.findIndex((item) => item.id === id);
-    if (index === -1) throw new Error("El adicional no existe.");
-    MOCK_ADICIONALES.splice(index, 1);
+    return normalizarAdicional(adicional);
 }

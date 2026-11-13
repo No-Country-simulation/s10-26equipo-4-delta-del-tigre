@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { authSchema } from "../schemas/auth.schema";
+import { registerAction } from "../actions";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   return message ? (
@@ -64,84 +65,6 @@ function BrandLogo() {
   );
 }
 
-function extractBackendErrors(payload: unknown): string[] {
-  if (!payload || typeof payload !== "object") return [];
-
-  const data = payload as Record<string, unknown>;
-  const validation = data.errors ?? data.fieldErrors;
-  const messages: string[] = [];
-
-  if (Array.isArray(validation)) {
-    for (const entry of validation) {
-      if (typeof entry === "string") {
-        messages.push(entry);
-      } else if (entry && typeof entry === "object") {
-        const error = entry as Record<string, unknown>;
-        const message = error.message ?? error.defaultMessage ?? error.detail;
-        const field = error.field ?? error.name;
-        if (typeof message === "string") {
-          messages.push(
-            typeof field === "string" ? `${field}: ${message}` : message,
-          );
-        }
-      }
-    }
-  } else if (validation && typeof validation === "object") {
-    for (const [field, value] of Object.entries(validation)) {
-      const fieldMessages = Array.isArray(value) ? value : [value];
-      for (const message of fieldMessages) {
-        if (typeof message === "string") {
-          messages.push(`${field}: ${message}`);
-        }
-      }
-    }
-  }
-
-  const metadataFields = new Set([
-    "timestamp",
-    "status",
-    "error",
-    "path",
-    "type",
-    "instance",
-    "title",
-    "detail",
-    "message",
-    "errors",
-    "fieldErrors",
-  ]);
-  for (const [field, value] of Object.entries(data)) {
-    if (metadataFields.has(field)) continue;
-    const fieldMessages = Array.isArray(value) ? value : [value];
-    for (const message of fieldMessages) {
-      if (typeof message === "string") {
-        messages.push(`${field}: ${message}`);
-      }
-    }
-  }
-
-  for (const key of ["message", "detail", "title", "error"]) {
-    if (typeof data[key] === "string") messages.push(data[key] as string);
-  }
-
-  return [...new Set(messages)];
-}
-
-function getRedirectPath(payload: unknown) {
-  if (!payload || typeof payload !== "object") return "/login";
-
-  const redirectTo = (payload as Record<string, unknown>).redirectTo;
-  if (typeof redirectTo !== "string" || !redirectTo.trim()) return "/login";
-
-  try {
-    const url = new URL(redirectTo, window.location.origin);
-    if (url.origin !== window.location.origin) return "/login";
-    return `${url.pathname}${url.search}${url.hash}`;
-  } catch {
-    return "/login";
-  }
-}
-
 export default function RegisterPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -177,72 +100,26 @@ export default function RegisterPage() {
 
     const { name, email, password } = validation.data;
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
-    if (!apiUrl) {
-      setFormErrors([
-        "La API no está configurada. Definí NEXT_PUBLIC_API_URL para continuar.",
-      ]);
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${apiUrl}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
-        cache: "no-store",
-      });
-      const payload: unknown = await response.json().catch(() => null);
+      const result = await registerAction({ name, email, password });
 
-      if (!response.ok) {
-        const backendErrors = extractBackendErrors(payload);
-        const nextFieldErrors: Record<string, string> = {};
-        const generalErrors: string[] = [];
-        const backendFieldNames: Record<string, string> = {
-          name: "name",
-          fullname: "name",
-          email: "email",
-          password: "password",
-          "confirm-password": "confirm-password",
-          confirmpassword: "confirm-password",
-          confirm_password: "confirm-password",
-        };
-
-        for (const error of backendErrors) {
-          const separatorIndex = error.indexOf(":");
-          const field = error.slice(0, separatorIndex).trim().toLowerCase();
-          const message = error.slice(separatorIndex + 1).trim();
-          const fieldName = backendFieldNames[field];
-
-          if (separatorIndex > 0 && fieldName && message) {
-            nextFieldErrors[fieldName] = message;
-          } else {
-            generalErrors.push(error);
-          }
-        }
-
-        setFieldErrors(nextFieldErrors);
+      if (!result.ok) {
+        setFieldErrors(result.fieldErrors ?? {});
         setFormErrors(
-          generalErrors.length > 0
-            ? generalErrors
-            : backendErrors.length > 0
-              ? []
-              : [`No se pudo completar el registro (${response.status}).`],
+          result.fieldErrors && Object.keys(result.fieldErrors).length > 0
+            ? []
+            : [result.message],
         );
         return;
       }
 
       setSuccessMessage("Registro exitoso. Redirigiendo...");
-      window.setTimeout(() => router.replace(getRedirectPath(payload)), 800);
-    } catch {
-      setFormErrors([
-        "No se pudo conectar con el servidor. Revisá tu conexión e intentá nuevamente.",
-      ]);
+      window.setTimeout(() => {
+        router.replace("/dashboard");
+        router.refresh();
+      }, 800);
     } finally {
       setIsSubmitting(false);
     }

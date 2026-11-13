@@ -1,7 +1,7 @@
 # ==========================================
 # ETAPA 1: Dependencias (deps)
 # ==========================================
-ARG NODE_IMAGE=node:20-alpine
+ARG NODE_IMAGE=node:22-alpine
 FROM ${NODE_IMAGE} AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app

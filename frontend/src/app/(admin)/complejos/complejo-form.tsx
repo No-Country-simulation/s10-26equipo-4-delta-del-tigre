@@ -15,17 +15,20 @@ import {
     LOGO_MAX_BYTES,
     type ComplejoFormValues,
 } from "@/app/(admin)/complejos/schemas/complejo-form.schema";
-import { ComplejoApiError, guardarComplejo } from "../../../services/complejos/complejos.service";
-
-type ComplejoFormProps = {
-    complejoId?: string;
-    initialValues?: Partial<ComplejoFormValues>;
-    initialLogo?: string | null;
-};
+import {
+    actualizarComplejoAction,
+    crearComplejoAction,
+} from "./actions";
 
 const MAX_FILE_SIZE_LABEL = `${LOGO_MAX_BYTES / (1024 * 1024)} MB`;
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+type ComplejoFormProps = {
+    complejoId?: string;
+    initialValues?: Partial<ComplejoFormValues>;
+    initialSlug?: string | null;
+};
 
 function FieldError({ id, message }: { id: string; message?: string }) {
     return message ? (
@@ -60,100 +63,27 @@ function getColorValue(value?: string) {
     return firstColor && /^#[\da-f]{6}$/i.test(firstColor) ? firstColor : "#174f40";
 }
 
-function getInitials(value?: string) {
-    return value
-        ?.trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map((part) => part[0])
-        .join("")
-        .toLocaleUpperCase("es") || "";
-}
-
-function getResponseId(payload: unknown): string | undefined {
-    if (!payload || typeof payload !== "object") return undefined;
-    const data = payload as Record<string, unknown>;
-    const nested = data.complejo ?? data.data;
-    const resource = nested && typeof nested === "object"
-        ? nested as Record<string, unknown>
-        : data;
-    const id = resource.id ?? resource.uuid;
-    return typeof id === "string" || typeof id === "number" ? String(id) : undefined;
-}
-
-function getServerErrors(payload: unknown) {
-    const fieldErrors: Record<string, string> = {};
-    const formErrors: string[] = [];
-    if (!payload || typeof payload !== "object") return { fieldErrors, formErrors };
-
-    const data = payload as Record<string, unknown>;
-    const fieldNames: Record<string, string> = {
-        nombre: "nombre",
-        name: "nombre",
-        direccion: "direccion",
-        address: "direccion",
-        estadooperativo: "estadoOperativo",
-        estado_operativo: "estadoOperativo",
-        slug: "slug",
-        coloresmarca: "coloresMarca",
-        colores_marca: "coloresMarca",
-        logo: "logo",
-        url_logo: "logo",
-        maxpersonas: "maxPersonas",
-        max_personas: "maxPersonas",
-        minpersonas: "minPersonas",
-        min_personas: "minPersonas",
-        maxreservas: "maxReservas",
-        max_reservas: "maxReservas",
-        titularcuenta: "titularCuenta",
-        titular_cuenta: "titularCuenta",
-        aliascbu: "aliasCbu",
-        alias_cbu: "aliasCbu",
-        banco: "banco",
-        cuenta: "cuenta",
-    };
-    const validation = data.errors ?? data.fieldErrors;
-
-    if (validation && typeof validation === "object" && !Array.isArray(validation)) {
-        for (const [field, rawMessages] of Object.entries(validation)) {
-            const name = fieldNames[field.toLowerCase()];
-            const messages = Array.isArray(rawMessages) ? rawMessages : [rawMessages];
-            const message = messages.find((entry): entry is string => typeof entry === "string");
-            if (name && message) fieldErrors[name] = message;
-            else if (message) formErrors.push(message);
-        }
-    } else if (Array.isArray(validation)) {
-        for (const entry of validation) {
-            if (typeof entry === "string") formErrors.push(entry);
-            else if (entry && typeof entry === "object") {
-                const error = entry as Record<string, unknown>;
-                const field = error.field ?? error.name;
-                const message = error.message ?? error.defaultMessage ?? error.detail;
-                const name = typeof field === "string" ? fieldNames[field.toLowerCase()] : undefined;
-                if (typeof message === "string" && name) fieldErrors[name] = message;
-                else if (typeof message === "string") formErrors.push(message);
-            }
-        }
-    }
-
-    for (const key of ["message", "detail", "title"]) {
-        if (typeof data[key] === "string") formErrors.push(data[key] as string);
-    }
-
-    return { fieldErrors, formErrors: [...new Set(formErrors)] };
-}
-
-export function ComplejoForm({ complejoId, initialValues, initialLogo }: ComplejoFormProps) {
+export function ComplejoForm({
+    complejoId,
+    initialValues,
+    initialSlug,
+}: ComplejoFormProps) {
     const router = useRouter();
-    const [logoUrl, setLogoUrl] = useState<string | null>(initialLogo ?? null);
-    const [colorValue, setColorValue] = useState(() => getColorValue(initialValues?.coloresMarca));
-    const [logoError, setLogoError] = useState("");
+    const [colorValue, setColorValue] = useState(() =>
+        getColorValue(initialValues?.coloresMarca),
+    );
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [formErrors, setFormErrors] = useState<string[]>([]);
     const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
-    const [isOpen, setIsOpen] = useState(initialValues?.estadoOperativo !== "cerrado");
+    const [logoUrl, setLogoUrl] = useState<string | null>(
+        initialValues?.logoUrl || null,
+    );
+    const [logoError, setLogoError] = useState("");
+    const [isOpen, setIsOpen] = useState(
+        initialValues?.estadoOperativo !== "cerrado",
+    );
     const isEditing = Boolean(complejoId);
 
     function handleLogoUpload(result: CloudinaryUploadWidgetResults) {
@@ -181,54 +111,43 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
         setHasAttemptedSubmit(true);
         setFieldErrors({});
         setFormErrors([]);
-        setLogoError("");
         setIsSaved(false);
 
-        const { validation, fieldErrors: nextFieldErrors } = validateForm(event.currentTarget);
+        if (logoError) return;
+
+        const { validation, fieldErrors: nextFieldErrors } = validateForm(
+            event.currentTarget,
+        );
         if (!validation.success) {
             setFieldErrors(nextFieldErrors);
             return;
         }
 
-        const payload = new FormData();
-        for (const [field, value] of Object.entries(validation.data)) {
-            payload.append(field, value == null ? "" : String(value));
-        }
-        if (logoUrl) payload.append("logo", logoUrl);
-
         setIsSubmitting(true);
         try {
-            const response = await guardarComplejo(complejoId, payload);
-            const responseId = getResponseId(response);
-            setIsSaved(true);
-            window.setTimeout(() => {
-                if (isEditing && complejoId) {
-                    router.push(`/complejos/${encodeURIComponent(complejoId)}?guardado=1`);
-                } else if (responseId) {
-                    router.push(`/complejos/${encodeURIComponent(responseId)}`);
-                } else {
-                    router.push("/complejos?creado=1");
-                }
-                router.refresh();
-            }, 700);
-        } catch (error) {
-            if (error instanceof ComplejoApiError) {
-                const parsed = getServerErrors(error.payload);
-                setFieldErrors(parsed.fieldErrors);
+            const result = complejoId
+                ? await actualizarComplejoAction(complejoId, validation.data)
+                : await crearComplejoAction(validation.data);
+
+            if (!result.ok) {
+                setFieldErrors(result.fieldErrors ?? {});
                 setFormErrors(
-                    parsed.formErrors.length > 0
-                        ? parsed.formErrors
-                        : Object.keys(parsed.fieldErrors).length > 0
-                            ? []
-                            : [error.message],
+                    result.fieldErrors && Object.keys(result.fieldErrors).length > 0
+                        ? []
+                        : [result.message],
                 );
-            } else {
-                setFormErrors([
-                    error instanceof Error
-                        ? error.message
-                        : "No se pudo conectar con el servidor. Intentá nuevamente.",
-                ]);
+                return;
             }
+
+            setIsSaved(true);
+            router.push(`/complejos/${encodeURIComponent(result.id)}?guardado=1`);
+            router.refresh();
+        } catch (error) {
+            setFormErrors([
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo conectar con el servidor. Intentá nuevamente.",
+            ]);
         } finally {
             setIsSubmitting(false);
         }
@@ -237,6 +156,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
     return (
         <section className="mx-auto max-w-4xl space-y-6">
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                <input type="hidden" name="logoUrl" value={logoUrl ?? ""} />
                 <header className="flex flex-col gap-5 border-b border-[#dce5e0] pb-6 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="text-xs font-semibold uppercase tracking-widest text-[#28745b]">
@@ -276,68 +196,82 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         <p className="mt-1 text-xs text-[#71817b]">Estos datos aparecen en tu ficha de onboarding.</p>
                         <div className="my-5 border-t border-[#dce5e0]" />
 
-                        <div className="flex items-center gap-3">
-                            <div className="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-[#174f40] text-xs font-semibold text-white">
-                                {logoUrl ? (
-                                    <Image src={logoUrl} alt="Vista previa del logo" fill unoptimized className="object-cover" />
-                                ) : (
-                                    getInitials(initialValues?.nombre) || <ImagePlus aria-hidden="true" className="size-5" />
-                                )}
-                            </div>
-                            <div>
-                                <p className="text-sm font-semibold text-[#172c28]">Logo del complejo</p>
-                                <p id="logo-help" className="mt-0.5 text-xs text-[#71817b]">
-                                    PNG o JPG, máximo {MAX_FILE_SIZE_LABEL}.
-                                </p>
-                                {CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET ? (
-                                    <CldUploadWidget
-                                        uploadPreset={CLOUDINARY_UPLOAD_PRESET}
-                                        onSuccess={handleLogoUpload}
-                                        onError={() => setLogoError("No se pudo subir la imagen. Intentá nuevamente.")}
-                                        options={{
-                                            maxFiles: 1,
-                                            multiple: false,
-                                            folder: "hostflow/logos",
-                                            sources: ["local", "url"],
-                                            clientAllowedFormats: ["png", "jpg", "jpeg"],
-                                            maxFileSize: LOGO_MAX_BYTES,
-                                            cropping: true,
-                                            croppingAspectRatio: 1,
-                                            language: "es",
-                                        }}
-                                    >
-                                        {({ open, isLoading }) => (
-                                            <button
-                                                type="button"
-                                                onClick={() => open()}
-                                                disabled={isLoading}
-                                                className="mt-1 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[#174f40] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
-                                            >
-                                                <Upload aria-hidden="true" className="size-3.5" />
-                                                {isLoading ? "Subiendo…" : logoUrl ? "Cambiar logo" : "Subir nuevo logo"}
-                                            </button>
-                                        )}
-                                    </CldUploadWidget>
-                                ) : (
-                                    <p className="mt-1 text-xs text-[#a33c2f]">
-                                        Error al subir el logo.
-                                    </p>
-                                )}
-                                {logoUrl ? (
-                                    <button
-                                        type="button"
-                                        onClick={() => setLogoUrl(null)}
-                                        className="ml-3 text-xs text-[#8a3c30] hover:underline"
-                                    >
-                                        <X aria-hidden="true" className="mr-1 inline size-3.5" />
-                                        Quitar logo
-                                    </button>
-                                ) : null}
-                            </div>
-                        </div>
-                        <FieldError id="logo-error" message={logoError || fieldErrors.logo} />
+                        <div>
+                            <h3 className="text-base font-medium text-[#172c28]">Logo del complejo</h3>
+                            <p id="logo-help" className="mt-1 text-xs text-[#71817b]">
+                                PNG o JPG, máximo {MAX_FILE_SIZE_LABEL}.
+                            </p>
 
-                        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                            <div className="mt-4 flex flex-col gap-3">
+                                <div className="relative aspect-square w-32 overflow-hidden rounded-xl bg-[#e8eeea]">
+                                    {logoUrl ? (
+                                        <Image
+                                            src={logoUrl}
+                                            alt="Vista previa del logo del complejo"
+                                            fill
+                                            unoptimized
+                                            className="object-cover"
+                                        />
+                                    ) : (
+                                        <span className="flex h-full w-full items-center justify-center text-[#899791]">
+                                            <ImagePlus aria-hidden="true" className="size-7" />
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-col items-start gap-2">
+                                    {CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET ? (
+                                        <CldUploadWidget
+                                            uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                                            onSuccess={handleLogoUpload}
+                                            onError={() => setLogoError("No se pudo subir el logo. Intentá nuevamente.")}
+                                            options={{
+                                                maxFiles: 1,
+                                                multiple: false,
+                                                folder: "hostflow/logos",
+                                                sources: ["local", "url"],
+                                                clientAllowedFormats: ["png", "jpg", "jpeg"],
+                                                maxFileSize: LOGO_MAX_BYTES,
+                                                cropping: true,
+                                                croppingAspectRatio: 1,
+                                                language: "es",
+                                            }}
+                                        >
+                                            {({ open, isLoading }) => (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => open()}
+                                                    disabled={isLoading}
+                                                    className="mt-1 inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[#174f40] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+                                                >
+                                                    <Upload aria-hidden="true" className="size-3.5" />
+                                                    {isLoading ? "Subiendo…" : logoUrl ? "Cambiar logo" : "Subir logo"}
+                                                </button>
+                                            )}
+                                        </CldUploadWidget>
+                                    ) : (
+                                        <p className="mt-1 text-xs text-[#a33c2f]">
+                                            Error al subir el logo.
+                                        </p>
+                                    )}
+                                    {logoUrl && logoUrl !== initialValues?.logoUrl ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setLogoUrl(initialValues?.logoUrl || null)}
+                                            className="text-xs text-[#8a3c30] hover:underline"
+                                        >
+                                            <X aria-hidden="true" className="mr-1 inline size-3.5" />
+                                            Quitar logo
+                                        </button>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <FieldError id="logoUrl-error" message={logoError || fieldErrors.logoUrl} />
+                        </div>
+
+                        <div className="my-5 border-t border-[#dce5e0]" />
+
+                        <div className="grid gap-4 sm:grid-cols-2">
                             <div>
                                 <label htmlFor="nombre" className="text-sm font-medium text-[#172c28]">
                                     Nombre del complejo<RequiredMark />
@@ -346,7 +280,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                     id="nombre"
                                     name="nombre"
                                     required
-                                    maxLength={100}
+                                    maxLength={150}
                                     defaultValue={initialValues?.nombre ?? ""}
                                     onChange={handleFieldChange}
                                     aria-invalid={Boolean(fieldErrors.nombre)}
@@ -363,7 +297,7 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                                     id="direccion"
                                     name="direccion"
                                     required
-                                    maxLength={200}
+                                    maxLength={255}
                                     defaultValue={initialValues?.direccion ?? ""}
                                     onChange={handleFieldChange}
                                     aria-invalid={Boolean(fieldErrors.direccion)}
@@ -396,59 +330,87 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                     </CardContent>
                 </Card>
 
-
-
                 <Card className="rounded-xl border border-[#dce5e0] bg-white py-0 shadow-none ring-0">
                     <CardContent className="p-6">
-                        <h2 className="text-base font-medium text-[#172c28]">Datos del alojamiento</h2>
-                        <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                            <div>
-                                <label htmlFor="slug" className="text-sm font-medium text-[#526963]">Slug<RequiredMark /></label>
-                                <Input
-                                    id="slug"
-                                    name="slug"
-                                    maxLength={80}
-                                    pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-                                    placeholder="mi-complejo"
-                                    defaultValue={initialValues?.slug ?? ""}
-                                    required
-                                    onChange={handleFieldChange}
-                                    aria-invalid={Boolean(fieldErrors.slug)}
-                                    aria-describedby={fieldErrors.slug ? "slug-error" : undefined}
-                                    className="mt-1 h-10 bg-white"
-                                />
-                                <FieldError id="slug-error" message={fieldErrors.slug} />
-                            </div>
-                            {(["minPersonas", "maxPersonas", "maxReservas"] as const).map((name) => {
-                                const labels = {
-                                    minPersonas: "Capacidad mínima",
-                                    maxPersonas: "Capacidad máxima",
-                                    maxReservas: "Máximo de reservas",
-                                };
-                                return (
-                                    <div key={name}>
-                                        <label htmlFor={name} className="text-sm font-medium text-[#526963]">{labels[name]}<RequiredMark /></label>
-                                        <Input
-                                            id={name}
-                                            name={name}
-                                            type="number"
-                                            min={1}
-                                            step={1}
-                                            inputMode="numeric"
-                                            defaultValue={initialValues?.[name] ?? ""}
-                                            required
-                                            onChange={handleFieldChange}
-                                            aria-invalid={Boolean(fieldErrors[name])}
-                                            aria-describedby={fieldErrors[name] ? `${name}-error` : undefined}
-                                            className="mt-1 h-10 bg-white"
-                                        />
-                                        <FieldError id={`${name}-error`} message={fieldErrors[name]} />
-                                    </div>
-                                );
-                            })}
+                        <h2 className="text-base font-medium text-[#172c28]">Enlace de onboarding</h2>
+                        <p className="mt-1 text-xs text-[#71817b]">
+                            {isEditing && initialSlug
+                                ? "El link público usa el slug generado automáticamente. No se puede modificar."
+                                : "El slug se genera automáticamente a partir del nombre del complejo."}
+                        </p>
+                        <div className="mt-4 rounded-lg border border-[#dce5e0] bg-[#f9faf9] px-4 py-3 text-sm text-[#526963]">
+                            {isEditing && initialSlug ? (
+                                <span className="font-mono text-[#172c28]">{initialSlug}</span>
+                            ) : (
+                                <span className="text-[#899791]">Se generará al guardar el complejo.</span>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
+
+                <Card className="rounded-xl border border-[#dce5e0] bg-white py-0 shadow-none ring-0">
+                    <CardContent className="p-6">
+                        <h2 className="text-base font-medium text-[#172c28]">Datos de pago</h2>
+                        <p className="mt-1 text-xs text-[#71817b]">
+                            Opcional. Si completás un campo, completá los tres. Se muestran al finalizar el onboarding.
+                        </p>
+                        <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                            <div>
+                                <label htmlFor="titularCuenta" className="text-sm font-medium text-[#526963]">
+                                    Titular de la cuenta
+                                </label>
+                                <Input
+                                    id="titularCuenta"
+                                    name="titularCuenta"
+                                    maxLength={150}
+                                    autoComplete="off"
+                                    defaultValue={initialValues?.titularCuenta ?? ""}
+                                    onChange={handleFieldChange}
+                                    aria-invalid={Boolean(fieldErrors.titularCuenta)}
+                                    aria-describedby={fieldErrors.titularCuenta ? "titularCuenta-error" : undefined}
+                                    className="mt-1 h-10 bg-white"
+                                />
+                                <FieldError id="titularCuenta-error" message={fieldErrors.titularCuenta} />
+                            </div>
+                            <div>
+                                <label htmlFor="aliasCbu" className="text-sm font-medium text-[#526963]">
+                                    Alias o CBU
+                                </label>
+                                <Input
+                                    id="aliasCbu"
+                                    name="aliasCbu"
+                                    maxLength={22}
+                                    autoComplete="off"
+                                    placeholder="alias.o.cbu"
+                                    defaultValue={initialValues?.aliasCbu ?? ""}
+                                    onChange={handleFieldChange}
+                                    aria-invalid={Boolean(fieldErrors.aliasCbu)}
+                                    aria-describedby={fieldErrors.aliasCbu ? "aliasCbu-error" : undefined}
+                                    className="mt-1 h-10 bg-white"
+                                />
+                                <FieldError id="aliasCbu-error" message={fieldErrors.aliasCbu} />
+                            </div>
+                            <div>
+                                <label htmlFor="banco" className="text-sm font-medium text-[#526963]">
+                                    Banco
+                                </label>
+                                <Input
+                                    id="banco"
+                                    name="banco"
+                                    maxLength={80}
+                                    autoComplete="off"
+                                    defaultValue={initialValues?.banco ?? ""}
+                                    onChange={handleFieldChange}
+                                    aria-invalid={Boolean(fieldErrors.banco)}
+                                    aria-describedby={fieldErrors.banco ? "banco-error" : undefined}
+                                    className="mt-1 h-10 bg-white"
+                                />
+                                <FieldError id="banco-error" message={fieldErrors.banco} />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
                 <div className="flex items-center justify-between gap-4 rounded-xl bg-[#eef4f1] px-4 py-3.5">
                     <div>
                         <p className="text-sm font-semibold text-[#172c28]">
@@ -476,7 +438,6 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                 </div>
                 <FieldError id="estadoOperativo-error" message={fieldErrors.estadoOperativo} />
 
-
                 {formErrors.length > 0 ? (
                     <div className="rounded-lg border border-[#e7c9c3] bg-[#fff7f5] p-4 text-sm text-[#8a3c30]" role="alert">
                         {formErrors.map((message) => <p key={message}>{message}</p>)}
@@ -487,7 +448,6 @@ export function ComplejoForm({ complejoId, initialValues, initialLogo }: Complej
                         Guardado confirmado. Redirigiendo…
                     </p>
                 ) : null}
-
             </form>
         </section>
     );

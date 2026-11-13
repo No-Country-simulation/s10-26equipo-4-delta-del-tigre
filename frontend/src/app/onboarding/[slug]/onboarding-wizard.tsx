@@ -20,7 +20,7 @@ import {
     type ComplejoPublico,
     type OnboardingPayload,
     type OnboardingResultado,
-} from "@/services/onboarding/onboarding.service";
+} from "@/services/public/public.service";
 import {
     ALERGIAS_OPCIONES,
     ahoraLocalISO,
@@ -43,7 +43,7 @@ type PasoConfig = {
 const PASOS: PasoConfig[] = [
     {
         titulo: "Tus datos",
-        eyebrow: "Bienvenidos al Delta",
+        eyebrow: "Te damos la bienvenida",
         heading: "Empecemos por conocerte",
     },
     {
@@ -88,14 +88,29 @@ const LANCHA_INICIAL: LanchaForm = {
     comentariosLancha: "",
 };
 
+/* ------------------------------------------------------------------ */
+/* Clases base: todos los colores salen de variables CSS de la marca   */
+/* ------------------------------------------------------------------ */
+
 const INPUT_CLASS =
-    "h-12 rounded-xl border-[#e3ded2] bg-white px-3.5 text-sm text-[#172c28] shadow-none placeholder:text-[#9aa6a1] focus-visible:border-[var(--brand)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]";
+    "h-12 rounded-xl border-[var(--line)] bg-white px-3.5 text-sm text-[var(--ink)] shadow-none placeholder:text-[var(--ink)]/40 focus-visible:border-[var(--brand)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]";
 
 const TEXTAREA_CLASS =
-    "w-full resize-none rounded-xl border border-[#e3ded2] bg-white px-3.5 py-3 text-sm text-[#172c28] shadow-none outline-none transition placeholder:text-[#9aa6a1] focus-visible:border-[var(--brand)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]";
+    "w-full resize-none rounded-xl border border-[var(--line)] bg-white px-3.5 py-3 text-sm text-[var(--ink)] shadow-none outline-none transition placeholder:text-[var(--ink)]/40 focus-visible:border-[var(--brand)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]";
 
 const SELECT_CLASS =
-    "h-12 w-full appearance-none rounded-xl border border-[#e3ded2] bg-white px-3.5 pr-10 text-sm text-[#172c28] shadow-none outline-none transition focus-visible:border-[var(--brand)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]";
+    "h-12 w-full appearance-none rounded-xl border border-[var(--line)] bg-white px-3.5 pr-10 text-sm text-[var(--ink)] shadow-none outline-none transition focus-visible:border-[var(--brand)] focus-visible:ring-2 focus-visible:ring-[var(--brand)]";
+
+const BTN_PRIMARY =
+    "inline-flex h-12 min-w-36 cursor-pointer items-center justify-center gap-2 rounded-xl px-7 text-sm font-semibold shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] disabled:cursor-not-allowed disabled:opacity-70";
+
+const BTN_SECONDARY =
+    "inline-flex h-12 cursor-pointer items-center justify-center rounded-xl border border-[var(--line)] bg-white px-6 text-sm font-semibold text-[var(--ink)]/70 transition hover:bg-[var(--brand-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-60";
+
+const ESTILO_BTN_PRIMARY: CSSProperties = {
+    backgroundColor: "var(--brand)",
+    color: "var(--brand-contrast)",
+};
 
 const PUNTOS_SALIDA = [
     "Estación Fluvial de Tigre",
@@ -105,9 +120,68 @@ const PUNTOS_SALIDA = [
     "Muelle de Carapachay",
 ];
 
-function colorDeMarca(valor: string | null) {
-    const color = valor?.split(",")[0]?.trim();
-    return color && /^#[\da-f]{6}$/i.test(color) ? color : "#174f40";
+/* ------------------------------------------------------------------ */
+/* Helpers de color                                                    */
+/* ------------------------------------------------------------------ */
+
+const COLOR_FALLBACK = "#174f40";
+
+function normalizarHex(valor?: string) {
+    const match = /^#?([\da-f]{3}|[\da-f]{6})$/i.exec(valor?.trim() ?? "");
+    if (!match) return null;
+    const hex =
+        match[1].length === 3
+            ? match[1]
+                .split("")
+                .map((c) => c + c)
+                .join("")
+            : match[1];
+    return `#${hex.toLowerCase()}`;
+}
+
+/** Acepta "#aabbcc" o "#aabbcc, #ddeeff" (primario, secundario). */
+function parseColoresMarca(valor: string | null) {
+    const [p, s] = (valor ?? "").split(",").map((c) => normalizarHex(c));
+    return { primario: p ?? COLOR_FALLBACK, secundario: s ?? null };
+}
+
+function luminancia(hex: string) {
+    const n = parseInt(hex.slice(1), 16);
+    const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** Color de texto (blanco u oscuro) legible sobre un fondo de marca. */
+function colorSobre(hex: string) {
+    return luminancia(hex) > 0.5 ? "#111111" : "#ffffff";
+}
+
+/** Si la marca es muy clara, oscurece el color cuando se usa como texto sobre blanco. */
+function colorTexto(hex: string) {
+    return luminancia(hex) > 0.4
+        ? `color-mix(in srgb, ${hex} 45%, #000000)`
+        : hex;
+}
+
+function crearEstiloMarca(primario: string, secundario: string | null) {
+    const acento = secundario ?? primario;
+    return {
+        "--brand": primario,
+        "--brand-text": colorTexto(primario),
+        "--brand-contrast": colorSobre(primario),
+        "--brand-soft": `color-mix(in srgb, ${primario} 8%, white)`,
+        "--brand-border": `color-mix(in srgb, ${primario} 25%, white)`,
+        "--accent": acento,
+        "--accent-text": colorTexto(acento),
+        "--accent-soft": `color-mix(in srgb, ${acento} 12%, white)`,
+        "--accent-border": `color-mix(in srgb, ${acento} 30%, white)`,
+        "--bg": `color-mix(in srgb, ${primario} 4%, white)`,
+        "--line": `color-mix(in srgb, ${primario} 12%, #e5e5e5)`,
+        "--ink": `color-mix(in srgb, ${primario} 18%, #111111)`,
+    } as CSSProperties;
 }
 
 function iniciales(nombre: string) {
@@ -146,6 +220,44 @@ function descripcionPaso(paso: number, nombre: string) {
     }
 }
 
+/* ------------------------------------------------------------------ */
+/* Componentes auxiliares                                              */
+/* ------------------------------------------------------------------ */
+
+function LogoComplejo({
+    complejo,
+    colorMarca,
+}: {
+    complejo: ComplejoPublico;
+    colorMarca: string;
+}) {
+    const [fallo, setFallo] = useState(false);
+
+    if (complejo.logo && !fallo) {
+        return (
+            // <img> en lugar de next/image: funciona con cualquier URL externa
+            // sin configurar dominios en next.config.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+                src={complejo.logo}
+                alt={`Logo de ${complejo.nombre}`}
+                onError={() => setFallo(true)}
+                className="h-12 w-auto max-w-[170px] shrink-0 object-contain"
+            />
+        );
+    }
+
+    return (
+        <span
+            aria-hidden="true"
+            className="grid size-12 shrink-0 place-items-center rounded-xl text-sm font-semibold"
+            style={{ backgroundColor: colorMarca, color: colorSobre(colorMarca) }}
+        >
+            {iniciales(complejo.nombre)}
+        </span>
+    );
+}
+
 function CabeceraComplejo({
     complejo,
     colorMarca,
@@ -154,41 +266,25 @@ function CabeceraComplejo({
     colorMarca: string;
 }) {
     return (
-        <header className="border-b border-[#e8e3d7] bg-[#fbf9f4]">
+        <header className="border-b border-[var(--line)] bg-white">
             <div className="mx-auto flex w-full max-w-xl items-center justify-between gap-4 px-5 py-4">
                 <div className="flex min-w-0 items-center gap-3">
-                    {complejo.logo ? (
-                        <Image
-                            src={complejo.logo}
-                            alt={`Logo de ${complejo.nombre}`}
-                            width={44}
-                            height={44}
-                            unoptimized
-                            className="size-11 shrink-0 rounded-xl object-cover"
-                        />
-                    ) : (
-                        <span
-                            aria-hidden="true"
-                            className="grid size-11 shrink-0 place-items-center rounded-xl text-sm font-semibold text-white"
-                            style={{ backgroundColor: colorMarca }}
-                        >
-                            {iniciales(complejo.nombre)}
-                        </span>
-                    )}
+                    <LogoComplejo complejo={complejo} colorMarca={colorMarca} />
                     <div className="min-w-0">
                         <p className="truncate text-sm font-semibold leading-tight">
                             {complejo.nombre}
                         </p>
-                        <p className="mt-0.5 truncate text-[11px] text-[#7d8a84]">
-                            {complejo.direccion || "Delta del Tigre"}
-                        </p>
+                        {complejo.direccion ? (
+                            <p className="mt-0.5 truncate text-[11px] text-[var(--ink)]/60">
+                                {complejo.direccion}
+                            </p>
+                        ) : null}
                     </div>
                 </div>
 
                 <a
                     href="mailto:soporte@hostflow.com"
-                    className="shrink-0 text-xs font-semibold hover:underline"
-                    style={{ color: colorMarca }}
+                    className="shrink-0 text-xs font-semibold text-[var(--brand-text)] hover:underline"
                 >
                     ¿Necesitás ayuda?
                 </a>
@@ -212,7 +308,7 @@ function Campo({
         <div>
             <label
                 htmlFor={htmlFor}
-                className="mb-1.5 block text-xs font-semibold text-[#172c28]"
+                className="mb-1.5 block text-xs font-semibold text-[var(--ink)]"
             >
                 {label}
             </label>
@@ -226,8 +322,16 @@ function Campo({
     );
 }
 
+/* ------------------------------------------------------------------ */
+/* Wizard                                                              */
+/* ------------------------------------------------------------------ */
+
 export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
-    const colorMarca = colorDeMarca(complejo.coloresMarca);
+    const { primario: colorMarca, secundario } = parseColoresMarca(
+        complejo.coloresMarca,
+    );
+    const estiloMarca = crearEstiloMarca(colorMarca, secundario);
+
     const [paso, setPaso] = useState(1);
     const [datos, setDatos] = useState<DatosHuespedForm>(DATOS_INICIALES);
     const [preferencias, setPreferencias] = useState<PreferenciasHuespedForm>(
@@ -244,7 +348,6 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
     const pasoActual = PASOS[paso - 1];
     const hoy = hoyISO();
     const ahora = ahoraLocalISO();
-    const estiloMarca = { "--brand": colorMarca } as CSSProperties;
     const totalAdicionales = complejo.addons.reduce(
         (total, addon) => total + (adicionales[addon.id] ?? 0) * addon.precio,
         0,
@@ -338,7 +441,12 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
     }
 
     function actualizarLancha(
-        campo: "salidaLancha" | "regresoLancha" | "pasajerosLancha" | "puntoSalida" | "comentariosLancha",
+        campo:
+            | "salidaLancha"
+            | "regresoLancha"
+            | "pasajerosLancha"
+            | "puntoSalida"
+            | "comentariosLancha",
         valor: string,
     ) {
         setLancha((previa) => ({ ...previa, [campo]: valor }));
@@ -356,7 +464,9 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
             ...previa,
             necesitaLancha: necesita,
             pasajerosLancha:
-                necesita && !previa.pasajerosLancha ? datos.huespedes : previa.pasajerosLancha,
+                necesita && !previa.pasajerosLancha
+                    ? datos.huespedes
+                    : previa.pasajerosLancha,
         }));
         setErrores({});
         setErrorEnvio("");
@@ -448,6 +558,8 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
         }
     }
 
+    /* ---------------------------- Pantalla final ---------------------------- */
+
     if (resultado) {
         const totalMostrar = resultado.total > 0 ? resultado.total : totalAdicionales;
         const addonsSeleccionados = complejo.addons.filter(
@@ -459,45 +571,47 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
         return (
             <div
                 style={estiloMarca}
-                className="min-h-dvh bg-[#f7f4ec] text-[#172c28]"
+                className="flex min-h-dvh flex-col bg-[var(--bg)] text-[var(--ink)]"
             >
-                <main className="mx-auto w-full max-w-xl px-5 py-12">
+                <CabeceraComplejo complejo={complejo} colorMarca={colorMarca} />
+
+                <main className="mx-auto w-full max-w-xl flex-1 px-5 py-12">
                     <div className="flex flex-col items-center text-center">
                         <span
                             className="grid size-20 place-items-center rounded-full"
                             style={{
-                                backgroundColor: `color-mix(in srgb, ${colorMarca} 12%, white)`,
+                                backgroundColor: `color-mix(in srgb, ${colorMarca} 14%, white)`,
                             }}
                         >
                             <span
-                                className="grid size-14 place-items-center rounded-full text-white"
-                                style={{ backgroundColor: colorMarca }}
+                                className="grid size-14 place-items-center rounded-full"
+                                style={{
+                                    backgroundColor: "var(--brand)",
+                                    color: "var(--brand-contrast)",
+                                }}
                             >
                                 <Check className="size-7" strokeWidth={2.5} aria-hidden="true" />
                             </span>
                         </span>
 
-                        <p
-                            className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em]"
-                            style={{ color: colorMarca }}
-                        >
+                        <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand-text)]">
                             Check-in completado
                         </p>
                         <h1 className="mt-2 text-[32px] font-semibold leading-tight tracking-tight">
-                            ¡Todo listo, {nombrePila}!
+                            ¡Todo listo{nombrePila ? `, ${nombrePila}` : ""}!
                         </h1>
-                        <p className="mt-2 max-w-md text-sm leading-6 text-[#71817b]">
+                        <p className="mt-2 max-w-md text-sm leading-6 text-[var(--ink)]/70">
                             Recibimos tus datos. En breve, {complejo.nombre} te espera para
-                            disfrutar del Delta.
+                            que disfrutes tu estadía.
                         </p>
                     </div>
 
                     {totalMostrar > 0 && addonsSeleccionados.length > 0 ? (
-                        <section className="mt-8 rounded-2xl border border-[#e3ded2] bg-white p-5">
+                        <section className="mt-8 rounded-2xl border border-[var(--line)] bg-white p-5">
                             <div className="flex items-start justify-between gap-4">
                                 <h2 className="text-base font-medium">Resumen de adicionales</h2>
                                 {resultado.bookingId ? (
-                                    <p className="text-xs text-[#9aa6a1]">
+                                    <p className="text-xs text-[var(--ink)]/45">
                                         Reserva #{resultado.bookingId}
                                     </p>
                                 ) : null}
@@ -511,7 +625,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                             key={addon.id}
                                             className="flex items-center justify-between gap-4 text-sm"
                                         >
-                                            <span className="text-[#526963]">
+                                            <span className="text-[var(--ink)]/70">
                                                 {addon.nombre} · {cantidad}
                                             </span>
                                             <span className="font-medium">
@@ -521,7 +635,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                     );
                                 })}
                             </div>
-                            <div className="mt-4 flex items-center justify-between gap-4 border-t border-[#eee9dd] pt-4">
+                            <div className="mt-4 flex items-center justify-between gap-4 border-t border-[var(--line)] pt-4">
                                 <span className="text-sm font-semibold">Total a transferir</span>
                                 <span className="text-2xl font-semibold">
                                     {formatearPrecio(totalMostrar)}
@@ -531,18 +645,12 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                     ) : null}
 
                     {pago?.aliasCbu && totalMostrar > 0 ? (
-                        <section className="mt-4 rounded-2xl border border-[#e6d6b8] bg-[#f7f0e3] p-5">
+                        <section className="mt-4 rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-5">
                             <div className="flex items-center gap-2.5">
-                                <span
-                                    className="grid size-8 place-items-center rounded-lg bg-white/70"
-                                    style={{ color: colorMarca }}
-                                >
+                                <span className="grid size-8 place-items-center rounded-lg bg-white/70 text-[var(--accent-text)]">
                                     <CreditCard className="size-4" aria-hidden="true" />
                                 </span>
-                                <p
-                                    className="text-[11px] font-bold uppercase tracking-[0.14em]"
-                                    style={{ color: colorMarca }}
-                                >
+                                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent-text)]">
                                     Datos de pago
                                 </p>
                             </div>
@@ -550,21 +658,21 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                             <h2 className="mt-4 text-xl font-semibold">
                                 Asegurá tus adicionales
                             </h2>
-                            <p className="mt-1 text-xs leading-5 text-[#71817b]">
+                            <p className="mt-1 text-xs leading-5 text-[var(--ink)]/70">
                                 Transferí el monto total a este Alias para asegurar tus
                                 adicionales.
                             </p>
 
                             <div className="mt-4 flex items-center justify-between gap-4 rounded-xl bg-white p-4">
                                 <div className="min-w-0">
-                                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9aa6a1]">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--ink)]/45">
                                         Alias
                                     </p>
                                     <p className="mt-0.5 truncate text-lg font-semibold">
                                         {pago.aliasCbu}
                                     </p>
                                     {pago.accountHolder ? (
-                                        <p className="mt-0.5 text-xs text-[#71817b]">
+                                        <p className="mt-0.5 text-xs text-[var(--ink)]/70">
                                             Titular: {pago.accountHolder}
                                         </p>
                                     ) : null}
@@ -572,7 +680,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                 <button
                                     type="button"
                                     onClick={() => copiarAlias(pago.aliasCbu)}
-                                    className="inline-flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-[#d9d3c4] bg-white px-4 text-sm font-semibold text-[#172c28] transition hover:bg-[#f7f4ec] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                                    className="inline-flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-[var(--line)] bg-white px-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--brand-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
                                 >
                                     {aliasCopiado ? "Copiado" : "Copiar alias"}
                                     <Copy className="size-4" aria-hidden="true" />
@@ -582,15 +690,15 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                     ) : null}
 
                     {resultado.boatRequested ? (
-                        <section className="mt-4 flex items-start gap-3 rounded-2xl bg-[#e6eef5] p-4">
-                            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white/80 text-[#3b6f8f]">
+                        <section className="mt-4 flex items-start gap-3 rounded-2xl bg-[var(--brand-soft)] p-4">
+                            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white/80 text-[var(--brand-text)]">
                                 <Ship className="size-4" aria-hidden="true" />
                             </span>
                             <div>
                                 <p className="text-sm font-semibold">
                                     Solicitud de lancha recibida
                                 </p>
-                                <p className="mt-0.5 text-xs leading-5 text-[#5d7482]">
+                                <p className="mt-0.5 text-xs leading-5 text-[var(--ink)]/70">
                                     Recibimos tu solicitud de cotización, te contactaremos pronto.
                                 </p>
                             </div>
@@ -601,10 +709,12 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
         );
     }
 
+    /* ------------------------------ Formulario ------------------------------ */
+
     return (
         <div
             style={estiloMarca}
-            className="flex min-h-dvh flex-col bg-[#f7f4ec] text-[#172c28]"
+            className="flex min-h-dvh flex-col bg-[var(--bg)] text-[var(--ink)]"
         >
             <CabeceraComplejo complejo={complejo} colorMarca={colorMarca} />
 
@@ -616,7 +726,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                     <span>{pasoActual.titulo}</span>
                 </div>
                 <div
-                    className="mt-2 h-[3px] overflow-hidden rounded-full bg-[#e3ded2]"
+                    className="mt-2 h-[3px] overflow-hidden rounded-full bg-[var(--line)]"
                     role="progressbar"
                     aria-label={`Paso ${paso} de ${PASOS.length}`}
                     aria-valuemin={1}
@@ -627,23 +737,20 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                         className="h-full rounded-full transition-all duration-300"
                         style={{
                             width: `${(paso / PASOS.length) * 100}%`,
-                            backgroundColor: colorMarca,
+                            backgroundColor: "var(--brand)",
                         }}
                     />
                 </div>
             </div>
 
             <main className="mx-auto w-full max-w-xl flex-1 px-5 pb-12 pt-8">
-                <p
-                    className="text-[11px] font-bold uppercase tracking-[0.16em]"
-                    style={{ color: colorMarca }}
-                >
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--brand-text)]">
                     {pasoActual.eyebrow}
                 </p>
                 <h1 className="mt-2 text-[30px] font-semibold leading-[1.15] tracking-tight">
                     {pasoActual.heading}
                 </h1>
-                <p className="mt-2 text-sm leading-6 text-[#71817b]">
+                <p className="mt-2 text-sm leading-6 text-[var(--ink)]/70">
                     {descripcionPaso(paso, complejo.nombre)}
                 </p>
 
@@ -745,11 +852,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                         </Campo>
 
                         <div className="flex justify-end pt-2">
-                            <button
-                                type="submit"
-                                className="inline-flex h-12 min-w-36 cursor-pointer items-center justify-center rounded-xl px-7 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f4ec]"
-                                style={{ backgroundColor: colorMarca }}
-                            >
+                            <button type="submit" className={BTN_PRIMARY} style={ESTILO_BTN_PRIMARY}>
                                 Continuar
                             </button>
                         </div>
@@ -757,10 +860,10 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                 ) : paso === 2 ? (
                     <form onSubmit={continuarPasoDos} noValidate className="mt-7 space-y-5">
                         <fieldset>
-                            <legend className="text-xs font-semibold text-[#172c28]">
+                            <legend className="text-xs font-semibold text-[var(--ink)]">
                                 Alergias o intolerancias
                             </legend>
-                            <p className="mt-1 text-xs text-[#71817b]">
+                            <p className="mt-1 text-xs text-[var(--ink)]/70">
                                 Seleccioná todas las que correspondan. Si no tenés, podés continuar.
                             </p>
                             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -773,30 +876,27 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                             type="button"
                                             aria-pressed={activa}
                                             onClick={() => alternarAlergia(opcion.value)}
-                                            className={`flex h-11 cursor-pointer items-center gap-2 rounded-xl border px-3 text-left text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
-                                                activa
-                                                    ? "text-[var(--brand)]"
-                                                    : "border-[#e3ded2] bg-white text-[#526963] hover:bg-[#f1ece0]"
-                                            }`}
-                                            style={
-                                                activa
-                                                    ? {
-                                                        borderColor: colorMarca,
-                                                        backgroundColor: `color-mix(in srgb, ${colorMarca} 10%, white)`,
-                                                    }
-                                                    : undefined
-                                            }
+                                            className={`flex h-11 cursor-pointer items-center gap-2 rounded-xl border px-3 text-left text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${activa
+                                                ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-text)]"
+                                                : "border-[var(--line)] bg-white text-[var(--ink)]/70 hover:bg-[var(--brand-soft)]"
+                                                }`}
                                         >
                                             <span
                                                 aria-hidden="true"
-                                                className={`grid size-4 shrink-0 place-items-center rounded-[5px] border ${
+                                                className={`grid size-4 shrink-0 place-items-center rounded-[5px] border ${activa
+                                                    ? "border-transparent"
+                                                    : "border-[var(--line)] bg-white"
+                                                    }`}
+                                                style={
                                                     activa
-                                                        ? "border-transparent"
-                                                        : "border-[#c9c2b2] bg-white"
-                                                }`}
-                                                style={activa ? { backgroundColor: colorMarca } : undefined}
+                                                        ? {
+                                                            backgroundColor: "var(--brand)",
+                                                            color: "var(--brand-contrast)",
+                                                        }
+                                                        : undefined
+                                                }
                                             >
-                                                {activa ? <Check className="size-3 text-white" /> : null}
+                                                {activa ? <Check className="size-3" /> : null}
                                             </span>
                                             {opcion.label}
                                         </button>
@@ -834,24 +934,16 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                 aria-invalid={Boolean(errores.preferencias)}
                                 className={TEXTAREA_CLASS}
                             />
-                            <p className="mt-1 text-right text-[11px] text-[#9aa6a1]">
+                            <p className="mt-1 text-right text-[11px] text-[var(--ink)]/45">
                                 {preferencias.preferencias.length}/1000
                             </p>
                         </Campo>
 
                         <div className="flex items-center justify-between gap-3 pt-2">
-                            <button
-                                type="button"
-                                onClick={volver}
-                                className="inline-flex h-12 cursor-pointer items-center justify-center rounded-xl border border-[#d9d3c4] bg-white px-6 text-sm font-semibold text-[#526963] transition hover:bg-[#f1ece0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
-                            >
+                            <button type="button" onClick={volver} className={BTN_SECONDARY}>
                                 Volver
                             </button>
-                            <button
-                                type="submit"
-                                className="inline-flex h-12 min-w-36 cursor-pointer items-center justify-center rounded-xl px-7 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f4ec]"
-                                style={{ backgroundColor: colorMarca }}
-                            >
+                            <button type="submit" className={BTN_PRIMARY} style={ESTILO_BTN_PRIMARY}>
                                 Continuar
                             </button>
                         </div>
@@ -859,9 +951,9 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                 ) : paso === 3 ? (
                     <form onSubmit={continuarPasoTres} noValidate className="mt-7 space-y-4">
                         {complejo.addons.length === 0 ? (
-                            <div className="rounded-2xl border border-dashed border-[#d9d3c4] bg-white/60 p-6">
+                            <div className="rounded-2xl border border-dashed border-[var(--line)] bg-white/60 p-6">
                                 <p className="text-sm font-semibold">Sin adicionales disponibles</p>
-                                <p className="mt-1 text-sm text-[#71817b]">
+                                <p className="mt-1 text-sm text-[var(--ink)]/70">
                                     Este alojamiento todavía no cargó servicios extra. Podés
                                     continuar.
                                 </p>
@@ -875,13 +967,12 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                     return (
                                         <div
                                             key={addon.id}
-                                            className={`flex overflow-hidden rounded-2xl border bg-white transition ${
-                                                seleccionado
-                                                    ? "border-[var(--brand)]"
-                                                    : "border-[#e3ded2]"
-                                            }`}
+                                            className={`flex overflow-hidden rounded-2xl border bg-white transition ${seleccionado
+                                                ? "border-[var(--brand)]"
+                                                : "border-[var(--line)]"
+                                                }`}
                                         >
-                                            <div className="relative w-[120px] shrink-0 self-stretch bg-[#eef4f1] sm:w-[150px]">
+                                            <div className="relative w-[120px] shrink-0 self-stretch bg-[var(--brand-soft)] sm:w-[150px]">
                                                 {addon.imagen ? (
                                                     <Image
                                                         src={addon.imagen}
@@ -892,17 +983,8 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                                         className="object-cover"
                                                     />
                                                 ) : (
-                                                    <div
-                                                        className="grid h-full w-full place-items-center"
-                                                        style={{
-                                                            color: colorMarca,
-                                                            backgroundColor: `color-mix(in srgb, ${colorMarca} 8%, white)`,
-                                                        }}
-                                                    >
-                                                        <Sparkles
-                                                            className="size-6"
-                                                            aria-hidden="true"
-                                                        />
+                                                    <div className="grid h-full w-full place-items-center text-[var(--brand-text)]">
+                                                        <Sparkles className="size-6" aria-hidden="true" />
                                                     </div>
                                                 )}
                                             </div>
@@ -913,47 +995,37 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                                         {addon.nombre}
                                                     </p>
                                                     {addon.descripcion ? (
-                                                        <p className="mt-1 text-xs leading-5 text-[#71817b]">
+                                                        <p className="mt-1 text-xs leading-5 text-[var(--ink)]/70">
                                                             {addon.descripcion}
                                                         </p>
                                                     ) : null}
                                                 </div>
 
                                                 <div className="flex items-center justify-between gap-3">
-                                                    <p className="text-sm font-semibold text-[#172c28]">
+                                                    <p className="text-sm font-semibold">
                                                         {formatearPrecio(addon.precio)}
                                                     </p>
 
                                                     <div className="flex shrink-0 items-center gap-2.5">
                                                         <button
                                                             type="button"
-                                                            onClick={() =>
-                                                                cambiarCantidad(addon.id, -1)
-                                                            }
+                                                            onClick={() => cambiarCantidad(addon.id, -1)}
                                                             disabled={cantidad === 0}
                                                             aria-label={`Quitar un ${addon.nombre}`}
-                                                            className="grid size-10 cursor-pointer place-items-center rounded-xl border border-[#e3ded2] bg-white text-[#526963] transition hover:bg-[#f1ece0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-40"
+                                                            className="grid size-10 cursor-pointer place-items-center rounded-xl border border-[var(--line)] bg-white text-[var(--ink)]/70 transition hover:bg-[var(--brand-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-40"
                                                         >
-                                                            <Minus
-                                                                className="size-4"
-                                                                aria-hidden="true"
-                                                            />
+                                                            <Minus className="size-4" aria-hidden="true" />
                                                         </button>
                                                         <span className="w-5 text-center text-sm font-semibold">
                                                             {cantidad}
                                                         </span>
                                                         <button
                                                             type="button"
-                                                            onClick={() =>
-                                                                cambiarCantidad(addon.id, 1)
-                                                            }
+                                                            onClick={() => cambiarCantidad(addon.id, 1)}
                                                             aria-label={`Agregar un ${addon.nombre}`}
-                                                            className="grid size-10 cursor-pointer place-items-center rounded-xl border border-[#e3ded2] bg-white text-[#526963] transition hover:bg-[#f1ece0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
+                                                            className="grid size-10 cursor-pointer place-items-center rounded-xl border border-[var(--line)] bg-white text-[var(--ink)]/70 transition hover:bg-[var(--brand-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
                                                         >
-                                                            <Plus
-                                                                className="size-4"
-                                                                aria-hidden="true"
-                                                            />
+                                                            <Plus className="size-4" aria-hidden="true" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -965,27 +1037,19 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                         )}
 
                         {totalAdicionales > 0 ? (
-                            <div className="flex items-center justify-between rounded-xl bg-[#eef4f1] px-4 py-3.5">
+                            <div className="flex items-center justify-between rounded-xl bg-[var(--brand-soft)] px-4 py-3.5">
                                 <span className="text-sm font-semibold">Total de adicionales</span>
-                                <span className="text-sm font-semibold" style={{ color: colorMarca }}>
+                                <span className="text-sm font-semibold text-[var(--brand-text)]">
                                     {formatearPrecio(totalAdicionales)}
                                 </span>
                             </div>
                         ) : null}
 
                         <div className="flex items-center justify-between gap-3 pt-2">
-                            <button
-                                type="button"
-                                onClick={volver}
-                                className="inline-flex h-12 cursor-pointer items-center justify-center rounded-xl border border-[#d9d3c4] bg-white px-6 text-sm font-semibold text-[#526963] transition hover:bg-[#f1ece0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
-                            >
+                            <button type="button" onClick={volver} className={BTN_SECONDARY}>
                                 Volver
                             </button>
-                            <button
-                                type="submit"
-                                className="inline-flex h-12 min-w-36 cursor-pointer items-center justify-center rounded-xl px-7 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f4ec]"
-                                style={{ backgroundColor: colorMarca }}
-                            >
+                            <button type="submit" className={BTN_PRIMARY} style={ESTILO_BTN_PRIMARY}>
                                 Continuar
                             </button>
                         </div>
@@ -993,34 +1057,24 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                 ) : (
                     <form onSubmit={continuarPasoCuatro} noValidate className="mt-7 space-y-5">
                         <div
-                            className={`rounded-2xl border bg-white p-5 transition ${
-                                lancha.necesitaLancha
-                                    ? "border-[var(--brand)]"
-                                    : "border-[#e3ded2]"
-                            }`}
+                            className={`rounded-2xl border bg-white p-5 transition ${lancha.necesitaLancha
+                                ? "border-[var(--brand)]"
+                                : "border-[var(--line)]"
+                                }`}
                         >
                             <div className="flex items-start gap-4">
-                                <span
-                                    className="grid size-12 shrink-0 place-items-center rounded-xl"
-                                    style={{
-                                        color: colorMarca,
-                                        backgroundColor: `color-mix(in srgb, ${colorMarca} 12%, white)`,
-                                    }}
-                                >
+                                <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-[var(--brand-soft)] text-[var(--brand-text)]">
                                     <Ship className="size-6" aria-hidden="true" />
                                 </span>
 
                                 <div className="min-w-0 flex-1">
-                                    <p
-                                        className="text-[10px] font-bold uppercase tracking-[0.14em]"
-                                        style={{ color: colorMarca }}
-                                    >
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--brand-text)]">
                                         Servicio recomendado
                                     </p>
                                     <p className="mt-1 text-lg font-semibold leading-tight">
                                         Cotizar lancha remis
                                     </p>
-                                    <p className="mt-1 text-sm text-[#71817b]">
+                                    <p className="mt-1 text-sm text-[var(--ink)]/70">
                                         Viaje privado, seguro y directo.
                                     </p>
                                 </div>
@@ -1031,14 +1085,16 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                     aria-checked={lancha.necesitaLancha}
                                     aria-label="Cotizar lancha remis"
                                     onClick={() => elegirLancha(!lancha.necesitaLancha)}
-                                    className={`grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${
-                                        lancha.necesitaLancha
-                                            ? "border-transparent text-white"
-                                            : "border-[#c9c2b2] bg-white"
-                                    }`}
+                                    className={`grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] ${lancha.necesitaLancha
+                                        ? "border-transparent"
+                                        : "border-[var(--line)] bg-white"
+                                        }`}
                                     style={
                                         lancha.necesitaLancha
-                                            ? { backgroundColor: colorMarca }
+                                            ? {
+                                                backgroundColor: "var(--brand)",
+                                                color: "var(--brand-contrast)",
+                                            }
                                             : undefined
                                     }
                                 >
@@ -1048,14 +1104,13 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                 </button>
                             </div>
 
-                            <div className="mt-4 flex items-start gap-2.5 rounded-xl bg-[#f7f1e4] px-3.5 py-3">
+                            <div className="mt-4 flex items-start gap-2.5 rounded-xl bg-[var(--accent-soft)] px-3.5 py-3">
                                 <Check
-                                    className="mt-0.5 size-4 shrink-0"
-                                    style={{ color: colorMarca }}
+                                    className="mt-0.5 size-4 shrink-0 text-[var(--accent-text)]"
                                     aria-hidden="true"
                                 />
-                                <p className="text-xs leading-5 text-[#526963]">
-                                    <span className="font-semibold text-[#172c28]">
+                                <p className="text-xs leading-5 text-[var(--ink)]/70">
+                                    <span className="font-semibold text-[var(--ink)]">
                                         Sin costo, solo cotizamos.
                                     </span>{" "}
                                     Recibirás el valor antes de confirmar.
@@ -1063,7 +1118,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                             </div>
 
                             {lancha.necesitaLancha ? (
-                                <div className="mt-5 space-y-4 border-t border-[#eee9dd] pt-5">
+                                <div className="mt-5 space-y-4 border-t border-[var(--line)] pt-5">
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <Campo
                                             label="Horario de llegada"
@@ -1077,10 +1132,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                                 min={ahora}
                                                 value={lancha.salidaLancha}
                                                 onChange={(event) =>
-                                                    actualizarLancha(
-                                                        "salidaLancha",
-                                                        event.currentTarget.value,
-                                                    )
+                                                    actualizarLancha("salidaLancha", event.currentTarget.value)
                                                 }
                                                 aria-invalid={Boolean(errores.salidaLancha)}
                                                 className={INPUT_CLASS}
@@ -1098,10 +1150,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                                 min={lancha.salidaLancha || ahora}
                                                 value={lancha.regresoLancha}
                                                 onChange={(event) =>
-                                                    actualizarLancha(
-                                                        "regresoLancha",
-                                                        event.currentTarget.value,
-                                                    )
+                                                    actualizarLancha("regresoLancha", event.currentTarget.value)
                                                 }
                                                 aria-invalid={Boolean(errores.regresoLancha)}
                                                 className={INPUT_CLASS}
@@ -1120,10 +1169,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                                 name="puntoSalida"
                                                 value={lancha.puntoSalida}
                                                 onChange={(event) =>
-                                                    actualizarLancha(
-                                                        "puntoSalida",
-                                                        event.currentTarget.value,
-                                                    )
+                                                    actualizarLancha("puntoSalida", event.currentTarget.value)
                                                 }
                                                 aria-invalid={Boolean(errores.puntoSalida)}
                                                 className={SELECT_CLASS}
@@ -1136,7 +1182,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                                 ))}
                                             </select>
                                             <ChevronDown
-                                                className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[#526963]"
+                                                className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--ink)]/70"
                                                 aria-hidden="true"
                                             />
                                         </div>
@@ -1156,10 +1202,7 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                             inputMode="numeric"
                                             value={lancha.pasajerosLancha}
                                             onChange={(event) =>
-                                                actualizarLancha(
-                                                    "pasajerosLancha",
-                                                    event.currentTarget.value,
-                                                )
+                                                actualizarLancha("pasajerosLancha", event.currentTarget.value)
                                             }
                                             aria-invalid={Boolean(errores.pasajerosLancha)}
                                             className={`${INPUT_CLASS} sm:max-w-[calc(50%-0.5rem)]`}
@@ -1183,15 +1226,15 @@ export function OnboardingWizard({ complejo }: { complejo: ComplejoPublico }) {
                                 type="button"
                                 onClick={volver}
                                 disabled={enviando}
-                                className="inline-flex h-12 cursor-pointer items-center justify-center rounded-xl border border-[#d9d3c4] bg-white px-6 text-sm font-semibold text-[#526963] transition hover:bg-[#f1ece0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] disabled:cursor-not-allowed disabled:opacity-60"
+                                className={BTN_SECONDARY}
                             >
                                 Volver
                             </button>
                             <button
                                 type="submit"
                                 disabled={enviando}
-                                className="inline-flex h-12 min-w-36 cursor-pointer items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f4ec] disabled:cursor-not-allowed disabled:opacity-70"
-                                style={{ backgroundColor: colorMarca }}
+                                className={BTN_PRIMARY}
+                                style={ESTILO_BTN_PRIMARY}
                             >
                                 {enviando ? (
                                     <>

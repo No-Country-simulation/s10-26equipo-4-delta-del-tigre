@@ -1,12 +1,11 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { CheckIcon, ClockIcon, PlusIcon, UsersIcon } from "lucide-react";
+import { CheckIcon, ClockIcon, UsersIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ReservasFiltros } from "@/components/reservas-filtros";
 import { ReservasLista, ReservasListaSkeleton } from "@/components/reservas-lista";
-import { esEstadoValido, getResumen } from "@/lib/reservas";
+import { esEstadoValido } from "@/lib/reservas";
+import { getResumen } from "./data/reservas.data";
 
 
 type SearchParams = Promise<{ q?: string; estado?: string }>;
@@ -45,9 +44,9 @@ async function ReservasPage({ searchParams }: { searchParams: SearchParams }) {
             hintClass: "text-[#71817b]",
         },
         {
-            label: "Onboarding completo",
-            value: `${resumen.onboardingCompleto}%`,
-            hint: `+${resumen.variacionMes}% este mes`,
+            label: "Confirmadas",
+            value: String(resumen.confirmadas),
+            hint: "Reservas confirmadas",
             icon: CheckIcon,
             iconBox: "bg-[#e3eee9] text-[#174f40]",
             hintClass: "text-[#28745b]",
@@ -69,15 +68,7 @@ async function ReservasPage({ searchParams }: { searchParams: SearchParams }) {
                     </p>
                 </div>
 
-                <Button
-                    size="lg"
-                    nativeButton={false}
-                    render={<Link href="/reservas/nueva" />}
-                    className="h-12 gap-3 rounded-2xl bg-[#174f40] px-6 text-base font-semibold text-white shadow-lg shadow-[#174f40]/25 hover:bg-[#123f33]"
-                >
-                    Nueva reserva
-                    <PlusIcon className="size-4" />
-                </Button>
+
             </header>
 
             <div className="grid gap-5 md:grid-cols-3">

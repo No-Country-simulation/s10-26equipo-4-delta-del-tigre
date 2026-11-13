@@ -1,19 +1,24 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, Pencil } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getOwnedComplejo } from "../data/complejos.data";
-import { ArrowLeft, Pencil } from "lucide-react";
-import Link from "next/link";
+import {
+  ESTADOS_COMPLEJO,
+  getEstadoComplejo,
+  getOwnedComplejo,
+} from "../data/complejos.data";
 
 type Params = Promise<{ id: string }>;
+type SearchParams = Promise<{ guardado?: string | string[] }>;
 
 function Dato({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
       <dt className="text-sm text-[#71817b]">{label}</dt>
-            <dd className="mt-1 wrap-break-word font-medium text-[#172c28]">
+      <dd className="mt-1 wrap-break-word font-medium text-[#172c28]">
         {children ?? <span className="text-[#a7b3ae]">No disponible</span>}
       </dd>
     </div>
@@ -49,15 +54,25 @@ function MuestrasColores({ value }: { value: string | null }) {
   );
 }
 
-export const instant = false
+export const instant = false;
 
-export default async function ComplejoDetallePage({ params }: { params: Params }) {
+export default async function ComplejoDetallePage({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: SearchParams;
+}) {
   const { id } = await params;
+  const { guardado } = await searchParams;
   const complejo = await getOwnedComplejo(id);
 
   if (!complejo) notFound();
 
-    return (
+  const estado = getEstadoComplejo(complejo);
+  const estadoLabel = ESTADOS_COMPLEJO.find((opcion) => opcion.value === estado)?.label;
+
+  return (
     <section className="mx-auto max-w-3xl space-y-6">
       <Button
         nativeButton={false}
@@ -70,6 +85,14 @@ export default async function ComplejoDetallePage({ params }: { params: Params }
         Volver a complejos
       </Button>
 
+      {guardado ? (
+        <p
+          className="rounded-lg border border-[#cfe3d8] bg-[#e8f1ec] px-4 py-3 text-sm text-[#174f40]"
+          role="status"
+        >
+          Los cambios del complejo se guardaron correctamente.
+        </p>
+      ) : null}
 
       <header className="flex flex-wrap items-center gap-4">
         {complejo.logo ? (
@@ -109,16 +132,12 @@ export default async function ComplejoDetallePage({ params }: { params: Params }
           <dl className="mt-6 grid gap-6 sm:grid-cols-2">
             <Dato label="UUID">{complejo.id}</Dato>
             <Dato label="Nombre">{complejo.nombre}</Dato>
-            <Dato label="Dueño ID">{complejo.ownerId}</Dato>
-            <Dato label="Dirección">{complejo.direccion}</Dato>
-            <Dato label="Logo URL">{complejo.logo}</Dato>
+            <Dato label="Dirección">{complejo.direccion || null}</Dato>
+            <Dato label="Slug">{complejo.slug}</Dato>
+            <Dato label="Estado">{estadoLabel}</Dato>
             <Dato label="Colores de marca">
               <MuestrasColores value={complejo.coloresMarca} />
             </Dato>
-            <Dato label="Capacidad máxima">{complejo.maxPersonas}</Dato>
-            <Dato label="Capacidad mínima">{complejo.minPersonas}</Dato>
-            <Dato label="Máximo de reservas">{complejo.maxReservas}</Dato>
-            <Dato label="Slug">{complejo.slug}</Dato>
           </dl>
         </CardContent>
       </Card>
@@ -130,8 +149,10 @@ export default async function ComplejoDetallePage({ params }: { params: Params }
             <Dato label="Titular de la cuenta">{complejo.titularCuenta}</Dato>
             <Dato label="Alias / CBU">{complejo.aliasCbu}</Dato>
             <Dato label="Banco">{complejo.banco}</Dato>
-            <Dato label="Número de cuenta">{complejo.cuenta}</Dato>
           </dl>
+          <p className="mt-6 text-sm text-[#71817b]">
+            Podés actualizar estos datos desde el formulario de edición del complejo.
+          </p>
         </CardContent>
       </Card>
     </section>

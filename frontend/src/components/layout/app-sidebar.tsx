@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-    House,
     CalendarDays,
     Plus,
     CreditCard,
@@ -29,19 +28,27 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu";
-import {useState} from "react"
-import { logoutMockSession } from "@/app/(auth)/actions";
+import { useState } from "react"
+import { logoutAction } from "@/app/(auth)/actions";
+import type { AuthUser } from "@/types/auth.types";
+
+function getInitials(name: string) {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "HF";
+    const first = parts[0]?.[0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? "" : "";
+    return `${first}${last}`.toUpperCase();
+}
 
 const items = [
-    { title: "Inicio", url: "/dashboard", icon: House },
-    { title: "Complejos", url: "/complejos", icon: BuildingComplex},
+    { title: "Complejos", url: "/complejos", icon: BuildingComplex },
     { title: "Reservas", url: "/reservas", icon: CalendarDays },
     { title: "Adicionales", url: "/adicionales", icon: Plus },
     { title: "Datos de pago", url: "/datos-pago", icon: CreditCard },
     { title: "Link de onboarding", url: "/onboarding", icon: LinkIcon },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ user }: { user: AuthUser }) {
     const pathname = usePathname();
     const { setOpenMobile, isMobile } = useSidebar();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -106,15 +113,17 @@ export function AppSidebar() {
                     >
                         <Avatar className="size-10 rounded-xl">
                             <AvatarFallback className="rounded-xl bg-[#174f40] text-white">
-                                DG
+                                {getInitials(user.name)}
                             </AvatarFallback>
                         </Avatar>
 
                         <span className="min-w-0 flex-1 text-left">
                             <span className="block truncate text-sm font-semibold text-[#233a33]">
-                                Administrador
+                                {user.name}
                             </span>
-                            <span className="block text-xs text-[#71817b]">HostFlow</span>
+                            <span className="block truncate text-xs text-[#71817b]">
+                                {user.email}
+                            </span>
                         </span>
 
                         <ChevronRight className="size-5 text-[#526963]" />
@@ -126,22 +135,22 @@ export function AppSidebar() {
                         className="w-56"
                     >
                         <DropdownMenuItem
-                        disabled={isLoggingOut}
-                            onClick={async() => {
-                              try {
-                                setIsLoggingOut(true)
-                                await logoutMockSession();
-                                                                window.location.replace("/login");
-                              }catch (error) {
-                                console.error("Error al cerrar sesión:", error);
-                              }finally{
-                                setIsLoggingOut(false)
-                              }
+                            disabled={isLoggingOut}
+                            onClick={async () => {
+                                try {
+                                    setIsLoggingOut(true)
+                                    await logoutAction();
+                                    window.location.replace("/login");
+                                } catch (error) {
+                                    console.error("Error al cerrar sesión:", error);
+                                } finally {
+                                    setIsLoggingOut(false)
+                                }
                             }}
                             className="gap-2 text-red-600 focus:text-red-600 cursor-pointer"
                         >
                             <LogOut className="size-4" />
-                             {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
+                            {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

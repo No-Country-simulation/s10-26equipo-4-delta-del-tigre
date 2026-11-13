@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect, type FormEvent, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { authCredentialsSchema } from "../schemas/auth.schema";
-import { loginWithMockSession } from "../actions";
+import { loginAction } from "../actions";
 import Unauthorized from "../../unauthorized";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -131,12 +131,17 @@ function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      await loginWithMockSession(validation.data);
+      const result = await loginAction(validation.data);
+      if (!result.ok) {
+        setFormErrors([result.message]);
+        if (result.fieldErrors) setFieldErrors(result.fieldErrors);
+        return;
+      }
 
       setSuccessMessage("Inicio de sesión exitoso. Redirigiendo...");
 
       window.setTimeout(() => {
-        router.replace("/dashboard");
+        router.replace("/complejos");
       }, 600);
     } catch (error) {
       setFormErrors([
@@ -149,9 +154,9 @@ function LoginForm() {
     }
   };
 
- useEffect(() => {
-  formRef.current?.reset();
-}, []);
+  useEffect(() => {
+    formRef.current?.reset();
+  }, []);
 
   return (
     <section
@@ -310,11 +315,10 @@ function LoginForm() {
           </label>
 
           <input
-            className={`h-10 rounded-md border bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${
-              fieldErrors.email
-                ? "border-red-400 focus:border-red-400 focus:ring-red-400/15"
-                : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"
-            }`}
+            className={`h-10 rounded-md border bg-white/[0.07] px-4 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${fieldErrors.email
+              ? "border-red-400 focus:border-red-400 focus:ring-red-400/15"
+              : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"
+              }`}
             type="email"
             id="email"
             name="email"
@@ -336,11 +340,10 @@ function LoginForm() {
 
           <div className="relative">
             <input
-              className={`h-10 w-full rounded-md border bg-white/[0.07] px-4 pr-12 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${
-                fieldErrors.password
-                  ? "border-red-400 focus:border-red-400 focus:ring-red-400/15"
-                  : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"
-              }`}
+              className={`h-10 w-full rounded-md border bg-white/[0.07] px-4 pr-12 text-sm text-white outline-none transition placeholder:text-white/45 focus:ring-4 ${fieldErrors.password
+                ? "border-red-400 focus:border-red-400 focus:ring-red-400/15"
+                : "border-white/20 focus:border-[#69d2a7] focus:ring-[#69d2a7]/15"
+                }`}
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
@@ -382,7 +385,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting || Boolean(successMessage)}
-            className="mt-4 h-11 rounded-md bg-linear-to-r from-[#54bd91] to-[#36a77d] px-4 text-sm font-semibold text-[#06261c] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7ce0b7] focus-visible:ring-offset-2 focus-visible:ring-offset-[#102a28] disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-4 h-11 rounded-md cursor-pointer bg-linear-to-r from-[#54bd91] to-[#36a77d] px-4 text-sm font-semibold text-[#06261c] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7ce0b7] focus-visible:ring-offset-2 focus-visible:ring-offset-[#102a28] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting
               ? "Ingresando..."
