@@ -20,7 +20,7 @@ public class OpenApiConfig {
                         .title("HostFlow API")
                         .version("v1")
                         .description("Onboarding y gestión para pequeños alojamientos del Delta del Tigre. "
-                                + "Las rutas del dueño requieren token: hacer POST /api/v1/auth/login, copiar "
+                                + "Las rutas del dueño requieren token: hacer POST /api/auth/login, copiar "
                                 + "`data.accessToken` y pegarlo en el botón Authorize. "
                                 + "Las rutas públicas (ficha del huésped) no requieren autenticación."))
                 .components(new Components().addSecuritySchemes(BEARER, new SecurityScheme()
