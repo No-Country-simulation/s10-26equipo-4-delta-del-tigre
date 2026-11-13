@@ -31,6 +31,7 @@ public class ComplexService {
         c.setAccountHolder(r.accountHolder());
         c.setAliasCbu(r.aliasCbu());
         c.setBank(r.bank());
+        c.setLogoUrl(r.logoUrl());
         c.setSlug(uniqueSlug(c.getName()));
         return ComplexResponse.from(complexRepository.save(c));
     }
@@ -64,6 +65,7 @@ public class ComplexService {
         complex.setName(r.name().trim());
         complex.setAddress(r.address());
         complex.setBrandColors(r.brandColors());
+        complex.setLogoUrl(r.logoUrl());
         return ComplexResponse.from(complexRepository.save(complex));
     }
 

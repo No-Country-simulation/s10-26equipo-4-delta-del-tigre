@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "Reemplaza nombre, dirección y colores. El slug, el logo y los datos bancarios no se modifican")
+@Schema(description = "Reemplaza nombre, dirección, color y logo (si se omite el logo, se quita). El slug y los datos bancarios no se modifican")
 public record UpdateComplexRequest(
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Cabañas del Río",
                 description = "2 a 150 caracteres. Solo letras latinas, números, espacios, apóstrofes, puntos, guiones y &")
@@ -26,4 +26,11 @@ public record UpdateComplexRequest(
                 description = "Opcional. Un color hex, por ejemplo #1A73E8")
         @Pattern(regexp = ComplexValidation.BRAND_COLORS_REGEX,
                 message = "El color de marca debe tener el formato #RRGGBB")
-        String brandColors) {}
+        String brandColors,
+
+        @Schema(example = "https://res.cloudinary.com/demo/image/upload/v1/logo.png",
+                description = "Opcional. URL del logo subido a Cloudinary (https://res.cloudinary.com/...), máximo 500 caracteres. Omitir o enviar null quita el logo; no enviar \"\"")
+        @Size(max = ImageUrlValidation.MAX_URL_LENGTH, message = "La URL del logo no puede superar los 500 caracteres")
+        @Pattern(regexp = ImageUrlValidation.CLOUDINARY_REGEX,
+                message = "El logo debe ser una URL de Cloudinary (https://res.cloudinary.com/...)")
+        String logoUrl) {}

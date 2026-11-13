@@ -1,0 +1,1 @@
+ALTER TABLE addons ADD COLUMN image_url VARCHAR(500) NULL;
