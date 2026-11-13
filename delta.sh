@@ -47,11 +47,6 @@ if [[ "$command_name" == "init" ]]; then
   exit 0
 fi
 
-if [[ ! -f "$ENV_FILE" ]]; then
-  printf 'Falta .env. Ejecuta ./delta.sh init y revisa el archivo creado.\n' >&2
-  exit 1
-fi
-
 if ! command -v docker >/dev/null 2>&1; then
   printf 'No se encontró Docker. Instala Docker y asegúrate de que el daemon esté activo.\n' >&2
   exit 1
@@ -71,7 +66,13 @@ else
 fi
 
 compose() {
-  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
+  local -a compose_args=(compose -f "$COMPOSE_FILE")
+  if [[ -f "$ENV_FILE" ]]; then
+    compose_args=(compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE")
+  elif [[ -z "${COMPOSE_PROFILES:-}" ]]; then
+    export COMPOSE_PROFILES=development
+  fi
+  docker "${compose_args[@]}" "$@"
 }
 
 case "$command_name" in
